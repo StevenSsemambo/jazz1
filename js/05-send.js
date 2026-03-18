@@ -75,6 +75,7 @@ function send(){
   const delay=['philosophical','mentalHealth','grief','trauma','venting','askAdvice','crisis'].includes(intent.primary)?1800:['sad','lonely','selfEsteem','relationships'].includes(intent.primary)?1400:900;
 
   setTimeout(()=>{
+    try{
     hideTyping();sbtn.disabled=false;
 
     if(healthLog&&healthLog.type==='health-log'){
@@ -270,6 +271,13 @@ function send(){
 
     setQR(getQR(intent.primary));
     if(typeof refreshStatsAnimated==='function')refreshStatsAnimated();else refreshStats();
+    }catch(err){
+      console.error('Jazz send error:',err);
+      sbtn.disabled=false;
+      hideTyping();
+      // Show a fallback response so user knows Jazz is there
+      addMsg('b',"I'm here. Tell me more.",'et-warm');
+    }
   },delay);
 }
 
