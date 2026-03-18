@@ -1,27 +1,37 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 08-voice.js
+ * Jazz Buddy -- 08-voice.js
  * Voice engine: TTS, STT, voice mode, voice settings
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
 
-// VOICE ENGINE v6 — Full TTS + STT + Voice Mode
+// VOICE ENGINE v6 -- Full TTS + STT + Voice Mode
 // ══════════════════════════════════════════════════════════════════
 
 // ── Voice state ──────────────────────────────────────────────────
 const VS = {
-  ttsEnabled: DB.g('vs_tts', true),      // Jazz speaks automatically
-  voiceMode: false,                        // Full voice mode
-  listening: false,                        // Mic active
-  speaking: false,                         // Jazz currently speaking
-  autoListen: DB.g('vs_autoListen', false),// Auto-start mic after Jazz speaks
-  pitch: DB.g('vs_pitch', 1.05),
-  rate: DB.g('vs_rate', 0.92),
+  ttsEnabled: false,          // set in initVS()
+  voiceMode: false,
+  listening: false,
+  speaking: false,
+  autoListen: false,          // set in initVS()
+  pitch: 1.05,                // set in initVS()
+  rate: 0.92,                 // set in initVS()
   volume: DB.g('vs_volume', 1.0),
-  selectedVoice: DB.g('vs_voice', null),   // Voice name stored
+  selectedVoice: null,                // set in initVS()
   voices: [],
   recognition: null,
   currentUtterance: null,
 };
+
+// initVS -- called after DB is available
+function initVS(){
+  VS.ttsEnabled   = DB.g('vs_tts', false);
+  VS.autoListen   = DB.g('vs_autoListen', false);
+  VS.pitch        = DB.g('vs_pitch', 1.05);
+  VS.rate         = DB.g('vs_rate', 0.92);
+  VS.volume       = DB.g('vs_volume', 1.0);
+  VS.selectedVoice= DB.g('vs_voice', null);
+}
 
 // ── Load voices ──────────────────────────────────────────────────
 function loadVoices() {
@@ -257,7 +267,7 @@ function updateVoiceUI(state) {
     if (vbarLabel) {
       if (state === 'speaking') vbarLabel.textContent = 'Jazz is speaking…';
       else if (state === 'listening') vbarLabel.textContent = 'Listening to you…';
-      else vbarLabel.textContent = 'Voice mode on — Jazz will speak every response';
+      else vbarLabel.textContent = 'Voice mode on -- Jazz will speak every response';
     }
     vbar.className = state === 'speaking' ? 'show vbar-speaking' : state === 'listening' ? 'show vbar-listening' : 'show';
   }
@@ -272,7 +282,7 @@ function toggleVoiceMode(on) {
   if (VS.ttsEnabled) {
     if (vbar) vbar.classList.add('show');
     if (btn) { btn.style.background = 'rgba(108,92,231,.2)'; btn.style.borderColor = 'var(--acc)'; btn.style.color = 'var(--acc2)'; }
-    toast('🔊 Voice mode on — Jazz will now speak every response');
+    toast('🔊 Voice mode on -- Jazz will now speak every response');
   } else {
     if (vbar) vbar.classList.remove('show');
     if (btn) { btn.style.background = ''; btn.style.borderColor = ''; btn.style.color = ''; }
