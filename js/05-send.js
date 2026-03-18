@@ -13,9 +13,9 @@ function send(){
 
   const{emotion,intensity}=detectEmotion(text);
   const intent=detectIntent(text);
-  updateConvState(intent.primary,emotion,intensity,text);
-  trackEmotionalTrajectory(emotion,intensity);
-  extractCommitment(text);
+  if(typeof updateConvState==='function')updateConvState(intent.primary,emotion,intensity,text);
+  if(typeof trackEmotionalTrajectory==='function')trackEmotionalTrajectory(emotion,intensity);
+  if(typeof extractCommitment==='function')extractCommitment(text);
 
   // Check-in intercept
   if(ciState.active){
@@ -46,8 +46,8 @@ function send(){
   }
 
   // Custom emotion detector
-  const customEmo=detectCustomEmotion(text);
-  if(customEmo){
+  const customEmo=(typeof detectCustomEmotion==='function')?detectCustomEmotion(text):null;
+  if(customEmo&&typeof handleCustomEmotionResponse==='function'){
     const customResp=handleCustomEmotionResponse(customEmo);
     showTyping();
     setTimeout(()=>{hideTyping();sbtn.disabled=false;addMsg('b',customResp,'et-deep');setQR(getQR('venting'));},1000);
@@ -55,14 +55,14 @@ function send(){
   }
 
   // Emotional suppression detector
-  const suppressMsg=detectSuppression(text,emotion,intensity);
+  const suppressMsg=(typeof detectSuppression==='function')?detectSuppression(text,emotion,intensity):null;
   if(suppressMsg){
     setTimeout(()=>{hideTyping();sbtn.disabled=false;addMsg('b',suppressMsg,'et-deep');setQR([{l:'You\'re right',t:'You\'re right, I\'m not really fine'},{l:'I actually am okay',t:'I actually am okay, just tired'},{l:'Let me explain',t:'Let me explain what\'s actually going on'}]);},900);
     showTyping();return;
   }
 
   // Clarification when confidence is low
-  const clarifyMsg=needsClarification(intent.primary,intent.confidence,text);
+  const clarifyMsg=(typeof needsClarification==='function')?needsClarification(intent.primary,intent.confidence,text):null;
   if(clarifyMsg&&Math.random()>.6){
     setTimeout(()=>{hideTyping();sbtn.disabled=false;addMsg('b',clarifyMsg,'et-warm');},700);
     showTyping();return;
