@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 03-responses.js
+ * Jazz Buddy -- 03-responses.js
  * Full response library (1000+ responses)
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
@@ -38,32 +38,32 @@ function buildHealthConvo(intent,text){
 
 // ── ONBOARDING (Phase 2) ──────────────────────────────────────────
 const OBQ=[
-  {type:'display',title:'Welcome to Jazz Buddy 🎷',body:"I'm not just a chatbot. I learn who you are. I remember what matters to you. I actually show up — every single time. Five quick questions and I'll start knowing you.",btn:'Let\'s go'},
+  {type:'display',title:'Welcome to Jazz Buddy 🎷',body:"I'm not just a chatbot. I learn who you are. I remember what matters to you. I actually show up -- every single time. Five quick questions and I'll start knowing you.",btn:'Let\'s go'},
   {type:'input',q:'What should I call you?',hint:'Just your first name',ph:'Your name…',key:'name'},
-  {type:'options',q:'How are you feeling about life right now — honestly?',hint:'No right answer here',key:'initMood',opts:[
+  {type:'options',q:'How are you feeling about life right now -- honestly?',hint:'No right answer here',key:'initMood',opts:[
     {l:'Pretty good, actually 😊',t:{A:5,N:-5},v:'happy'},
     {l:'A bit up and down 😐',t:{N:5},v:'mixed'},
     {l:'Going through something hard 😔',t:{N:12,depth:8},v:'sad'},
     {l:'Stressed and overwhelmed 😟',t:{N:12,C:5},v:'anxious'}
   ]},
   {type:'options',q:'When something is really bothering you, what do you do?',hint:'Be honest',key:'coping',opts:[
-    {l:'Talk about it — I need to process out loud',t:{E:12},v:'verbal'},
+    {l:'Talk about it -- I need to process out loud',t:{E:12},v:'verbal'},
     {l:'Keep it in and think through it alone',t:{E:-10,O:6},v:'internal'},
-    {l:'Distract myself — keep busy',t:{C:7},v:'distract'},
+    {l:'Distract myself -- keep busy',t:{C:7},v:'distract'},
     {l:'It depends on what it is',t:{O:5},v:'varies'}
   ]},
   {type:'options',q:'What kind of conversations do you want with me?',hint:'This shapes everything',key:'style',opts:[
-    {l:'Deep and real — I want to actually think',t:{depth:18,O:12},v:'deep'},
-    {l:'Supportive — I need someone to listen',t:{A:12},v:'support'},
-    {l:'A mix — real but also light sometimes',t:{humor:6,depth:6},v:'mixed'},
-    {l:'Practical — honest advice and direction',t:{direct:12},v:'practical'}
+    {l:'Deep and real -- I want to actually think',t:{depth:18,O:12},v:'deep'},
+    {l:'Supportive -- I need someone to listen',t:{A:12},v:'support'},
+    {l:'A mix -- real but also light sometimes',t:{humor:6,depth:6},v:'mixed'},
+    {l:'Practical -- honest advice and direction',t:{direct:12},v:'practical'}
   ]},
-  {type:'options',q:'One last thing — how do you feel about being challenged?',hint:'I can push you or hold you gently',key:'challenge',opts:[
-    {l:"Challenge me — growth over comfort",t:{O:12,resilience:8},v:'yes'},
-    {l:'Be gentle — I need support right now',v:'gentle'},
-    {l:'Read the room — sometimes push, sometimes not',t:{O:6},v:'dynamic'}
+  {type:'options',q:'One last thing -- how do you feel about being challenged?',hint:'I can push you or hold you gently',key:'challenge',opts:[
+    {l:"Challenge me -- growth over comfort",t:{O:12,resilience:8},v:'yes'},
+    {l:'Be gentle -- I need support right now',v:'gentle'},
+    {l:'Read the room -- sometimes push, sometimes not',t:{O:6},v:'dynamic'}
   ]},
-  {type:'display',title:'I\'ve got you, {name}. 🎷',body:"I've already started building your profile. The more we talk, the more I understand you — and the more this feels like a real friendship. I'm genuinely here.",btn:'Start talking to Jazz'}
+  {type:'display',title:'I\'ve got you, {name}. 🎷',body:"I've already started building your profile. The more we talk, the more I understand you -- and the more this feels like a real friendship. I'm genuinely here.",btn:'Start talking to Jazz'}
 ];
 
 let obStep=0,obAns={};
@@ -78,10 +78,24 @@ function renderOB(){
     const bd=q.body.replace('{name}',P.name||obAns.name||'friend');
     body.innerHTML=`<div class="ob-q">${tt}</div><p style="color:var(--tx2);font-size:14px;line-height:1.7;margin:10px 0 22px;font-family:var(--fb)">${bd}</p><button class="ob-btn" onclick="nextOB()">${q.btn}</button>`;
   }else if(q.type==='input'){
-    body.innerHTML=`<div class="ob-q">${q.q}</div><div class="ob-hint">${q.hint}</div><input class="ob-input" id="ob-inp" placeholder="${q.ph}" autocomplete="off"/><button class="ob-btn" onclick="subOBI('${q.key}')">Continue →</button>`;
+    body.innerHTML=`<div class="ob-q">${q.q}</div><div class="ob-hint">${q.hint}</div><input class="ob-input" id="ob-inp" placeholder="${q.ph}" autocomplete="off"/><button class="ob-btn" onclick="subOBI('${q.key}')">Continue</button>`;
     setTimeout(()=>{const el=document.getElementById('ob-inp');if(el){el.focus();el.addEventListener('keydown',e=>{if(e.key==='Enter')subOBI(q.key);});}},80);
   }else if(q.type==='options'){
-    body.innerHTML=`<div class="ob-q">${q.q}</div><div class="ob-hint">${q.hint}</div><div class="ob-opts">${q.opts.map((o,i)=>`<button class="ob-opt" onclick="selOB(${i},'${q.key}',${JSON.stringify(o)})">${o.l}</button>`).join('')}</div>`;
+    // Build buttons using DOM — never put JSON.stringify inside an onclick attribute
+    const wrap=document.createElement('div');
+    wrap.innerHTML=`<div class="ob-q">${q.q}</div><div class="ob-hint">${q.hint}</div>`;
+    const opts=document.createElement('div');
+    opts.className='ob-opts';
+    q.opts.forEach((o,i)=>{
+      const btn=document.createElement('button');
+      btn.className='ob-opt';
+      btn.textContent=o.l;
+      btn.addEventListener('click',()=>selOB(i,q.key,o));
+      opts.appendChild(btn);
+    });
+    wrap.appendChild(opts);
+    body.innerHTML='';
+    body.appendChild(wrap);
   }
 }
 function nextOB(){obStep++;if(obStep>=OBQ.length)finishOB();else renderOB();}
@@ -123,7 +137,7 @@ function finishOB(){
   const opens=[
     `Hey ${nm}! I'm so glad you're here. I've already started learning about you. What's on your mind?`,
     `${nm}! Welcome to Jazz. This is a space where you can be completely real. Where do we start?`,
-    `${nm}! I've been looking forward to this. Tell me — what's the one thing you most want to talk about right now?`
+    `${nm}! I've been looking forward to this. Tell me -- what's the one thing you most want to talk about right now?`
   ];
   setTimeout(()=>{
     addMsg('b',rnd(opens),'et-warm');
