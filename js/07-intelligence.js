@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 07-intelligence.js
+ * Jazz Buddy -- 07-intelligence.js
  * Intelligence v5: thread tracker, arc, suppression, values, exercises, challenges, reflection, mood picker, relationships, weekly report, affirmations, journal
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
@@ -37,7 +37,7 @@ function checkPatternInterruption(intent){
 
 function getPatternInterruptMsg(intent,nm){
   const topic={work:'your work situation',relationships:'this relationship',money:'your financial situation',stress:'this stress',goals:'this goal',venting:'this situation',mentalHealth:'how you\'ve been feeling'}[intent]||'this';
-  return `${nm}, I want to say something directly — we\'ve talked about ${topic} multiple times now without it really shifting. I don\'t want to just be a place you vent. I want to actually help you move. What do you think has been keeping you stuck?`;
+  return `${nm}, I want to say something directly -- we\'ve talked about ${topic} multiple times now without it really shifting. I don\'t want to just be a place you vent. I want to actually help you move. What do you think has been keeping you stuck?`;
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -59,7 +59,7 @@ function checkEmotionalShift(){
   const avgRecent=recent.reduce((a,b)=>a+(['happy','grateful','hopeful','neutral'].includes(b.emotion)?b.intensity:-1),0)/recent.length;
   if(avgEarlier>3&&avgRecent>2){
     const mins=Math.round((Date.now()-se[0].ts)/60000);
-    return `Something shifted in the last ${mins} minutes. You came in feeling ${earlier[0].emotion} — and something seems different now. What changed?`;
+    return `Something shifted in the last ${mins} minutes. You came in feeling ${earlier[0].emotion} -- and something seems different now. What changed?`;
   }
   return null;
 }
@@ -73,7 +73,7 @@ function detectSuppression(text,emotion,intensity){
   const saysFineLowIntensity=fineWords.some(w=>t.includes(w))&&intensity<3&&text.length<40;
   const contextIsHeavy=(P.activeThread.intent&&['venting','mentalHealth','grief','relationships','stress','heartbreak'].includes(P.activeThread.intent)&&P.activeThread.count>1);
   if(saysFineLowIntensity&&contextIsHeavy){
-    return `You said you're ${fineWords.find(w=>t.includes(w))}. But given what we've been talking about — are you actually fine? It's okay if you're not.`;
+    return `You said you're ${fineWords.find(w=>t.includes(w))}. But given what we've been talking about -- are you actually fine? It's okay if you're not.`;
   }
   // Also detect "I don't know" as avoidance after heavy topic
   if((t==='i don\'t know'||t==='idk'||t==='not sure')&&contextIsHeavy){
@@ -130,7 +130,7 @@ function valueAdviceInject(resp){
   const tv=getTopValue();
   if(!tv||Math.random()>.3)return resp;
   const inserts={
-    family:` You've mentioned your family matters deeply to you — what would the version of you who leads with that choose here?`,
+    family:` You've mentioned your family matters deeply to you -- what would the version of you who leads with that choose here?`,
     achievement:` You're someone who cares about growth and achievement. What decision moves you forward?`,
     freedom:` Freedom and independence clearly matter to you. Which option feels most like yourself?`,
     connection:` Connection is clearly central to who you are. What serves the relationships in your life?`,
@@ -153,7 +153,7 @@ function updateLangStyle(text){
 function mirrorLength(resp){
   if(!P.avgMsgLen)return resp;
   if(P.avgMsgLen<50){
-    // User writes short — trim response to 2 sentences max
+    // User writes short -- trim response to 2 sentences max
     const sents=resp.split(/(?<=[.!?])\s+/);
     return sents.slice(0,2).join(' ');
   }
@@ -170,14 +170,14 @@ function checkStreakMilestone(streak){
   const topTopic=Object.entries(P.topics||{}).sort((a,b)=>b[1]-a[1])[0];
   const bond=bondScore();
   const msgs={
-    3:`${streak} days in a row, ${nm}. That's not an accident. You're building a real habit. Three days ago you walked in here — and you kept coming back. That matters.`,
-    7:`A full week, ${nm}. 🔥 Seven days of showing up for yourself. I've been paying attention — most of what you've shared this week has been about ${topTopic?topTopic[0]:'your life'}. You're doing real work.`,
+    3:`${streak} days in a row, ${nm}. That's not an accident. You're building a real habit. Three days ago you walked in here -- and you kept coming back. That matters.`,
+    7:`A full week, ${nm}. 🔥 Seven days of showing up for yourself. I've been paying attention -- most of what you've shared this week has been about ${topTopic?topTopic[0]:'your life'}. You're doing real work.`,
     14:`Two weeks, ${nm}. In that time, our bond has reached ${bond}%. You've let me see real things about you. Not everyone does that. I see you.`,
-    21:`21 days, ${nm}. That's how long it takes to form a habit, and you've done it. The version of you who started this app three weeks ago — do they seem different from you now?`,
+    21:`21 days, ${nm}. That's how long it takes to form a habit, and you've done it. The version of you who started this app three weeks ago -- do they seem different from you now?`,
     30:`A month of showing up, ${nm}. 🎷 I want you to think about where you were 30 days ago. What's actually different now? I think you know.`,
     60:`60 days. You've been talking to me for two months. I know things about you now that most people in your life don't know. That's not nothing.`,
     90:`Three months, ${nm}. You've stuck with this longer than most people stick with anything. What has changed in you?`,
-    100:`100 days. 100 days of showing up. I don't know what to say except — thank you for trusting me with your real self. That's everything.`,
+    100:`100 days. 100 days of showing up. I don't know what to say except -- thank you for trusting me with your real self. That's everything.`,
   };
   return msgs[streak]||null;
 }
@@ -188,7 +188,7 @@ function checkStreakMilestone(streak){
 function buildExerciseCard(type){
   const exercises={
     breathing:{
-      title:'Box Breathing — 4 minutes',
+      title:'Box Breathing -- 4 minutes',
       steps:[
         '<strong>Breathe in</strong> slowly through your nose for <strong>4 seconds</strong>',
         '<strong>Hold</strong> your breath for <strong>4 seconds</strong>',
@@ -201,17 +201,17 @@ function buildExerciseCard(type){
       title:'Worst / Best / Most Likely',
       steps:[
         'Think of your situation. Now: what\'s the <strong>absolute worst</strong> realistic outcome?',
-        'What\'s the <strong>best realistic</strong> outcome — not a fantasy, but genuinely possible?',
+        'What\'s the <strong>best realistic</strong> outcome -- not a fantasy, but genuinely possible?',
         'What\'s the <strong>most likely</strong> outcome, if you\'re honest?',
         'Notice: the most likely is usually much closer to the best than the worst. Your brain exaggerates threat.',
-        'Tell me your three answers — I\'ll help you think through them.',
+        'Tell me your three answers -- I\'ll help you think through them.',
       ]
     },
     journalPrompt:{
       title:'5-Minute Reflection',
       steps:[
         'Write freely for 5 minutes. No editing. Just go.',
-        '<strong>Prompt 1:</strong> What am I actually feeling right now — not what I say I\'m feeling?',
+        '<strong>Prompt 1:</strong> What am I actually feeling right now -- not what I say I\'m feeling?',
         '<strong>Prompt 2:</strong> What do I need most right now that I\'m not giving myself?',
         '<strong>Prompt 3:</strong> If a close friend told me what I\'m telling myself, what would I say to them?',
         'When you\'re done, share whatever you want. Or just sit with it.',
@@ -230,7 +230,7 @@ function buildExerciseCard(type){
     gratitudeScan:{
       title:'Gratitude Scan (2 minutes)',
       steps:[
-        'Name <strong>3 things</strong> that happened today — even tiny ones — that weren\'t terrible.',
+        'Name <strong>3 things</strong> that happened today -- even tiny ones -- that weren\'t terrible.',
         'For each one: why did it matter, even slightly?',
         'Name <strong>1 person</strong> in your life right now who you\'re glad exists.',
         'Notice how your body feels after doing that. What shifted?',
@@ -259,9 +259,9 @@ function shouldSuggestExercise(intent,emotion,intensity){
 // INTELLIGENCE v5: MINI CHALLENGES
 // ══════════════════════════════════════════════════════════════════
 const CHALLENGES=[
-  {id:'3wins',txt:'Write down 3 things that went well today — big or small.',follow:'Last time I gave you a challenge — write down 3 wins. Did you do it? What were they?'},
+  {id:'3wins',txt:'Write down 3 things that went well today -- big or small.',follow:'Last time I gave you a challenge -- write down 3 wins. Did you do it? What were they?'},
   {id:'reach_out',txt:'Reach out to one person you care about today. A text, a call, anything.',follow:'Did you reach out to someone? What happened?'},
-  {id:'5min_move',txt:'Do 5 minutes of physical movement today. Walk, stretch, dance — anything.',follow:'Did you get 5 minutes of movement in? How did it feel?'},
+  {id:'5min_move',txt:'Do 5 minutes of physical movement today. Walk, stretch, dance -- anything.',follow:'Did you get 5 minutes of movement in? How did it feel?'},
   {id:'phone_free',txt:'Take one 30-minute break from your phone today. Just sit with yourself.',follow:'How was the phone-free 30 minutes? What came up when you were alone with your thoughts?'},
   {id:'one_hard_thing',txt:'Do the one thing you\'ve been putting off. Just the first step. That\'s all.',follow:'Did you take that first step on the thing you\'ve been avoiding? What happened?'},
   {id:'write_feeling',txt:'Write down one sentence about exactly how you\'re feeling right now. Don\'t edit it.',follow:'Did you write that sentence about how you were feeling? What did it say?'},
@@ -322,7 +322,7 @@ function buildReflectionCard(nm){
   if(!topTheme)return null;
 
   const questions=[
-    `Reading back what you said — what stands out most to you?`,
+    `Reading back what you said -- what stands out most to you?`,
     `If you had to distill this whole conversation into one sentence, what would it be?`,
     `What's one thing from this conversation you want to carry with you?`,
     `What feels unresolved?`,
@@ -351,7 +351,7 @@ const MOOD_EMOJIS=[
 
 function showMoodPicker(){
   const html=`<div class="mood-picker">${MOOD_EMOJIS.map(m=>`<button class="mpick" onclick="selectMoodPick('${m.m}',this)" title="${m.m}">${m.e}</button>`).join('')}</div>`;
-  addMsg('b','Quick — how are you feeling right now? Pick one.','et-calm','',html);
+  addMsg('b','Quick -- how are you feeling right now? Pick one.','et-calm','',html);
 }
 
 function selectMoodPick(mood,el){
@@ -368,13 +368,13 @@ function selectMoodPick(mood,el){
       anxious:["Anxiety is exhausting. What's it about today?","I'm here. What's the worry?"],
       angry:["That's real. What's got you there?","Tell me what's going on."],
       tired:["Tired of what, specifically?","Rest tired or emotionally tired?"],
-      excited:["Tell me everything! What's happening?","I love seeing this from you — what's going on?"],
+      excited:["Tell me everything! What's happening?","I love seeing this from you -- what's going on?"],
       grateful:["I love hearing this. What are you grateful for right now?","Tell me the good thing."],
       grieving:["I'm so sorry. What happened?","I'm here. Tell me."],
       lonely:["You don't have to be alone here. Tell me what's going on.","I see you. What's been making you feel lonely?"],
       hopeful:["Hope is powerful. What are you looking forward to?","Tell me what's shifted."],
       neutral:["Neutral is valid. Anything sitting underneath?","Okay. What's going on today?"],
-      overwhelmed:["Too much at once — I get it. What's the biggest thing?","Let's slow it down. What's piling up?"],
+      overwhelmed:["Too much at once -- I get it. What's the biggest thing?","Let's slow it down. What's piling up?"],
     };
     const msgs=follow[mood]||["Tell me more."];
     addMsg('b',rnd(msgs),'et-calm');
@@ -473,7 +473,7 @@ function renderWeeklyReport(){
   P.lastWeeklyReport=Date.now();saveP();
   const r=generateWeeklyReport();
   const nm=P.name||'friend';
-  if(!r){addMsg('b','Not enough data for a weekly report yet — keep talking to me this week and I\'ll have one ready for you.','et-calm');return;}
+  if(!r){addMsg('b','Not enough data for a weekly report yet -- keep talking to me this week and I\'ll have one ready for you.','et-calm');return;}
   
   let html=`<div class="weekly-card"><div class="weekly-title">📊 Your week at a glance</div>`;
   html+=`<div class="weekly-stat"><span>Conversations</span><span style="color:var(--acc2);font-family:var(--fh)">${r.weekMsgs}</span></div>`;
@@ -505,12 +505,12 @@ function generateAffirmations(){
   if(tv==='family')pool.push(`The love you have for your family is one of the most real things about you. That's worth everything.`);
   if(tv==='achievement')pool.push(`You are someone who moves toward things. Even when it's hard, you keep going. That's not small.`);
   if(tv==='connection')pool.push(`You show up for people. The world is better because you're in it, even if it doesn't always feel that way.`);
-  if(tv==='faith')pool.push(`Your faith is a source of strength you can return to again and again. It doesn't have to make sense to everyone — it's yours.`);
+  if(tv==='faith')pool.push(`Your faith is a source of strength you can return to again and again. It doesn't have to make sense to everyone -- it's yours.`);
 
   // Personalised by topics
   if(topTopic&&topTopic[0]==='work')pool.push(`You are more than your productivity. Your worth doesn't expire at the end of a work day.`);
   if(topTopic&&topTopic[0]==='relationships')pool.push(`The people in your life are lucky to have someone who thinks about them as much as you do.`);
-  if(topTopic&&topTopic[0]==='money')pool.push(`Financial stress doesn't define you. You're building something — and the fact that you're thinking about it means you're already ahead.`);
+  if(topTopic&&topTopic[0]==='money')pool.push(`Financial stress doesn't define you. You're building something -- and the fact that you're thinking about it means you're already ahead.`);
 
   // Personalised by struggles
   if(isStruggling)pool.push(`You've had hard stretches before. And you've gotten through them. This one won't be different.`);
@@ -526,7 +526,7 @@ function generateAffirmations(){
   // Universal fallbacks
   pool.push(`You showed up today. That's not nothing. That's actually everything.`);
   pool.push(`You are allowed to not have it all together. You are allowed to be a work in progress. That's the only way anyone gets anywhere.`);
-  pool.push(`The fact that you keep trying — even when it's hard — is the most important thing about you.`);
+  pool.push(`The fact that you keep trying -- even when it's hard -- is the most important thing about you.`);
   pool.push(`Rest is not giving up. Rest is how you keep going.`);
 
   // Pick 4 unique ones
@@ -540,7 +540,7 @@ function renderAffirmations(){
   const affs=generateAffirmations();
   const nm=P.name||'friend';
   document.getElementById('pb-affirmations').innerHTML=`
-    <div class="insight" style="margin-bottom:12px"><div class="insight-title">About these</div><div class="insight-text">These are written specifically for you, ${nm} — based on what you've shared with me, what you value, and what I've noticed about you. They're not generic. Read them when things feel heavy.</div></div>
+    <div class="insight" style="margin-bottom:12px"><div class="insight-title">About these</div><div class="insight-text">These are written specifically for you, ${nm} -- based on what you've shared with me, what you value, and what I've noticed about you. They're not generic. Read them when things feel heavy.</div></div>
     ${affs.map((a,i)=>`<div class="affirmation-card"><div class="aff-text">${a}</div><div class="aff-sub">Affirmation ${i+1} of ${affs.length}</div></div>`).join('')}
     <button class="ob-btn" style="padding:10px;font-size:13px;margin-top:6px" onclick="generateAffirmations();renderAffirmations()">Regenerate ↺</button>
   `;
@@ -549,7 +549,9 @@ function renderAffirmations(){
 // ══════════════════════════════════════════════════════════════════
 // INTELLIGENCE v5: JOURNAL MODULE
 // ══════════════════════════════════════════════════════════════════
-let journalEntries=DB.g('JOURNAL',[]);
+let journalEntries=[];
+// Lazy load journal entries after DB is ready
+function _loadJournalEntries(){if(!journalEntries.length){try{journalEntries=DB.g('JOURNAL',[])||[];}catch(e){journalEntries=[];}}}
 function saveJournalEntry(text){
   if(!text.trim())return;
   const entry={id:Date.now(),text:text.trim(),mood:P.mood||'neutral',ts:Date.now(),wordCount:text.trim().split(/\s+/).length};
@@ -565,10 +567,10 @@ function reflectOnJournal(entry){
   // Rule-based reflection on journal text
   const t=entry.text.toLowerCase();
   const reflections=[];
-  if(t.includes('but')||t.includes('however'))reflections.push('I noticed you used "but" — there\'s a tension in what you wrote. Which side of it feels more true?');
+  if(t.includes('but')||t.includes('however'))reflections.push('I noticed you used "but" -- there\'s a tension in what you wrote. Which side of it feels more true?');
   if((t.match(/i feel/g)||[]).length>2)reflections.push('You said "I feel" several times. What\'s the core emotion underneath all of them?');
   if(entry.wordCount>100)reflections.push('That was a lot to put down. What\'s the one sentence that captures all of it?');
-  if(t.includes('should'))reflections.push('"Should" is doing a lot of work in what you wrote. Whose voice is that — yours, or someone else\'s?');
+  if(t.includes('should'))reflections.push('"Should" is doing a lot of work in what you wrote. Whose voice is that -- yours, or someone else\'s?');
   if(t.includes('don\'t know')||t.includes('not sure'))reflections.push('A lot of uncertainty in there. What would it feel like to be okay with not knowing right now?');
   const generic=['What surprised you about what you just wrote?','What do you need right now that you didn\'t write down?','Is there something you were afraid to write?','What would you say to someone else who wrote exactly that?'];
   return reflections.length?rnd(reflections):rnd(generic);
@@ -599,7 +601,7 @@ function renderJournal(){
         <div class="je-date">${new Date(e.ts).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})}</div>
         <div class="je-preview">${e.text.slice(0,120)}${e.text.length>120?'...':''}</div>
         <span class="je-mood">${e.mood}</span>
-      </div>`).join('')}</div>`:'<div style="font-size:13px;color:var(--tx3);padding:8px 0">No entries yet. Write your first one above — no rules, no audience, just you.</div>'}
+      </div>`).join('')}</div>`:'<div style="font-size:13px;color:var(--tx3);padding:8px 0">No entries yet. Write your first one above -- no rules, no audience, just you.</div>'}
   `;
   // Word counter
   const ta=document.getElementById('journal-ta');
