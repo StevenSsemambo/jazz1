@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 09-auth.js
+ * Jazz Buddy -- 09-auth.js
  * Auth system: name-based entry, guest mode, sign out
- * NO passwords — just enter your name and go
+ * NO passwords -- just enter your name and go
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
 
@@ -16,7 +16,7 @@ function splashErr(msg) {
   if (el) el.textContent = msg;
 }
 
-// ── ENTER — main entry point, called by both button and Enter key
+// ── ENTER -- main entry point, called by both button and Enter key
 function doEnter() {
   const nameInput = document.getElementById('sl-name');
   const name = nameInput ? nameInput.value.trim() : '';
@@ -47,7 +47,7 @@ function doEnter() {
   launchApp(cleanName);
 }
 
-// ── GUEST — enter with no name stored
+// ── GUEST -- enter with no name stored
 function doGuest() {
   localStorage.setItem('jb_currentUser', 'guest');
   window._userPrefix = 'jb_guest_';
@@ -96,7 +96,7 @@ function launchApp(name) {
   const hasName = P.name && P.name.length > 0;
 
   if (!isReturning) {
-    // New user — pre-set name if provided, then onboard
+    // New user -- pre-set name if provided, then onboard
     if (name && name !== 'guest') {
       P.name = name;
       saveP();
@@ -107,7 +107,7 @@ function launchApp(name) {
     if (app) app.style.display = 'none';
     if (typeof renderOB === 'function') renderOB();
   } else {
-    // Returning user — go straight to app
+    // Returning user -- go straight to app
     const ob = document.getElementById('ob');
     const app = document.getElementById('app');
     if (ob) ob.style.display = 'none';
@@ -116,7 +116,7 @@ function launchApp(name) {
   }
 }
 
-// ── START APP SESSION — called after successful login ─────────────
+// ── START APP SESSION -- called after successful login ─────────────
 function startAppSession() {
   if (typeof refreshStats === 'function') refreshStats();
   if (typeof restoreCustomization === 'function') restoreCustomization();
@@ -210,7 +210,7 @@ function startAppSession() {
   // Goal check
   const overdueGoals = (P.goals || []).filter(g => g.status === 'active' && g.nextCheckIn && g.nextCheckIn < Date.now());
   if (overdueGoals.length > 0 && h > 12) {
-    msg += ` Also — I want to check in on ${overdueGoals.length === 1 ? `your goal: "${overdueGoals[0].title}"` : `${overdueGoals.length} of your goals`} when you're ready.`;
+    msg += ` Also -- I want to check in on ${overdueGoals.length === 1 ? `your goal: "${overdueGoals[0].title}"` : `${overdueGoals.length} of your goals`} when you're ready.`;
   }
 
   // Session count / thought of the day
@@ -239,8 +239,7 @@ function startAppSession() {
 }
 
 // ── USER-AWARE DB OVERRIDES ───────────────────────────────────────
-// Must happen AFTER _userPrefix is set (i.e. after doEnter/doGuest)
-// These override DB.s and DB.g to namespace storage per user
+// Runs at load time -- 01-core.js must already be loaded (no defer)
 const _db_origSave = DB.s.bind(DB);
 const _db_origLoad = DB.g.bind(DB);
 const _db_origDel  = DB.del.bind(DB);
