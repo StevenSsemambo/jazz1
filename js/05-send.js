@@ -245,11 +245,12 @@ function send(){
       const query=getMoodMusic&&getMoodMusic(emotion);
       if(query){
         setTimeout(()=>{
-          const html=`<div class="music-card" onclick="window.open('https://www.youtube.com/results?search_query='+encodeURIComponent('${query}'),'_blank')">
-            <div class="music-icon">🎵</div>
-            <div><div class="music-query">"${query}"</div><div class="music-label">Search this on YouTube / Spotify</div></div>
-          </div>`;
-          addMsg('b','For how you're feeling right now -- I'd look up:','et-calm',null,html);
+          const yt='https://www.youtube.com/results?search_query='+encodeURIComponent(query);
+          const html='<div class="music-card" onclick="window.open(\'' +yt+ '\')">'
+            +'<div class="music-icon">🎵</div>'
+            +'<div><div class="music-query">'+query+'</div><div class="music-label">Search on YouTube / Spotify</div></div>'
+            +'</div>';
+          addMsg('b','For how you are feeling right now -- look this up:','et-calm',null,html);
         },4000);
       }
     }
