@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 05-send.js
+ * Jazz Buddy -- 05-send.js
  * Main send() pipeline + PWA setup
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
@@ -78,7 +78,7 @@ function send(){
     hideTyping();sbtn.disabled=false;
 
     if(healthLog&&healthLog.type==='health-log'){
-      const responses={sleep:{low:"That's pretty rough. Poor sleep affects everything — mood, focus, energy. What do you think's been getting in the way of sleeping?",mid:"Okay. Not terrible, not great. What's your sleep like lately — is it consistent?",high:"That's actually good to hear! Good sleep makes everything easier. How long has it been that way?"},stress:{low:"Good — low stress is a real gift. What's keeping you so grounded right now?",mid:"Medium stress. Manageable, but not nothing. What's the main thing driving it?",high:"That's a significant stress level. Your body and mind are working overtime. What's the biggest source?"},energy:{low:"Low energy is draining in itself. When did it start feeling this way?",mid:"Medium energy. What's it been like this week overall — consistent or up and down?",high:"Good energy! That's great. What's been going well that's giving you that?"}};
+      const responses={sleep:{low:"That's pretty rough. Poor sleep affects everything -- mood, focus, energy. What do you think's been getting in the way of sleeping?",mid:"Okay. Not terrible, not great. What's your sleep like lately -- is it consistent?",high:"That's actually good to hear! Good sleep makes everything easier. How long has it been that way?"},stress:{low:"Good -- low stress is a real gift. What's keeping you so grounded right now?",mid:"Medium stress. Manageable, but not nothing. What's the main thing driving it?",high:"That's a significant stress level. Your body and mind are working overtime. What's the biggest source?"},energy:{low:"Low energy is draining in itself. When did it start feeling this way?",mid:"Medium energy. What's it been like this week overall -- consistent or up and down?",high:"Good energy! That's great. What's been going well that's giving you that?"}};
       const cat=healthLog.val<=3?'low':healthLog.val<=7?'mid':'high';
       const resp=responses[healthLog.logged][cat];
       addMsg('b',`✓ ${healthLog.logged.charAt(0).toUpperCase()+healthLog.logged.slice(1)} logged: ${healthLog.val}/10\n\n${resp}`,'et-calm');
@@ -110,7 +110,7 @@ function send(){
     // Health log prompts after health messages (occasionally)
     if(HEALTH_INTENTS.includes(intent.primary)&&P.totalMsgs%6===0){
       setTimeout(()=>{
-        const prompts=["One thing that helps me understand you better — can you rate your sleep quality lately from 1-10?","Quick check — how would you rate your stress level right now from 1-10?","How's your energy been lately? Give me a number from 1 (empty) to 10 (full)."];
+        const prompts=["One thing that helps me understand you better -- can you rate your sleep quality lately from 1-10?","Quick check -- how would you rate your stress level right now from 1-10?","How's your energy been lately? Give me a number from 1 (empty) to 10 (full)."];
         addMsg('b',rnd(prompts),'et-calm');
       },800);
     }
@@ -119,7 +119,7 @@ function send(){
     if(P.totalMsgs>0&&P.totalMsgs%20===0&&Date.now()-P.lastCalDate>86400000*2){
       P.lastCalDate=Date.now();saveP();
       setTimeout(()=>{
-        const calQ=["Quick question — am I responding in a way that feels right to you? Too serious? Not serious enough?","I want to make sure I'm actually helping. Is there something you wish I did differently?","Check-in: am I the kind of friend you need right now, or is there something I could do better?"];
+        const calQ=["Quick question -- am I responding in a way that feels right to you? Too serious? Not serious enough?","I want to make sure I'm actually helping. Is there something you wish I did differently?","Check-in: am I the kind of friend you need right now, or is there something I could do better?"];
         addMsg('b',rnd(calQ),'et-deep');
       },1200);
     }
@@ -168,7 +168,7 @@ function send(){
       if(ch){
         setTimeout(()=>{
           const html=`<div class="challenge-pill" title="Your challenge">🎯 Challenge: ${ch.txt}</div>`;
-          addMsg('b','I want to give you something to do before we talk next time — something small but real:','et-goal','',html);
+          addMsg('b','I want to give you something to do before we talk next time -- something small but real:','et-goal','',html);
         },3000);
       }
     }
@@ -176,7 +176,7 @@ function send(){
     // ── Reflection card after long emotional session
     if(P.totalMsgs%8===0&&deepIntents.includes(intent.primary)){
       const refHtml=buildReflectionCard(P.name||'friend');
-      if(refHtml){setTimeout(()=>{addMsg('b','Before we move on — let me reflect back what I heard:','et-deep','',refHtml);},3500);}
+      if(refHtml){setTimeout(()=>{addMsg('b','Before we move on -- let me reflect back what I heard:','et-deep','',refHtml);},3500);}
     }
 
     // ── Mood picker (occasional)
@@ -188,10 +188,10 @@ function send(){
     // ── Variable reward: mirror user phrase back
     if(P.totalMsgs%7===0&&P.userPhrases&&P.userPhrases.length>1){
       const ph=getUserPhraseMirror();
-      if(ph){const phResps=[`You described something once as "${ph}" — I've been thinking about that phrase. Does that still apply to how you're feeling?`,`"${ph}" — you said that before. Is that where you are now?`];setTimeout(()=>addMsg('b',rnd(phResps),'et-deep'),5000);}
+      if(ph){const phResps=[`You described something once as "${ph}" -- I've been thinking about that phrase. Does that still apply to how you're feeling?`,`"${ph}" -- you said that before. Is that where you are now?`];setTimeout(()=>addMsg('b',rnd(phResps),'et-deep'),5000);}
     }
 
-    // ── Value injection into response (retroactive — already done, but remind on advice)
+    // ── Value injection into response (retroactive -- already done, but remind on advice)
     // done inline in compose via valueAdviceInject
 
     // V8: Apply personality layer
@@ -226,8 +226,8 @@ function send(){
     if(anniv)setTimeout(()=>addMsg('b',anniv,'et-deep'),5200);
 
     // V8: Relationship milestone
-    const milestone=checkRelationshipMilestones&&checkRelationshipMilestones();
-    if(milestone)setTimeout(()=>addMsg('b',milestone,'et-warm'),2000);
+    const relMilestone=checkRelationshipMilestones&&checkRelationshipMilestones();
+    if(relMilestone)setTimeout(()=>addMsg('b',relMilestone,'et-warm'),2000);
 
     // V8: "Jazz noticed" card (occasional)
     if(P.totalMsgs%13===0)setTimeout(()=>injectNoticedCard&&injectNoticedCard(),5500);
@@ -249,7 +249,7 @@ function send(){
             <div class="music-icon">🎵</div>
             <div><div class="music-query">"${query}"</div><div class="music-label">Search this on YouTube / Spotify</div></div>
           </div>`;
-          addMsg('b','For how you're feeling right now — I'd look up:','et-calm',null,html);
+          addMsg('b','For how you're feeling right now -- I'd look up:','et-calm',null,html);
         },4000);
       }
     }
