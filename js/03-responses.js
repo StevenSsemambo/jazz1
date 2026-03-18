@@ -107,32 +107,47 @@ function renderOB(){
     },150);
 
   }else if(q.type==='options'){
-    // Put opts on window - globally accessible by inline onclick
-    window._OB_CURRENT_OPTS=q.opts;
-    window._OB_CURRENT_KEY=q.key;
-
+    // Render HTML with data-index attributes (no onclick)
     var html=
       '<div class="ob-q">'+q.q+'</div>'+
       '<div class="ob-hint">'+q.hint+'</div>'+
-      '<div class="ob-opts">';
-
+      '<div class="ob-opts" id="ob-opts-list">';
     for(var oi=0;oi<q.opts.length;oi++){
-      html+='<div class="ob-opt" onclick="obPick('+oi+')">'+q.opts[oi].l+'</div>';
+      html+='<div class="ob-opt" data-idx="'+oi+'">'+q.opts[oi].l+'</div>';
     }
     html+='</div>';
     body.innerHTML=html;
+
+    // Attach single listener to parent — works on ALL mobile browsers
+    var optsList=document.getElementById('ob-opts-list');
+    if(optsList){
+      var _opts=q.opts;
+      var _key=q.key;
+      var _picked=false;
+      optsList.addEventListener('click',function(e){
+        if(_picked)return;
+        var target=e.target;
+        // Walk up to find ob-opt div
+        while(target&&target!==optsList){
+          if(target.classList&&target.classList.contains('ob-opt')){
+            var idx=parseInt(target.getAttribute('data-idx'));
+            if(!isNaN(idx)){
+              _picked=true;
+              _doObPick(idx,_key,_opts,optsList);
+            }
+            break;
+          }
+          target=target.parentElement;
+        }
+      });
+    }
   }
 }
 
-// Use DIV not BUTTON — divs have no default browser behavior that can interfere
-// Explicitly on window so inline onclick always works
-window.obPick=function(i){
-  var opts=window._OB_CURRENT_OPTS;
-  var key=window._OB_CURRENT_KEY;
+function _doObPick(i,key,opts,container){
   if(!opts||!opts[i])return;
-
   // Visual feedback
-  var allOpts=document.querySelectorAll('.ob-opt');
+  var allOpts=container?container.querySelectorAll('.ob-opt'):document.querySelectorAll('.ob-opt');
   for(var a=0;a<allOpts.length;a++){
     allOpts[a].style.pointerEvents='none';
     allOpts[a].style.opacity='0.5';
