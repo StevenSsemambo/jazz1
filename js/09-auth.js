@@ -239,34 +239,34 @@ function startAppSession() {
 }
 
 // ── USER-AWARE DB OVERRIDES ───────────────────────────────────────
-// Runs at load time -- 01-core.js must already be loaded (no defer)
-const _db_origSave = DB.s.bind(DB);
-const _db_origLoad = DB.g.bind(DB);
-const _db_origDel  = DB.del.bind(DB);
-
-// Global keys that are NOT namespaced (auth + voice settings)
+// Called from 14-init.js after all modules loaded
 const GLOBAL_KEYS = ['jb_currentUser','vs_tts','vs_rate','vs_pitch','vs_volume','vs_voice','vs_autoListen','cust','jb_tourDone'];
 
-DB.s = (k, v) => {
-  if (GLOBAL_KEYS.includes(k)) { _db_origSave(k, v); return; }
-  const prefix = window._userPrefix || 'jb4_';
-  try { localStorage.setItem(prefix + k, JSON.stringify(v)); } catch(e) {}
-};
+function initDBOverrides(){
+  const _orig_s = DB.s.bind(DB);
+  const _orig_g = DB.g.bind(DB);
+  const _orig_d = DB.del.bind(DB);
 
-DB.g = (k, d = null) => {
-  if (GLOBAL_KEYS.includes(k)) { return _db_origLoad(k, d); }
-  const prefix = window._userPrefix || 'jb4_';
-  try {
-    const v = localStorage.getItem(prefix + k);
-    return v != null ? JSON.parse(v) : d;
-  } catch { return d; }
-};
-
-DB.del = (k) => {
-  if (GLOBAL_KEYS.includes(k)) { _db_origDel(k); return; }
-  const prefix = window._userPrefix || 'jb4_';
-  try { localStorage.removeItem(prefix + k); } catch(e) {}
-};
+  DB.s = function(k, v){
+    if(GLOBAL_KEYS.includes(k)){ _orig_s(k,v); return; }
+    const prefix = window._userPrefix || 'jb4_';
+    try{ localStorage.setItem(prefix+k, JSON.stringify(v)); }catch(e){}
+  };
+  DB.g = function(k, d){
+    if(d===undefined)d=null;
+    if(GLOBAL_KEYS.includes(k)){ return _orig_g(k,d); }
+    const prefix = window._userPrefix || 'jb4_';
+    try{
+      const v = localStorage.getItem(prefix+k);
+      return v!=null ? JSON.parse(v) : d;
+    }catch{ return d; }
+  };
+  DB.del = function(k){
+    if(GLOBAL_KEYS.includes(k)){ _orig_d(k); return; }
+    const prefix = window._userPrefix || 'jb4_';
+    try{ localStorage.removeItem(prefix+k); }catch(e){}
+  };
+}
 
 // ── SIGN OUT ──────────────────────────────────────────────────────
 function signOut() {
