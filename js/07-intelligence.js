@@ -7,6 +7,7 @@
 // INTELLIGENCE v5: CONVERSATION THREAD TRACKER
 // ══════════════════════════════════════════════════════════════════
 function updateThread(intent,text){
+  if(!P.activeThread)P.activeThread={intent:null,ts:0,count:0,topic:''};
   const now=Date.now();
   const t=P.activeThread;
   if(t.intent===intent&&now-t.ts<1800000){
@@ -18,6 +19,7 @@ function updateThread(intent,text){
 }
 
 function getThreadBoost(scores){
+  if(!P.activeThread)return scores;
   const t=P.activeThread;
   if(!t.intent||Date.now()-t.ts>1800000)return scores;
   const boosted={...scores};
@@ -45,6 +47,7 @@ function getPatternInterruptMsg(intent,nm){
 // ══════════════════════════════════════════════════════════════════
 function trackSessionEmotion(emotion,intensity){
   if(!P.sessionEmotions)P.sessionEmotions=[];
+  if(!P.sessionEmotions)P.sessionEmotions=[];
   P.sessionEmotions.push({emotion,intensity,ts:Date.now()});
   if(P.sessionEmotions.length>20)P.sessionEmotions=P.sessionEmotions.slice(-15);
   saveP();
@@ -71,7 +74,7 @@ function detectSuppression(text,emotion,intensity){
   const t=text.toLowerCase();
   const fineWords=['fine','okay','ok','alright','not bad','good','managing'];
   const saysFineLowIntensity=fineWords.some(w=>t.includes(w))&&intensity<3&&text.length<40;
-  const contextIsHeavy=(P.activeThread.intent&&['venting','mentalHealth','grief','relationships','stress','heartbreak'].includes(P.activeThread.intent)&&P.activeThread.count>1);
+  const contextIsHeavy=(P.activeThread&&P.activeThread.intent&&['venting','mentalHealth','grief','relationships','stress','heartbreak'].includes(P.activeThread.intent)&&P.activeThread.count>1);
   if(saysFineLowIntensity&&contextIsHeavy){
     return `You said you're ${fineWords.find(w=>t.includes(w))}. But given what we've been talking about -- are you actually fine? It's okay if you're not.`;
   }
@@ -285,6 +288,7 @@ function issueChallenge(intent,nm){
   if(!ch)return null;
   if(!P.activeChallenges)P.activeChallenges=[];
   // Don't repeat active challenges
+  if(!P.activeChallenges)P.activeChallenges=[];
   if(P.activeChallenges.some(c=>c.id===chId))return null;
   P.activeChallenges.push({...ch,issuedAt:Date.now(),done:false});
   saveP();
@@ -401,6 +405,7 @@ function extractRelationship(text,intent){
   const matched=patterns.find(p=>p.kw.some(k=>t.includes(k)));
   if(!matched)return;
   if(!P.relationships)P.relationships=[];
+  if(!P.relationships)P.relationships=[];
   const existing=P.relationships.find(r=>r.type===matched.r);
   if(existing){
     existing.mentions++;
@@ -410,6 +415,7 @@ function extractRelationship(text,intent){
     existing.emotions.push(P.mood||'neutral');
     if(existing.emotions.length>10)existing.emotions.shift();
   }else{
+    if(!P.relationships)P.relationships=[];
     P.relationships.push({type:matched.r,mentions:1,firstMention:Date.now(),lastMention:Date.now(),lastContext:text.slice(0,100),emotions:[P.mood||'neutral']});
   }
   saveP();
