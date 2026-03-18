@@ -116,5 +116,5 @@ function tourNext() {
 
 function tourSkip() {
   document.getElementById('tour').classList.remove('show');
-  DB.s('tourDone', true);
+  localStorage.setItem('jb_tourDone','true');
 }
