@@ -253,7 +253,7 @@ function detectIntent(txt){
   // Anti-repeat: penalise last 3 intents
   P.lastIntents.slice(-3).forEach((li,i)=>{ if(scores[li])scores[li]-=(3-i)*2; });
 
-  const boostedScores=getThreadBoost(scores);
+  const boostedScores=(typeof getThreadBoost==="function")?getThreadBoost(scores):scores;
   const sorted=Object.entries(boostedScores).sort((a,b)=>b[1]-a[1]);
   const primary=sorted[0][0];
   const secondary=(sorted[1]&&sorted[1][1]>sorted[0][1]*.55)?sorted[1][0]:null;
