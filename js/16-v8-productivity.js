@@ -397,10 +397,9 @@ function processWeeklyPlanStep(text) {
 // ══════════════════════════════════════════════════════════════════
 // CONVERSATION BOOKMARKS
 // ══════════════════════════════════════════════════════════════════
-if (!P.bookmarks) P.bookmarks = [];
-
+// P.bookmarks init is lazy
 function bookmarkMessage(text, tone, ts) {
-  if (!P.bookmarks) P.bookmarks = [];
+  if(typeof P!=="undefined"&&!P.bookmarks)P.bookmarks=[];
   P.bookmarks.push({ text, tone, ts: ts || Date.now(), id: Date.now() });
   if (P.bookmarks.length > 50) P.bookmarks.shift();
   saveP();
