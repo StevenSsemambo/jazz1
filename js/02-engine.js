@@ -350,9 +350,9 @@ function compose(intent,emotion,intensity,text){
   }
 
   // Value injection on advice intents
-  if(['askAdvice','bigDecision','goals','motivation'].includes(intent))resp=valueAdviceInject(resp);
+  if(['askAdvice','bigDecision','goals','motivation'].includes(intent)&&typeof valueAdviceInject==='function')resp=valueAdviceInject(resp);
   // Mirror user's language length
-  resp=mirrorLength(resp);
+  if(typeof mirrorLength==='function')resp=mirrorLength(resp);
   DB.s('lastR',resp);
   return{text:resp,tone};
 }
