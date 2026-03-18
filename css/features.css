@@ -1,0 +1,337 @@
+/* ═══════════════════════════════════════════════════════
+ * Jazz Buddy — features.css
+ * Voice, journal, reflection, affirmations, tour, auth,
+ * customization, sleep stories, birthday, letter styles
+ * SayMy Tech Developers
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── VOICE SYSTEM ─────────────────────────────────── */
+/* Mic button */
+#mic-btn{
+  width:46px;height:46px;flex-shrink:0;
+  background:var(--s1);border:1px solid var(--b2);
+  border-radius:var(--rs);color:var(--tx2);
+  cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:18px;
+  transition:all .25s;flex-shrink:0;
+}
+#mic-btn:hover{background:var(--s2);border-color:var(--acc)}
+#mic-btn.listening{
+  background:rgba(214,48,49,.15);
+  border-color:var(--rd);color:var(--rd);
+  animation:mic-pulse 1.2s ease-in-out infinite;
+}
+#mic-btn.processing{
+  background:rgba(108,92,231,.15);
+  border-color:var(--acc);color:var(--acc2);
+}
+@keyframes mic-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(214,48,49,.4)}
+  50%{box-shadow:0 0 0 8px rgba(214,48,49,.0)}
+}
+
+/* Voice mode toggle bar */
+#voice-bar{
+  display:none;align-items:center;justify-content:space-between;
+  padding:9px 14px;
+  background:linear-gradient(90deg,rgba(108,92,231,.1),rgba(0,206,201,.07));
+  border-bottom:1px solid rgba(108,92,231,.18);
+  flex-shrink:0;font-size:12.5px;color:var(--tx2);
+}
+#voice-bar.show{display:flex}
+.vbar-left{display:flex;align-items:center;gap:8px}
+.vbar-dot{width:7px;height:7px;border-radius:50%;background:var(--acc);animation:pulse-dot 2s ease-in-out infinite}
+.vbar-speaking .vbar-dot{background:var(--t1)}
+.vbar-listening .vbar-dot{background:var(--rd);animation:mic-pulse 1s ease-in-out infinite}
+
+/* Speaking wave indicator on messages */
+.speaking-wave{
+  display:inline-flex;align-items:center;gap:2px;
+  margin-left:8px;vertical-align:middle;opacity:0;
+  transition:opacity .3s;
+}
+.speaking-wave.active{opacity:1}
+.sw-bar{
+  width:3px;border-radius:2px;background:var(--acc2);
+  animation:wave-bar .7s ease-in-out infinite;
+}
+.sw-bar:nth-child(1){height:6px;animation-delay:0s}
+.sw-bar:nth-child(2){height:10px;animation-delay:.1s}
+.sw-bar:nth-child(3){height:14px;animation-delay:.2s}
+.sw-bar:nth-child(4){height:10px;animation-delay:.3s}
+.sw-bar:nth-child(5){height:6px;animation-delay:.4s}
+@keyframes wave-bar{
+  0%,100%{transform:scaleY(.5);opacity:.5}
+  50%{transform:scaleY(1);opacity:1}
+}
+
+/* Voice settings panel */
+.voice-setting{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--b1);
+}
+.voice-setting:last-child{border-bottom:none}
+.vs-label{font-size:13px;color:var(--tx2)}
+.vs-ctrl{display:flex;align-items:center;gap:8px}
+select.vs-select{
+  background:var(--s2);border:1px solid var(--b2);
+  border-radius:var(--rx);color:var(--tx);
+  font-family:var(--fb);font-size:12px;padding:5px 8px;
+  outline:none;cursor:pointer;max-width:160px;
+}
+input.vs-range{
+  width:90px;appearance:none;height:3px;
+  border-radius:2px;background:var(--b2);outline:none;
+}
+input.vs-range::-webkit-slider-thumb{
+  appearance:none;width:14px;height:14px;
+  border-radius:50%;background:var(--acc);cursor:pointer;
+}
+.vs-val{font-size:11px;color:var(--acc2);font-family:var(--fh);min-width:24px;text-align:right}
+
+/* Toggle switch */
+.toggle-sw{position:relative;width:42px;height:24px;cursor:pointer}
+.toggle-sw input{opacity:0;width:0;height:0}
+.toggle-track{
+  position:absolute;inset:0;border-radius:12px;
+  background:var(--b2);transition:.25s;
+}
+.toggle-track::before{
+  content:'';position:absolute;width:18px;height:18px;
+  border-radius:50%;background:#fff;top:3px;left:3px;
+  transition:.25s;
+}
+.toggle-sw input:checked+.toggle-track{background:var(--acc)}
+.toggle-sw input:checked+.toggle-track::before{transform:translateX(18px)}
+
+/* Transcript bubble */
+.transcript-pill{
+  display:inline-block;font-size:12px;color:var(--tx3);
+  font-style:italic;padding:2px 8px;margin-top:4px;
+  background:rgba(255,255,255,.04);border-radius:10px;
+}
+
+/* Voice mode full-screen overlay (voice-first mode) */
+#voice-mode-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:radial-gradient(ellipse at center,rgba(108,92,231,.2) 0%,rgba(8,8,16,.97) 70%);
+  flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  backdrop-filter:blur(12px);
+}
+#voice-mode-overlay.show{display:flex}
+.vmo-avatar{
+  width:100px;height:100px;border-radius:50%;
+  background:conic-gradient(from 180deg,var(--acc),var(--w1),var(--t1),var(--acc));
+  display:flex;align-items:center;justify-content:center;
+  font-size:44px;
+  box-shadow:0 0 0 0 rgba(108,92,231,.4);
+  transition:all .3s;
+}
+.vmo-avatar.speaking{animation:avatar-speak 0.6s ease-in-out infinite alternate}
+.vmo-avatar.listening{animation:avatar-listen 1.2s ease-in-out infinite;box-shadow:0 0 0 20px rgba(214,48,49,.1),0 0 0 40px rgba(214,48,49,.05)}
+@keyframes avatar-speak{
+  from{transform:scale(1);box-shadow:0 0 0 10px rgba(108,92,231,.15),0 0 0 25px rgba(108,92,231,.07)}
+  to{transform:scale(1.06);box-shadow:0 0 0 20px rgba(108,92,231,.2),0 0 0 45px rgba(108,92,231,.08)}
+}
+@keyframes avatar-listen{
+  0%,100%{box-shadow:0 0 0 10px rgba(214,48,49,.15),0 0 0 25px rgba(214,48,49,.07)}
+  50%{box-shadow:0 0 0 22px rgba(214,48,49,.2),0 0 0 50px rgba(214,48,49,.08)}
+}
+.vmo-status{font-family:var(--fh);font-size:18px;font-weight:400;color:var(--tx2);text-align:center;min-height:28px}
+.vmo-transcript{
+  font-size:14px;color:var(--tx);text-align:center;
+  max-width:300px;line-height:1.6;min-height:44px;
+  font-style:italic;
+}
+.vmo-last-jazz{
+  font-size:13px;color:var(--tx2);text-align:center;
+  max-width:320px;line-height:1.6;min-height:40px;
+  padding:12px 16px;background:rgba(255,255,255,.04);
+  border-radius:var(--rr);border:1px solid var(--b1);
+}
+.vmo-controls{display:flex;gap:12px}
+.vmo-btn{
+  width:52px;height:52px;border-radius:50%;border:1.5px solid var(--b2);
+  background:var(--s1);color:var(--tx2);font-size:20px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.vmo-btn:hover{background:var(--s2);border-color:var(--acc);color:var(--tx)}
+.vmo-btn.active{background:rgba(214,48,49,.15);border-color:var(--rd);color:var(--rd)}
+.vmo-close{
+  position:absolute;top:20px;right:20px;
+  width:36px;height:36px;border-radius:50%;
+  background:var(--s1);border:1px solid var(--b1);
+  color:var(--tx3);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+
+/* ── SPLASH / LOGIN SCREEN ─── */
+#splash{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
+#splash::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 35%,rgba(108,92,231,.2) 0%,transparent 60%),radial-gradient(ellipse at 72% 70%,rgba(253,138,106,.13) 0%,transparent 60%);pointer-events:none}
+.splash-card{position:relative;width:100%;max-width:400px;background:rgba(22,22,34,.92);border:1px solid var(--b2);border-radius:26px;padding:38px 28px 32px;backdrop-filter:blur(24px);animation:ob-in .5s var(--spring)}
+.splash-logo{font-family:var(--fh);font-size:36px;font-weight:700;line-height:1;margin-bottom:4px;text-align:center}
+.splash-logo .j{background:linear-gradient(135deg,var(--acc2),var(--w1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.splash-tagline{text-align:center;font-size:13px;color:var(--tx3);font-style:italic;font-family:var(--fh);margin-bottom:6px}
+.splash-dev{text-align:center;font-size:10px;color:var(--tx4);letter-spacing:.5px;text-transform:uppercase;margin-bottom:28px}
+.splash-tabs{display:flex;background:var(--s1);border-radius:10px;padding:3px;margin-bottom:22px;gap:2px}
+.splash-tab{flex:1;padding:8px;text-align:center;border-radius:8px;font-size:13px;cursor:pointer;color:var(--tx3);transition:all .2s;border:none;background:none;font-family:var(--fb)}
+.splash-tab.active{background:var(--acc);color:#fff;font-weight:500}
+.splash-inp{width:100%;padding:12px 14px;border:1px solid var(--b2);border-radius:var(--rs);background:rgba(255,255,255,.03);color:var(--tx);font-family:var(--fb);font-size:14px;outline:none;transition:border-color .2s;margin-bottom:10px}
+.splash-inp:focus{border-color:var(--acc);box-shadow:0 0 0 2px rgba(108,92,231,.12)}
+.splash-inp::placeholder{color:var(--tx4)}
+.splash-btn{width:100%;padding:13px;border:none;border-radius:var(--rs);background:linear-gradient(135deg,var(--acc3),var(--acc));color:#fff;font-family:var(--fh);font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:4px}
+.splash-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(108,92,231,.4)}
+.splash-err{font-size:12px;color:#ff7675;text-align:center;margin-top:6px;min-height:18px}
+.splash-guest{width:100%;padding:10px;border:1px solid var(--b1);border-radius:var(--rs);background:transparent;color:var(--tx3);font-family:var(--fb);font-size:13px;cursor:pointer;transition:all .2s;margin-top:8px;text-align:center}
+.splash-guest:hover{border-color:var(--b2);color:var(--tx2)}
+
+/* ── TOUR OVERLAY ─── */
+#tour{display:none;position:fixed;inset:0;z-index:250;pointer-events:none}
+#tour.show{display:block}
+.tour-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.65);pointer-events:all}
+.tour-box{position:absolute;background:var(--bg2);border:1px solid var(--acc);border-radius:var(--rr);padding:18px 20px;max-width:280px;z-index:251;pointer-events:all;animation:pop-in .3s var(--spring)}
+.tour-box::before{content:'';position:absolute;width:12px;height:12px;background:var(--acc);border-radius:2px;transform:rotate(45deg)}
+.tour-title{font-family:var(--fh);font-size:15px;font-weight:600;color:var(--acc2);margin-bottom:6px}
+.tour-text{font-size:13px;color:var(--tx2);line-height:1.6;margin-bottom:14px}
+.tour-nav{display:flex;align-items:center;justify-content:space-between}
+.tour-dots{display:flex;gap:5px}
+.tour-dot{width:6px;height:6px;border-radius:50%;background:var(--b2);transition:background .2s}
+.tour-dot.active{background:var(--acc)}
+.tour-skip{font-size:11.5px;color:var(--tx4);cursor:pointer;transition:color .2s;border:none;background:none;font-family:var(--fb)}
+.tour-skip:hover{color:var(--tx2)}
+.tour-next{padding:7px 16px;border-radius:20px;background:var(--acc);border:none;color:#fff;font-size:12.5px;cursor:pointer;font-family:var(--fb);transition:all .2s}
+.tour-next:hover{background:var(--acc3)}
+.tour-highlight{position:relative;z-index:252}
+
+/* ── CUSTOMIZATION PANEL ─── */
+.theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.theme-swatch{width:100%;aspect-ratio:1;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:all .2s;position:relative}
+.theme-swatch.active{border-color:var(--tx)}
+.theme-swatch::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;opacity:0;transition:opacity .2s}
+.theme-swatch.active::after{opacity:1}
+.font-opt{padding:10px 14px;border:1px solid var(--b2);border-radius:var(--rs);cursor:pointer;transition:all .2s;text-align:center;font-size:14px;background:var(--s1);color:var(--tx2)}
+.font-opt.active{border-color:var(--acc);background:rgba(108,92,231,.1);color:var(--tx)}
+.bubble-opt{padding:8px 14px;border-radius:20px;border:1px solid var(--b2);background:var(--s1);color:var(--tx2);cursor:pointer;font-size:12.5px;transition:all .2s;font-family:var(--fb)}
+.bubble-opt.active{border-color:var(--acc);background:rgba(108,92,231,.15);color:var(--tx)}
+.cust-section{margin-bottom:18px}
+.cust-section .psec-label{margin-bottom:10px}
+
+/* ── LETTER FROM JAZZ ─── */
+.jazz-letter{background:linear-gradient(135deg,rgba(108,92,231,.08),rgba(253,138,106,.05));border:1px solid rgba(108,92,231,.2);border-radius:var(--rr);padding:20px;font-family:var(--fh);line-height:1.8}
+.letter-header{font-size:13px;color:var(--tx3);margin-bottom:12px}
+.letter-body{font-size:14.5px;color:var(--tx);font-weight:300;font-style:italic}
+.letter-sig{font-size:13px;color:var(--acc2);margin-top:14px;font-weight:600}
+
+/* ── PUSH NOTIFICATION BADGE ─── */
+.notif-dot{position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--w1);border:2px solid var(--bg)}
+
+/* ── BIRTHDAY CARD ─── */
+.birthday-card{background:linear-gradient(135deg,rgba(232,67,147,.1),rgba(253,203,110,.08));border:1px solid rgba(232,67,147,.25);border-radius:var(--rr);padding:22px;text-align:center}
+.bday-emoji{font-size:44px;margin-bottom:10px}
+.bday-title{font-family:var(--fh);font-size:20px;font-weight:700;color:var(--pk2);margin-bottom:10px}
+.bday-msg{font-size:14px;color:var(--tx2);line-height:1.7;font-style:italic}
+
+/* ── SLEEP STORY ─── */
+.story-card{background:linear-gradient(135deg,rgba(8,8,16,.95),rgba(22,22,34,.98));border:1px solid var(--b1);border-radius:var(--rr);padding:20px;text-align:center}
+.story-icon{font-size:36px;margin-bottom:10px}
+.story-title{font-family:var(--fh);font-size:16px;font-weight:600;color:var(--acc2);margin-bottom:12px}
+.story-text{font-size:13.5px;color:var(--tx2);line-height:1.8;text-align:left;font-style:italic}
+.story-controls{display:flex;gap:8px;justify-content:center;margin-top:14px}
+
+/* ── CUSTOM EMOTION ─── */
+.custom-emotion-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(108,92,231,.08);border:1px solid rgba(108,92,231,.18);border-radius:20px;font-size:12.5px;color:var(--acc2);margin:3px;cursor:default}
+
+/* ── SIGNOUT BTN ─── */
+.signout-btn{width:100%;padding:11px;border:1px solid rgba(214,48,49,.3);border-radius:var(--rs);background:rgba(214,48,49,.08);color:#ff7675;font-family:var(--fb);font-size:13.5px;cursor:pointer;transition:all .2s;margin-top:8px}
+.signout-btn:hover{background:rgba(214,48,49,.15);border-color:rgba(214,48,49,.5)}
+
+/* ── JAZZ INNER LIFE ─── */
+.jazz-thought{background:linear-gradient(135deg,rgba(108,92,231,.06),rgba(0,206,201,.04));border-left:3px solid var(--acc);border-radius:0 var(--rs) var(--rs) 0;padding:12px 14px;margin:8px 0;font-style:italic;font-size:13.5px;color:var(--tx2);line-height:1.6}
+
+/* ── V8 UI/UX ADDITIONS ──────────────────────────────────── */
+
+/* Jazz animated face */
+.jazz-face{width:100%;height:100%;border-radius:50%}
+.anim-breathe{animation:breathe 4s ease-in-out infinite}
+.anim-lean{animation:lean-in .5s ease forwards}
+.anim-speak{animation:speak .4s ease-in-out infinite}
+.anim-bounce{animation:bounce .6s ease-in-out infinite}
+.anim-slow{animation:breathe 7s ease-in-out infinite}
+.anim-sway{animation:sway 3s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes lean-in{0%{transform:scale(1)}100%{transform:scale(1.08) translateY(-2px)}}
+@keyframes speak{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.06)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes sway{0%,100%{transform:rotate(0deg)}33%{transform:rotate(3deg)}66%{transform:rotate(-3deg)}}
+
+/* Message reaction menu */
+.reaction-menu{position:absolute;bottom:calc(100% + 6px);right:0;display:flex;gap:4px;background:var(--bg2);border:1px solid var(--b2);border-radius:20px;padding:5px 8px;z-index:100;animation:pop-in .2s var(--spring);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.react-btn{background:none;border:none;font-size:16px;cursor:pointer;padding:3px 5px;border-radius:10px;transition:background .15s}
+.react-btn:hover{background:rgba(255,255,255,.08)}
+
+/* Focus/Pomodoro card */
+.focus-card{background:linear-gradient(135deg,rgba(0,206,201,.1),rgba(108,92,231,.08));border:1px solid rgba(0,206,201,.25);border-radius:var(--rr);padding:18px;margin-top:10px;text-align:center}
+.focus-icon{font-size:28px;margin-bottom:6px}
+.focus-task{font-size:12.5px;color:var(--tx2);margin-bottom:10px;font-style:italic}
+.focus-timer{font-family:var(--fh);font-size:36px;font-weight:700;color:var(--t1);letter-spacing:2px;margin-bottom:10px}
+.focus-bar-wrap{height:4px;background:var(--b1);border-radius:2px;overflow:hidden}
+.focus-bar{height:100%;background:linear-gradient(90deg,var(--t1),var(--acc2));border-radius:2px;transition:width 1s linear}
+
+/* Noticed card */
+.noticed-card{background:linear-gradient(135deg,rgba(108,92,231,.12),rgba(253,138,106,.06));border:1px solid rgba(108,92,231,.25);border-radius:var(--rr);padding:16px;margin-top:10px}
+.noticed-icon{font-size:22px;margin-bottom:6px}
+.noticed-title{font-family:var(--fh);font-size:13px;font-weight:600;color:var(--acc2);margin-bottom:8px}
+.noticed-text{font-size:13.5px;color:var(--tx);line-height:1.65;font-style:italic}
+
+/* Bookmark item */
+.bookmark-item{padding:10px 12px;background:var(--s1);border:1px solid var(--b1);border-left:3px solid var(--w2);border-radius:var(--rs);margin-bottom:8px}
+.bookmark-text{font-size:13px;color:var(--tx2);line-height:1.55;font-style:italic}
+.bookmark-time{font-size:10px;color:var(--tx4);margin-top:4px}
+
+/* Time capsule */
+.capsule-card{background:linear-gradient(135deg,rgba(253,203,110,.08),rgba(108,92,231,.06));border:1px solid rgba(253,203,110,.22);border-radius:var(--rr);padding:18px}
+.capsule-seal{font-size:28px;text-align:center;margin-bottom:8px}
+.capsule-to{font-family:var(--fh);font-size:13px;color:var(--w2);margin-bottom:8px}
+.capsule-msg{font-size:13.5px;color:var(--tx);line-height:1.7;font-style:italic;white-space:pre-wrap}
+.capsule-jazz{font-size:12px;color:var(--acc2);margin-top:12px;font-style:italic;border-top:1px solid var(--b1);padding-top:10px}
+
+/* Mood music card */
+.music-card{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rs);padding:12px 14px;margin-top:8px;cursor:pointer;transition:all .2s}
+.music-card:hover{border-color:var(--acc);background:var(--s3)}
+.music-icon{font-size:22px;flex-shrink:0}
+.music-query{font-size:12.5px;color:var(--acc2);font-style:italic}
+.music-label{font-size:10px;color:var(--tx3);margin-top:2px}
+
+/* Weekly planning card */
+.plan-card{background:linear-gradient(135deg,rgba(0,184,148,.08),rgba(108,92,231,.06));border:1px solid rgba(0,184,148,.2);border-radius:var(--rr);padding:16px}
+.plan-item{font-size:13px;color:var(--tx2);padding:5px 0;border-bottom:1px solid var(--b1);line-height:1.55}
+.plan-item:last-child{border-bottom:none}
+.plan-key{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+
+/* Decision journal */
+.decision-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rr);padding:14px;margin-bottom:8px}
+.decision-text{font-size:13.5px;font-weight:500;color:var(--tx);margin-bottom:6px}
+.decision-choice{font-size:12px;color:var(--acc2);background:rgba(108,92,231,.1);border-radius:20px;padding:3px 10px;display:inline-block;margin-bottom:6px}
+.decision-date{font-size:10px;color:var(--tx4)}
+
+/* Light mode overrides */
+body.light-mode .bbl.msg.b{background:var(--s1)!important}
+body.light-mode #chat{background:var(--bg)}
+
+/* 3am mode indicator */
+.mode-3am{position:fixed;top:8px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--tx4);background:rgba(0,0,0,.4);padding:2px 10px;border-radius:10px;z-index:20;pointer-events:none}
+
+/* Habit card */
+.habit-card{background:var(--s1);border:1px solid var(--b1);border-left:3px solid var(--gn);border-radius:var(--rs);padding:12px 14px;margin-bottom:8px}
+.habit-name{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:4px}
+.habit-anchor{font-size:11px;color:var(--tx3);margin-bottom:6px}
+.habit-streak{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--w2);background:rgba(253,203,110,.1);border-radius:10px;padding:2px 8px}
+
+/* Emotional fingerprint */
+.fingerprint-wrap{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rr);padding:16px}
+
+/* Typing speed variable */
+.typ{--typ-speed:.9s}
+.td{animation-duration:var(--typ-speed)!important}

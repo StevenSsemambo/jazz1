@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<meta name="theme-color" content="#080810"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Jazz Buddy"/>
+<meta name="description" content="Your AI friend who actually gets you — by SayMy Tech Developers"/>
+<meta name="author" content="SayMy Tech Developers"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icons/icon-192.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"/>
+<title>Jazz Buddy 💬</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+<!-- Styles -->
+<link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/features.css"/>
+
+</head>
+<body>
+<div id="ambient"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+
+<!-- SPLASH / LOGIN -->
+<div id="splash">
+  <div class="splash-card">
+    <div class="splash-logo"><span class="j">Jazz</span> Buddy</div>
+    <div class="splash-tagline">Your friend who actually gets you.</div>
+    <div class="splash-dev">by SayMy Tech Developers</div>
+    <div class="splash-tabs">
+      <button class="splash-tab active" onclick="splashTab('login',this)">Sign In</button>
+      <button class="splash-tab" onclick="splashTab('signup',this)">Create Account</button>
+    </div>
+    <div id="splash-login">
+      <input class="splash-inp" id="sl-user" placeholder="Username" autocomplete="username"/>
+      <input class="splash-inp" id="sl-pass" placeholder="Password" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+      <button class="splash-btn" onclick="doLogin()">Sign In →</button>
+      <button class="splash-guest" onclick="doGuest()">Continue as Guest</button>
+    </div>
+    <div id="splash-signup" style="display:none">
+      <input class="splash-inp" id="ss-user" placeholder="Choose a username" autocomplete="username"/>
+      <input class="splash-inp" id="ss-pass" placeholder="Create a password" type="password" autocomplete="new-password"/>
+      <input class="splash-inp" id="ss-pass2" placeholder="Confirm password" type="password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignup()"/>
+      <button class="splash-btn" onclick="doSignup()">Create Account →</button>
+    </div>
+    <div class="splash-err" id="splash-err"></div>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div id="ob" style="display:none">
+  <div class="ob-card">
+    <div class="ob-logo"><span class="j">Jazz</span> Buddy</div>
+    <div class="ob-sub">Your friend who actually gets you.</div>
+    <div style="font-size:10px;color:var(--tx4);text-align:center;margin-bottom:16px;text-transform:uppercase;letter-spacing:.5px">SayMy Tech Developers</div>
+    <div class="ob-prog" id="ob-prog"></div>
+    <div id="ob-body"></div>
+  </div>
+</div>
+
+<!-- TOUR OVERLAY -->
+<div id="tour">
+  <div class="tour-backdrop" onclick="tourSkip()"></div>
+  <div class="tour-box" id="tour-box">
+    <div class="tour-title" id="tour-title"></div>
+    <div class="tour-text" id="tour-text"></div>
+    <div class="tour-nav">
+      <div class="tour-dots" id="tour-dots"></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="tour-skip" onclick="tourSkip()">Skip tour</button>
+        <button class="tour-next" onclick="tourNext()" id="tour-next-btn">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+  <div id="install-bar">
+    <span>📲 Install Jazz Buddy on your device for offline use</span>
+    <button class="inst-btn" id="inst-btn">Install</button>
+    <button onclick="document.getElementById('install-bar').style.display='none'" style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:16px">×</button>
+  </div>
+  <div id="voice-bar">
+    <div class="vbar-left"><div class="vbar-dot"></div><span id="vbar-label">Voice mode on — Jazz will speak every response</span></div>
+    <div style="display:flex;gap:8px">
+      <button class="ci-nudge-btn" onclick="openVoiceMode()" style="background:rgba(108,92,231,.15);border-color:rgba(108,92,231,.3);color:var(--acc2)">Full screen</button>
+      <button onclick="toggleVoiceMode(false)" style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:15px">×</button>
+    </div>
+  </div>
+  <div id="ci-nudge">
+    <span>☀️ Time for your daily check-in with Jazz</span>
+    <button class="ci-nudge-btn" onclick="startCheckIn()">Start</button>
+    <button onclick="document.getElementById('ci-nudge').classList.remove('show')" style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:15px;margin-left:6px">×</button>
+  </div>
+  <div id="hdr">
+    <div class="hdr-l">
+      <div class="jav" id="jazz-avatar"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" class="jazz-face anim-breathe"><circle cx="20" cy="20" r="19" fill="var(--acc)" opacity="0.95"/><circle cx="20" cy="20" r="17" fill="var(--acc)"/><ellipse cx="12" cy="14" rx="2.5" ry="3" fill="#fff" opacity=".9"/><ellipse cx="28" cy="14" rx="2.5" ry="3" fill="#fff" opacity=".9"/><path d="M13 25 Q20 26 27 25" stroke="#fff" stroke-width="1.5" fill="none" opacity=".8" stroke-linecap="round"/></svg></div>
+      <div>
+        <div class="jname">Jazz Buddy</div>
+        <div class="jst"><span class="sdot"></span><span id="jst-txt">Here for you</span></div>
+      </div>
+    </div>
+    <div class="hdr-r">
+      <button class="hbtn" id="voice-toggle-btn" onclick="toggleVoiceMode()" title="Voice mode">🔊</button>
+      <button class="hbtn" onclick="startCheckIn()" title="Daily Check-in">☀️</button>
+      <button class="hbtn" onclick="openPanel('journal')" title="Journal">📓</button>
+      <button class="hbtn" onclick="openPanel('affirmations')" title="Affirmations">✨</button>
+      <button class="hbtn" onclick="openPanel('goals')" title="Goals">🎯</button>
+      <button class="hbtn" id="hlth-btn" onclick="openPanel('health')" title="Health Dashboard">🏥</button>
+      <button class="hbtn" id="prof-btn" onclick="openPanel('profile')" title="Your Profile"><span>👤</span><span class="badge" id="notif-badge" style="display:none"></span></button>
+      <button class="hbtn" onclick="openPanel('mem')" title="Memories">💭</button>
+      <button class="hbtn" onclick="openPanel('settings')" title="Settings">⚙️</button>
+      <button class="hbtn" onclick="openPanel('letter')" title="Letter from Jazz">📝</button>
+      <button class="hbtn" onclick="openPanel('bookmarks')" title="Highlights">💾</button>
+      <button class="hbtn" onclick="openPanel('fingerprint')" title="Emotional Fingerprint">🔮</button>
+      <button class="hbtn" onclick="newChat()" title="New chat">✨</button>
+    </div>
+  </div>
+  <div id="sbar">
+    <div class="sv"><div class="sv-n" id="sv-days">1</div><div class="sv-l">Days</div></div>
+    <div class="sv"><div class="sv-n" id="sv-msgs">0</div><div class="sv-l">Chats</div></div>
+    <div class="sv"><div class="sv-n" id="sv-bond">0%</div><div class="sv-l">Bond</div></div>
+    <div class="sv"><div class="sv-n" id="sv-mood">—</div><div class="sv-l">Mood</div></div>
+    <div class="sv"><div class="sv-n" id="sv-streak">🔥1</div><div class="sv-l">Streak</div></div>
+    <div class="sv"><div class="sv-n" id="sv-goals">0</div><div class="sv-l">Goals</div></div>
+  </div>
+  <div id="chat"></div>
+  <div id="qr"></div>
+  <div id="inp-area">
+    <div id="inp-row">
+      <div id="inp-wrap">
+        <textarea id="txta" placeholder="Talk to Jazz…" rows="1" onkeydown="hkey(event)" oninput="arz(this)"></textarea>
+      </div>
+      <button id="mic-btn" onclick="toggleMic()" title="Voice input">🎙️</button>
+      <button id="sbtn" onclick="send()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS PANEL -->
+<div class="panel panel-r" id="panel-settings">
+  <div class="phdr"><div class="ptitle">Settings & Style</div><button class="hbtn" onclick="closePanel()">✕</button></div>
+  <div class="pbody" id="pb-settings"></div>
+</div>
+
+<!-- LETTER PANEL -->
+<div class="panel panel-r" id="panel-letter">
+  <div class="phdr"><div class="ptitle">Letter from Jazz 📝</div><button class="hbtn" onclick="closePanel()">✕</button></div>
+  <div class="pbody" id="pb-letter"></div>
+</div>
+
+<!-- PANEL OVERLAY -->
+<div id="povly" onclick="closePanel()"></div>
+
+<!-- JOURNAL PANEL -->
+<div class="panel panel-r" id="panel-journal">
+  <div class="phdr"><div class="ptitle">Journal 📓</div><button class="hbtn" onclick="closePanel()">✕</button></div>
+  <div class="pbody" id="pb-journal"></div>
+</div>
+
+<!-- AFFIRMATIONS PANEL -->
+<div class="panel panel-r" id="panel-affirmations">
+  <div class="phdr"><div class="ptitle">Your Affirmations ✨</div><button class="hbtn" onclick="closePanel()">✕</button></div>
+  <div class="pbody" id="pb-affirmations"></div>
+</div>
+
+<!-- GOALS PANEL -->
+<div class="panel panel-r" id="panel-goals">
+  <div class="phdr"><div class="ptitle">Goal Tracker 🎯</div><button class="hbtn" onclick="closePanel()">✕</button></div>
+  <div class="pbody" id="pb-goals"></div>
+</div>
+
+<!-- PROFILE PANEL -->
+<div class="panel panel-r" id="panel-profile">
+  <div class="phdr"><div class="ptitle">Your Profile</div><button class="hbtn" onclick="closePanel()">✕</button></div>
+  <div class="pbody" id="pb-profile"></div>
+</div>
+
+<!-- HEALTH PANEL -->
+<div class="panel panel-r" id="panel-health">
+  <div class="phdr"><div class="ptitle">Health Dashboard</div><button class="hbtn" onclick="closePanel()">✕</button></div>
+  <div class="pbody" id="pb-health"></div>
+</div>
+
+<!-- MEMORIES PANEL -->
+<div class="panel panel-r" id="panel-mem">
+  <div class="phdr"><div class="ptitle">Jazz Remembers</div><button class="hbtn" onclick="closePanel()">✕</button></div>
+  <div class="pbody" id="pb-mem"></div>
+</div>
+
+<!-- VOICE MODE OVERLAY -->
+<div id="voice-mode-overlay">
+  <button class="vmo-close" onclick="closeVoiceMode()">✕</button>
+  <div class="vmo-avatar" id="vmo-avatar">🎷</div>
+  <div class="vmo-status" id="vmo-status">Tap the mic to speak</div>
+  <div class="vmo-transcript" id="vmo-transcript"></div>
+  <div class="vmo-last-jazz" id="vmo-last-jazz">Jazz's last response will appear here…</div>
+  <div class="vmo-controls">
+    <button class="vmo-btn" id="vmo-mic-btn" onclick="toggleMic()" title="Speak">🎙️</button>
+    <button class="vmo-btn" onclick="voiceStop()" title="Stop speaking">⏹️</button>
+    <button class="vmo-btn" onclick="closeVoiceMode()" title="Back to chat">💬</button>
+  </div>
+</div>
+
+<!-- BOOKMARKS PANEL -->
+<div class="panel panel-r" id="panel-bookmarks">
+  <div class="phdr"><div class="ptitle">Highlights 💾</div><button class="hbtn" onclick="closePanel()">✕</button></div>
+  <div class="pbody" id="pb-bookmarks"></div>
+</div>
+
+<!-- FINGERPRINT PANEL -->
+<div class="panel panel-r" id="panel-fingerprint">
+  <div class="phdr"><div class="ptitle">Your Emotional Fingerprint 🔮</div><button class="hbtn" onclick="closePanel()">✕</button></div>
+  <div class="pbody" id="pb-fingerprint"></div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     JavaScript Modules — SayMy Tech Developers
+     Load order matters: core → engine → ui → features → init
+     ═══════════════════════════════════════════════════════════ -->
+  <script src="js/01-core.js" defer></script>
+  <script src="js/02-engine.js" defer></script>
+  <script src="js/03-responses.js" defer></script>
+  <script src="js/04-ui-panels.js" defer></script>
+  <script src="js/05-send.js" defer></script>
+  <script src="js/06-checkin-goals-crisis.js" defer></script>
+  <script src="js/07-intelligence.js" defer></script>
+  <script src="js/08-voice.js" defer></script>
+  <script src="js/09-auth.js" defer></script>
+  <script src="js/10-tour.js" defer></script>
+  <script src="js/11-customization.js" defer></script>
+  <script src="js/12-notifications.js" defer></script>
+  <script src="js/13-personality.js" defer></script>
+  <script src="js/14-init.js" defer></script>
+  <script src="js/15-v8-intelligence.js" defer></script>
+  <script src="js/16-v8-productivity.js" defer></script>
+  <script src="js/17-v8-ui.js" defer></script>
+</body>
+</html>
