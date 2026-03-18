@@ -11,6 +11,7 @@
 // If no session → splash screen stays visible (default HTML state).
 function init() {
   // Init modules that need DB (called after 01-core.js is loaded)
+  if(typeof initDBOverrides === 'function') initDBOverrides();
   if(typeof initVS === 'function') initVS();
   if(typeof initCUST === 'function') initCUST();
   if(typeof _loadJournalEntries === 'function') _loadJournalEntries();
