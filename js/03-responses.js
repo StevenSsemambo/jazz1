@@ -81,38 +81,55 @@ function renderOB(){
     body.innerHTML=`<div class="ob-q">${q.q}</div><div class="ob-hint">${q.hint}</div><input class="ob-input" id="ob-inp" placeholder="${q.ph}" autocomplete="off"/><button class="ob-btn" onclick="subOBI('${q.key}')">Continue</button>`;
     setTimeout(()=>{const el=document.getElementById('ob-inp');if(el){el.focus();el.addEventListener('keydown',e=>{if(e.key==='Enter')subOBI(q.key);});}},80);
   }else if(q.type==='options'){
-    // Build buttons using DOM — never put JSON.stringify inside an onclick attribute
-    const wrap=document.createElement('div');
-    wrap.innerHTML=`<div class="ob-q">${q.q}</div><div class="ob-hint">${q.hint}</div>`;
-    const opts=document.createElement('div');
-    opts.className='ob-opts';
-    q.opts.forEach((o,i)=>{
-      const btn=document.createElement('button');
+    body.innerHTML='';
+    const qEl=document.createElement('div');
+    qEl.className='ob-q';qEl.textContent=q.q;
+    const hEl=document.createElement('div');
+    hEl.className='ob-hint';hEl.textContent=q.hint;
+    const oEl=document.createElement('div');
+    oEl.className='ob-opts';
+    q.opts.forEach(function(o,i){
+      var btn=document.createElement('button');
+      btn.type='button';
       btn.className='ob-opt';
       btn.textContent=o.l;
-      btn.addEventListener('click',()=>selOB(i,q.key,o));
-      opts.appendChild(btn);
+      // Use ontouchstart for instant visual + onclick for logic
+      // This is the most reliable cross-mobile pattern
+      btn.ontouchstart=function(){btn.style.background='rgba(108,92,231,.2)';};
+      btn.onclick=function(){
+        // Disable all buttons immediately to prevent double-tap
+        var allBtns=oEl.querySelectorAll('.ob-opt');
+        allBtns.forEach(function(b){b.disabled=true;b.style.opacity='0.6';});
+        btn.style.background='rgba(108,92,231,.25)';
+        btn.style.borderColor='var(--acc)';
+        btn.style.opacity='1';
+        selOB(i,q.key,o);
+      };
+      oEl.appendChild(btn);
     });
-    wrap.appendChild(opts);
-    body.innerHTML='';
-    body.appendChild(wrap);
+    body.appendChild(qEl);
+    body.appendChild(hEl);
+    body.appendChild(oEl);
   }
 }
 function nextOB(){obStep++;if(obStep>=OBQ.length)finishOB();else renderOB();}
 function subOBI(key){
-  const val=document.getElementById('ob-inp')?.value.trim();if(!val)return;
+  var val=document.getElementById('ob-inp')&&document.getElementById('ob-inp').value.trim();
+  if(!val)return;
   obAns[key]=val;
   if(key==='name'){P.name=val.charAt(0).toUpperCase()+val.slice(1);saveP();}
   nextOB();
 }
 function selOB(i,key,opt){
   obAns[key]=opt.v;
-  if(opt.t)Object.entries(opt.t).forEach(([k,v])=>{
-    const map={O:'O',C:'C',E:'E',A:'A',N:'N',depth:'depth',humor:'humor',direct:'direct',resilience:'resilience'};
-    if(map[k])P[map[k]]=clamp((P[map[k]]||50)+v,0,100);
-  });
-  document.querySelectorAll('.ob-opt').forEach((el,idx)=>el.classList.toggle('sel',idx===i));
-  setTimeout(nextOB,380);
+  if(opt.t){
+    var map={O:'O',C:'C',E:'E',A:'A',N:'N',depth:'depth',humor:'humor',direct:'direct',resilience:'resilience'};
+    Object.keys(opt.t).forEach(function(k){
+      if(map[k])P[map[k]]=clamp((P[map[k]]||50)+opt.t[k],0,100);
+    });
+  }
+  // Small delay so user sees selection before screen changes
+  setTimeout(nextOB,250);
 }
 function finishOB(){
   if(obAns.challenge==='yes')P.likesChallenged=true;
