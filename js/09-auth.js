@@ -103,7 +103,7 @@ function launchApp(name) {
     }
     const ob = document.getElementById('ob');
     const app = document.getElementById('app');
-    if (ob) { ob.style.display = 'flex'; ob.style.position = 'fixed'; }
+    if (ob) { ob.style.display = 'flex'; }
     if (app) app.style.display = 'none';
     if (typeof renderOB === 'function') renderOB();
   } else {
