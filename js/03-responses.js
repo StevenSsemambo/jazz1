@@ -106,18 +106,32 @@ function finishOB(){
   if(obAns.style==='support'){P.needsValidation=true;P.prefTone='warm';}
   if(obAns.style==='playful')P.prefTone='playful';
   if(obAns.style==='practical')P.prefTone='honest';
-  P.joinDate=Date.now();P.streakDays=1;saveP();DB.s('onboarded',true);
+  P.joinDate=Date.now();P.streakDays=1;saveP();
+  // Mark onboarding done using user-namespaced key
+  const prefix=window._userPrefix||'jb4_';
+  localStorage.setItem(prefix+'onboarded','true');
+  DB.s('onboarded',true);
+
   document.getElementById('ob').style.display='none';
   document.getElementById('app').style.display='flex';
   refreshStats();
+
+  // Start app session (sets up voice, nudges, etc.)
+  if(typeof startAppSession==='function') startAppSession();
+
+  const nm=P.name||'friend';
   const opens=[
-    `Hey ${P.name}! I'm so glad you're here. I've already started learning about you — and I'm genuinely excited about what we're going to talk about. What's on your mind?`,
-    `${P.name}! Welcome to Jazz. This is a space where you can be completely real. No filters, no judgment. Where do we start — what's actually going on in your life?`,
-    `Finally! ${P.name} is here. 🎷 I've been looking forward to this. Tell me — what's the one thing you most want to talk about right now?`
+    `Hey ${nm}! I'm so glad you're here. I've already started learning about you. What's on your mind?`,
+    `${nm}! Welcome to Jazz. This is a space where you can be completely real. Where do we start?`,
+    `${nm}! I've been looking forward to this. Tell me — what's the one thing you most want to talk about right now?`
   ];
   setTimeout(()=>{
     addMsg('b',rnd(opens),'et-warm');
     histAdd('b',opens[0],'neutral','greeting');
     setQR(getQR('greeting'));
+    // Start tour for brand new users
+    if(!localStorage.getItem('jb_tourDone')&&typeof startTour==='function'){
+      setTimeout(()=>startTour(),3500);
+    }
   },250);
 }
