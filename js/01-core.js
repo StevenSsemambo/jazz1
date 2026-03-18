@@ -1,19 +1,19 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 01-core.js
+ * Jazz Buddy -- 01-core.js
  * Core utilities, storage, profile, memory, history, health
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════════════
-   JAZZ BUDDY — COMPLETE ENGINE  (All 8 Phases)
+   JAZZ BUDDY -- COMPLETE ENGINE  (All 8 Phases)
    Phase 1: Core chat + rule engine
    Phase 2: Personality profile + deep onboarding
    Phase 3: Weighted multi-signal intent detection + rich response library
-   Phase 4: Health module — mood, sleep, stress, wellbeing scoring
-   Phase 5: Memory system — extraction, indexing, intelligent surfacing
-   Phase 6: Friendship depth — 8-dimension bond + relationship evolution
-   Phase 7: PWA packaging — installable, offline-ready
-   Phase 8: Polish — edge cases, calibration, insights, anti-patterns
+   Phase 4: Health module -- mood, sleep, stress, wellbeing scoring
+   Phase 5: Memory system -- extraction, indexing, intelligent surfacing
+   Phase 6: Friendship depth -- 8-dimension bond + relationship evolution
+   Phase 7: PWA packaging -- installable, offline-ready
+   Phase 8: Polish -- edge cases, calibration, insights, anti-patterns
 ═══════════════════════════════════════════════════════════════════ */
 
 // ── UTILS ─────────────────────────────────────────────────────────
@@ -315,3 +315,5 @@ function updateBond(intent,emotion,intensity){
   // Intensity bonus
   if(intensity>6){b.vuln=clamp(b.vuln+1,0,100);b.depth=clamp(b.depth+1,0,100);}
   P.bond=b;
+
+}
