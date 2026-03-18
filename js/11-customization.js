@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 11-customization.js
+ * Jazz Buddy -- 11-customization.js
  * Customization: themes, fonts, bubbles, font size
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
@@ -17,7 +17,9 @@ const THEMES = {
   amber: { name: 'Amber', acc: '#fdcb6e', acc2: '#ffeaa7', acc3: '#e17055', bg: '#100e05', gradient: 'linear-gradient(135deg,#fdcb6e,#ffeaa7)' },
 };
 
-let CUST = DB.g('cust', { theme: 'purple', fontSize: 15, bubbleStyle: 'rounded', fontFamily: 'default' });
+let CUST = { theme: 'purple', fontSize: 15, bubbleStyle: 'rounded', fontFamily: 'default' };
+// Load saved customization (called after DB is available)
+function initCUST(){ try{ const saved=DB.g('cust',null); if(saved)CUST=saved; }catch(e){} }
 
 function applyTheme(key) {
   const t = THEMES[key];
