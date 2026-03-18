@@ -5,8 +5,8 @@
  * ═══════════════════════════════════════════════════════ */
 
 // ── QUICK REPLIES ─────────────────────────────────────────────────
-const QR_MAP={
-  greeting:[{l:"Daily check-in",t:"Let's do my daily check-in"},{l:"I'm stressed",t:"I've been really stressed lately"},{l:"Big news!",t:"I have something to share"},{l:"I'm doing great",t:"I'm actually doing really well today"}],
+var QR_MAP={
+  greeting:[{l:"Daily check-in",t:"Let's do my daily check-in"},{l:"I'm stressed",t:"I've been really stressed lately"},{l:"Big news",t:"I have something to share"},{l:"I'm doing great",t:"I'm actually doing really well today"}],
   venting:[{l:"Say more",t:"Let me explain more"},{l:"What do I do?",t:"What should I do about this?"},{l:"It's about work",t:"It's related to my work"},{l:"It's personal",t:"It's something personal"}],
   goals:[{l:"Help me plan",t:"Help me make a real plan"},{l:"Hold me accountable",t:"Can you hold me accountable?"},{l:"My biggest goal",t:"Let me tell you my biggest goal"}],
   healthCheck:[{l:"Sleep issues",t:"I've been having sleep issues"},{l:"Stress is high",t:"My stress levels are really high"},{l:"Log my mood",t:"I want to log how I'm feeling"},{l:"Energy check",t:"My energy has been really low"}],
@@ -14,8 +14,8 @@ const QR_MAP={
   motivation:[{l:"One small step",t:"What's one tiny thing I can do right now?"},{l:"Why I want this",t:"Let me explain why this matters to me"}],
   relationships:[{l:"More context",t:"Let me give you more context"},{l:"What should I do?",t:"What do you think I should do?"}],
   philosophical:[{l:"Go deeper",t:"Let me share my perspective"},{l:"Another question",t:"Here's another question I think about"}],
-  sleep:[{l:"Rate my sleep",t:"I'd rate my sleep 3 out of 10"},{l:"Tips",t:"What are some sleep tips?"}],
-  default:[{l:"How am I doing?",t:"Show me my stats"},{l:"Tell me a joke",t:"Tell me a joke"},{l:"I need advice",t:"I need some advice"},{l:"How are you?",t:"How are you doing, Jazz?"}]
+  sleep:[{l:"Rate my sleep",t:"I rate my sleep 3 out of 10"},{l:"Tips",t:"What are some sleep tips?"}],
+  default:[{l:"How am I doing?",t:"Show me my stats"},{l:"Tell me a joke",t:"Tell me a joke"},{l:"I need advice",t:"I need some advice"},{l:"How are you?",t:"How are you doing Jazz?"}]
 };
 function getQR(intent){return(QR_MAP[intent]||QR_MAP.default).slice(0,4);}
 
@@ -34,10 +34,6 @@ function buildHealthConvo(intent,text){
 }
 
 // ── ONBOARDING ────────────────────────────────────────────────────
-// Store current options globally so onclick handlers can reference them
-var _obOpts=[];
-var _obKey='';
-
 var OBQ=[
   {type:'display',title:'Welcome to Jazz Buddy',body:"I am not just a chatbot. I learn who you are, remember what matters to you, and show up every single time. Five quick questions and I will start knowing you.",btn:'Get started'},
   {type:'input',q:'What should I call you?',hint:'Just your first name',ph:'Your name',key:'name'},
@@ -47,7 +43,7 @@ var OBQ=[
     {l:'Going through something hard',t:{N:12,depth:8},v:'sad'},
     {l:'Stressed and overwhelmed',t:{N:12,C:5},v:'anxious'}
   ]},
-  {type:'options',q:'When something is bothering you, what do you do?',hint:'Be honest',key:'coping',opts:[
+  {type:'options',q:'When something bothers you, what do you do?',hint:'Be honest',key:'coping',opts:[
     {l:'Talk about it out loud',t:{E:12},v:'verbal'},
     {l:'Keep it in and think alone',t:{E:-10,O:6},v:'internal'},
     {l:'Distract myself and keep busy',t:{C:7},v:'distract'},
@@ -55,7 +51,7 @@ var OBQ=[
   ]},
   {type:'options',q:'What kind of conversations do you want?',hint:'This shapes everything',key:'style',opts:[
     {l:'Deep and real',t:{depth:18,O:12},v:'deep'},
-    {l:'Supportive, I need someone to listen',t:{A:12},v:'support'},
+    {l:'Supportive, someone to listen',t:{A:12},v:'support'},
     {l:'A mix of real and light',t:{humor:6,depth:6},v:'mixed'},
     {l:'Practical advice and direction',t:{direct:12},v:'practical'}
   ]},
@@ -70,8 +66,14 @@ var OBQ=[
 var obStep=0;
 var obAns={};
 
+// Store current opts on window so inline onclick always finds them
+window._OB_CURRENT_OPTS=[];
+window._OB_CURRENT_KEY='';
+
 function renderOB(){
   var q=OBQ[obStep];
+
+  // Progress dots
   var prog=document.getElementById('ob-prog');
   if(prog){
     var dots='';
@@ -81,92 +83,94 @@ function renderOB(){
     }
     prog.innerHTML=dots;
   }
+
   var body=document.getElementById('ob-body');
   if(!body)return;
 
   if(q.type==='display'){
     var tt=q.title.replace('{name}',P.name||obAns.name||'friend');
     var bd=q.body.replace('{name}',P.name||obAns.name||'friend');
-    body.innerHTML='<div class="ob-q">'+tt+'</div>'
-      +'<p style="color:var(--tx2);font-size:14px;line-height:1.7;margin:10px 0 22px">'+bd+'</p>'
-      +'<button class="ob-btn" type="button" onclick="nextOB()">'+q.btn+'</button>';
+    body.innerHTML=
+      '<div class="ob-q">'+tt+'</div>'+
+      '<p style="color:var(--tx2);font-size:14px;line-height:1.7;margin:10px 0 20px">'+bd+'</p>'+
+      '<button class="ob-btn" type="button" onclick="nextOB()">'+q.btn+'</button>';
 
   }else if(q.type==='input'){
-    body.innerHTML='<div class="ob-q">'+q.q+'</div>'
-      +'<div class="ob-hint">'+q.hint+'</div>'
-      +'<input class="ob-input" id="ob-inp" type="text" placeholder="'+q.ph+'" autocomplete="off" autocorrect="off" autocapitalize="words"/>'
-      +'<button class="ob-btn" type="button" onclick="subOBI(\''+q.key+'\')">Continue</button>';
+    body.innerHTML=
+      '<div class="ob-q">'+q.q+'</div>'+
+      '<div class="ob-hint">'+q.hint+'</div>'+
+      '<input class="ob-input" id="ob-inp" type="text" placeholder="'+q.ph+'" autocomplete="off" autocorrect="off" autocapitalize="words"/>'+
+      '<button class="ob-btn" type="button" onclick="subOBI(\''+q.key+'\')">Continue</button>';
     setTimeout(function(){
       var el=document.getElementById('ob-inp');
-      if(el){
-        el.focus();
-        el.onkeydown=function(e){if(e.key==='Enter')subOBI(q.key);};
-      }
-    },100);
+      if(el){el.focus();el.onkeydown=function(e){if(e.key==='Enter')subOBI(q.key);};}
+    },150);
 
   }else if(q.type==='options'){
-    // Store opts globally so inline onclick can access them safely
-    _obOpts=q.opts;
-    _obKey=q.key;
-    var html='<div class="ob-q">'+q.q+'</div>'
-      +'<div class="ob-hint">'+q.hint+'</div>'
-      +'<div class="ob-opts" id="ob-opts-wrap">';
+    // Put opts on window - globally accessible by inline onclick
+    window._OB_CURRENT_OPTS=q.opts;
+    window._OB_CURRENT_KEY=q.key;
+
+    var html=
+      '<div class="ob-q">'+q.q+'</div>'+
+      '<div class="ob-hint">'+q.hint+'</div>'+
+      '<div class="ob-opts">';
+
     for(var oi=0;oi<q.opts.length;oi++){
-      // Use inline onclick with index only — no objects, no JSON
-      html+='<button class="ob-opt" type="button" onclick="pickOB('+oi+')">'+q.opts[oi].l+'</button>';
+      html+='<div class="ob-opt" onclick="obPick('+oi+')">'+q.opts[oi].l+'</div>';
     }
     html+='</div>';
     body.innerHTML=html;
   }
 }
 
-// Called by inline onclick — index only, looks up from _obOpts
-function pickOB(i){
-  var opt=_obOpts[i];
-  if(!opt)return;
+// Use DIV not BUTTON — divs have no default browser behavior that can interfere
+// Explicitly on window so inline onclick always works
+window.obPick=function(i){
+  var opts=window._OB_CURRENT_OPTS;
+  var key=window._OB_CURRENT_KEY;
+  if(!opts||!opts[i])return;
+
   // Visual feedback
-  var wrap=document.getElementById('ob-opts-wrap');
-  if(wrap){
-    var btns=wrap.getElementsByTagName('button');
-    for(var b=0;b<btns.length;b++){
-      btns[b].disabled=true;
-      btns[b].style.opacity='0.5';
-    }
-    btns[i].style.opacity='1';
-    btns[i].style.background='rgba(108,92,231,.3)';
-    btns[i].style.borderColor='var(--acc)';
+  var allOpts=document.querySelectorAll('.ob-opt');
+  for(var a=0;a<allOpts.length;a++){
+    allOpts[a].style.pointerEvents='none';
+    allOpts[a].style.opacity='0.5';
   }
-  // Store answer
-  obAns[_obKey]=opt.v;
+  allOpts[i].style.opacity='1';
+  allOpts[i].style.background='rgba(108,92,231,.3)';
+  allOpts[i].style.borderColor='var(--acc)';
+  allOpts[i].style.color='var(--tx)';
+
+  // Save answer
+  obAns[key]=opts[i].v;
+
   // Apply personality traits
+  var opt=opts[i];
   if(opt.t){
     var map={O:'O',C:'C',E:'E',A:'A',N:'N',depth:'depth',humor:'humor',direct:'direct',resilience:'resilience'};
-    var keys=Object.keys(opt.t);
-    for(var ti=0;ti<keys.length;ti++){
-      var k=keys[ti];
+    var ks=Object.keys(opt.t);
+    for(var ti=0;ti<ks.length;ti++){
+      var k=ks[ti];
       if(map[k])P[map[k]]=clamp((P[map[k]]||50)+opt.t[k],0,100);
     }
   }
-  setTimeout(nextOB,300);
-}
 
-function nextOB(){
-  obStep++;
-  if(obStep>=OBQ.length)finishOB();
-  else renderOB();
-}
+  setTimeout(nextOB,280);
+};
+// Also make nextOB, subOBI global for inline onclicks
+window.nextOB=function nextOB(){obStep++;if(obStep>=OBQ.length)finishOB();else renderOB();}
+function nextOB(){obStep++;if(obStep>=OBQ.length)finishOB();else renderOB();}
 
-function subOBI(key){
+window.subOBI=function(key){
   var inp=document.getElementById('ob-inp');
   var val=inp?inp.value.trim():'';
   if(!val)return;
   obAns[key]=val;
-  if(key==='name'){
-    P.name=val.charAt(0).toUpperCase()+val.slice(1);
-    saveP();
-  }
+  if(key==='name'){P.name=val.charAt(0).toUpperCase()+val.slice(1);saveP();}
   nextOB();
-}
+};
+function subOBI(key){window.subOBI(key);}
 
 function finishOB(){
   if(obAns.challenge==='yes')P.likesChallenged=true;
@@ -174,9 +178,7 @@ function finishOB(){
   if(obAns.style==='support'){P.needsValidation=true;P.prefTone='warm';}
   if(obAns.style==='playful')P.prefTone='playful';
   if(obAns.style==='practical')P.prefTone='honest';
-  P.joinDate=Date.now();
-  P.streakDays=1;
-  saveP();
+  P.joinDate=Date.now();P.streakDays=1;saveP();
   var prefix=window._userPrefix||'jb4_';
   localStorage.setItem(prefix+'onboarded','true');
   DB.s('onboarded',true);
@@ -185,17 +187,13 @@ function finishOB(){
   refreshStats();
   if(typeof startAppSession==='function')startAppSession();
   var nm=P.name||'friend';
-  var opens=[
-    'Hey '+nm+'! I am so glad you are here. I have already started learning about you. What is on your mind?',
-    nm+'! Welcome to Jazz. This is a space where you can be completely real. Where do we start?',
-    nm+'! I have been looking forward to this. Tell me -- what is the one thing you most want to talk about?'
-  ];
+  var msg=nm+'! Welcome to Jazz. This is your space. What is on your mind?';
   setTimeout(function(){
-    addMsg('b',opens[Math.floor(Math.random()*opens.length)],'et-warm');
-    histAdd('b',opens[0],'neutral','greeting');
+    addMsg('b',msg,'et-warm');
+    histAdd('b',msg,'neutral','greeting');
     setQR(getQR('greeting'));
     if(!localStorage.getItem('jb_tourDone')&&typeof startTour==='function'){
       setTimeout(startTour,3500);
     }
-  },250);
+  },300);
 }
