@@ -16,7 +16,7 @@ const VS = {
   autoListen: false,          // set in initVS()
   pitch: 1.05,                // set in initVS()
   rate: 0.92,                 // set in initVS()
-  volume: DB.g('vs_volume', 1.0),
+  volume: 1.0,               // set in initVS()
   selectedVoice: null,                // set in initVS()
   voices: [],
   recognition: null,
