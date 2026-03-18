@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 06-checkin-goals-crisis.js
+ * Jazz Buddy -- 06-checkin-goals-crisis.js
  * Daily check-in, goal tracking, crisis resources
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
@@ -8,8 +8,8 @@
 // ══════════════════════════════════════════════════════════════════
 let ciState={active:false,step:0,data:{}};
 const CI_STEPS=[
-  {id:'sleep',q:'Let's start with last night — how did you sleep? Rate it 1-10.',opts:['1-3 (rough)','4-6 (okay)','7-8 (decent)','9-10 (great)']},
-  {id:'mood',q:'And right now — how are you feeling as you start this day? The honest version.',opts:['😊 Good','😐 Neutral','😟 Struggling','😴 Drained','😤 Frustrated','😰 Anxious']},
+  {id:'sleep',q:'Let's start with last night -- how did you sleep? Rate it 1-10.',opts:['1-3 (rough)','4-6 (okay)','7-8 (decent)','9-10 (great)']},
+  {id:'mood',q:'And right now -- how are you feeling as you start this day? The honest version.',opts:['😊 Good','😐 Neutral','😟 Struggling','😴 Drained','😤 Frustrated','😰 Anxious']},
   {id:'oneThingMind',q:'What's the *one thing* on your mind most right now? The thing you're carrying.',opts:['Work/school','A relationship','Money','My health','A personal goal','Something I can't name yet']},
   {id:'intention',q:'Last one: what's one intention you want to hold today? Could be anything.',opts:['Stay present','Be kind to myself','Get one hard thing done','Rest properly','Connect with someone','Let go of something']}
 ];
@@ -80,10 +80,10 @@ function finishCheckIn(){
   if(d.mood)summary+=`You're feeling ${d.mood.replace(/[^a-zA-Z\s]/g,'').trim()}. `;
   if(d.oneThingMind)summary+=`You're carrying "${d.oneThingMind}" with you. `;
   if(d.intention)summary+=`Intention: *${d.intention}*. `;
-  if((P.checkInStreak||0)>1)summary+=`\n\nThat's ${P.checkInStreak} days in a row checking in — that consistency matters more than you know.`;
+  if((P.checkInStreak||0)>1)summary+=`\n\nThat's ${P.checkInStreak} days in a row checking in -- that consistency matters more than you know.`;
   else summary+='\n\nFirst check-in done. Come back tomorrow and we'll start seeing real patterns.';
   if(d.mood&&(d.mood.includes('Struggling')||d.mood.includes('Anxious')))summary+='\n\nYou said you're struggling. I don't want to just move on from that. What's going on?';
-  else if(d.oneThingMind)summary+=`\n\nThe thing on your mind — ${d.oneThingMind}. Do you want to talk about it?`;
+  else if(d.oneThingMind)summary+=`\n\nThe thing on your mind -- ${d.oneThingMind}. Do you want to talk about it?`;
   addMsg('b',summary,'et-checkin');
   histAdd('b',summary,'neutral','checkIn');
   checkGoalsDue();
@@ -116,7 +116,7 @@ function checkGoalsDue(){
   if(overdue.length>0){
     const g=rnd(overdue);
     setTimeout(()=>{
-      const msgs=[`Before we go — I want to ask about your goal: *"${g.title}"*. How's it going? Honestly.`,`Quick goal check-in: *"${g.title}"*. What's the latest? Any progress, even tiny?`,`I've been thinking about your goal — *"${g.title}"*. Where are you with it?`];
+      const msgs=[`Before we go -- I want to ask about your goal: *"${g.title}"*. How's it going? Honestly.`,`Quick goal check-in: *"${g.title}"*. What's the latest? Any progress, even tiny?`,`I've been thinking about your goal -- *"${g.title}"*. Where are you with it?`];
       addMsg('b',rnd(msgs),'et-goal');
       histAdd('b',msgs[0],'neutral','goalCheck');
       setQR([{l:"Making progress!",t:`I've been making progress on my goal`},{l:"Stuck, need help",t:`I'm stuck on my goal and need help`},{l:"I completed it!",t:`I completed my goal!`},{l:"I've paused it",t:`I've put my goal on hold for now`}]);
