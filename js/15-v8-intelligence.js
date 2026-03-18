@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 15-v8-intelligence.js
+ * Jazz Buddy -- 15-v8-intelligence.js
  * V8 Intelligence: State machine, predictive empathy,
  * emotional trajectory, contradiction detection,
  * nuance layers, Socratic mode, commitment tracking,
@@ -79,7 +79,7 @@ function getStateModeModifier(text) {
     case 'supporting':
       return null; // normal crisis/support response
     case 'resolving':
-      if (Math.random() > 0.6) return `${nm}, I want to help you actually land somewhere with this — not just talk around it. What does moving forward look like to you, even one small step?`;
+      if (Math.random() > 0.6) return `${nm}, I want to help you actually land somewhere with this -- not just talk around it. What does moving forward look like to you, even one small step?`;
       return null;
     default:
       return null;
@@ -87,25 +87,25 @@ function getStateModeModifier(text) {
 }
 
 const SOCRATIC_QUESTIONS = [
-  [  // depth 1 — surface
+  [  // depth 1 -- surface
     "What's the thing underneath what you just said?",
     "Tell me more. What's really going on?",
     "I want to understand this properly. What's the core of it?",
-    "What are you actually feeling right now — not what you think you should feel?",
+    "What are you actually feeling right now -- not what you think you should feel?",
   ],
-  [  // depth 2 — one layer deeper
+  [  // depth 2 -- one layer deeper
     "What does that feeling want you to do?",
     "When did you first start feeling this way about this?",
     "What would change if this resolved?",
     "What's the part of this you're most afraid to look at?",
   ],
-  [  // depth 3 — the real thing
+  [  // depth 3 -- the real thing
     "What's the belief underneath all of this? About yourself, or the world?",
     "If you knew the answer, what would it be?",
     "What does the wisest part of you already know about this?",
     "What would you tell someone you love who was in this exact situation?",
   ],
-  [  // depth 4+ — integration
+  [  // depth 4+ -- integration
     "What has this conversation brought up that you didn't expect?",
     "What do you want to do with what you just discovered?",
     "What changes now that you've said all of this out loud?",
@@ -118,7 +118,7 @@ function getSocraticQuestion(depth, text) {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// PREDICTIVE EMPATHY — time + pattern based opening adjustment
+// PREDICTIVE EMPATHY -- time + pattern based opening adjustment
 // ══════════════════════════════════════════════════════════════════
 function getPredictiveGreeting(nm) {
   const now = new Date();
@@ -139,9 +139,9 @@ function getPredictiveGreeting(nm) {
   // Time-based
   const timeGreets = {
     night:   [`It's late, ${nm}. Late-night conversations are different. What's actually on your mind?`, `${nm}. It's ${hour > 0 ? hour : 12}am. I'm here. What's keeping you up?`, `Late night, ${nm}. The quiet hours. What's going on?`],
-    morning: [`Morning, ${nm}. New day. What are you carrying into it?`, `Good morning, ${nm}. What's the emotional weather like this morning?`, `${nm}! Morning. How did you sleep — and what's waiting for you today?`],
+    morning: [`Morning, ${nm}. New day. What are you carrying into it?`, `Good morning, ${nm}. What's the emotional weather like this morning?`, `${nm}! Morning. How did you sleep -- and what's waiting for you today?`],
     evening: [`Evening, ${nm}. How has the day actually been?`, `Hey ${nm}. The day is winding down. How are you?`, `${nm}, evening. Let's talk about how today really went.`],
-    afternoon:[`Afternoon, ${nm}. Midday check — how are you doing?`, `Hey ${nm}. How's the day going so far?`],
+    afternoon:[`Afternoon, ${nm}. Midday check -- how are you doing?`, `Hey ${nm}. How's the day going so far?`],
   };
 
   const timeKey = hour >= 0 && hour < 5 ? 'night' : hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
@@ -150,7 +150,7 @@ function getPredictiveGreeting(nm) {
   let patternSuffix = '';
   if (topIntent && dayHist.length >= 3) {
     const patternMap = {
-      work: `${dayName}s tend to be heavy for you — usually something to do with work. How is that today?`,
+      work: `${dayName}s tend to be heavy for you -- usually something to do with work. How is that today?`,
       stress: `${dayName}s have been stressful for you lately. What's the vibe today?`,
       family: `I've noticed ${dayName}s often bring up family things for you. How's that going?`,
       venting: `You often have things to get off your chest on ${dayName}s. What's going on?`,
@@ -191,13 +191,13 @@ function checkTrajectoryShift() {
   if (slope > 0.4) {
     return rnd([
       `Something shifted in the last few messages, ${nm}. You came in heavier than you are now. What changed?`,
-      `I'm noticing something — the tone has lightened. What happened just now?`,
+      `I'm noticing something -- the tone has lightened. What happened just now?`,
       `You seem like you've moved somewhere. A few messages ago felt different. What shifted?`,
     ]);
   } else {
     return rnd([
       `I want to slow down here. Something's getting heavier as we talk. Are you okay right now?`,
-      `${nm} — I'm noticing this is getting harder as we go. What's the real thing underneath all of this?`,
+      `${nm} -- I'm noticing this is getting harder as we go. What's the real thing underneath all of this?`,
       `Something is escalating in what you're sharing. I don't want to rush past it. What's actually going on?`,
     ]);
   }
@@ -222,9 +222,9 @@ function detectContradiction(text, emotion) {
 
   if (saysOkay && recentHeavy && text.length < 30) {
     return rnd([
-      `${nm} — you said you're fine. But the last few things you shared weren't fine. Which is true right now?`,
+      `${nm} -- you said you're fine. But the last few things you shared weren't fine. Which is true right now?`,
       `I'm going to gently push back. You were just talking about something heavy, and now you're okay? What happened?`,
-      `"Fine" after what you just shared — I'm not sure I believe that. What's actually going on?`,
+      `"Fine" after what you just shared -- I'm not sure I believe that. What's actually going on?`,
     ]);
   }
 
@@ -233,7 +233,7 @@ function detectContradiction(text, emotion) {
   const topicCount = (HIST||[]).filter(h => h.role==='u' && h.intent === (P.activeThread?.intent)).length;
   if (claimsOver && topicCount > 3) {
     return rnd([
-      `You say you're over it — but this is the ${topicCount}th time we've talked about it. What does that tell you?`,
+      `You say you're over it -- but this is the ${topicCount}th time we've talked about it. What does that tell you?`,
       `You said you've accepted it. And yet here we are again. What part of it hasn't actually resolved?`,
       `"It is what it is" is sometimes true. And sometimes it's a thing we say to stop feeling. Which is this?`,
     ]);
@@ -243,7 +243,7 @@ function detectContradiction(text, emotion) {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// NUANCE LAYERS — modifier sentences added to responses
+// NUANCE LAYERS -- modifier sentences added to responses
 // ══════════════════════════════════════════════════════════════════
 function getNuanceModifier(intent, text) {
   const h = P.health || {};
@@ -251,13 +251,13 @@ function getNuanceModifier(intent, text) {
 
   // Sleep deprivation modifier
   if (h.avgSleep && h.avgSleep < 5.5 && ['stress','venting','anxiety','selfEsteem'].includes(intent)) {
-    mods.push(`(And just so you know — your sleep has been averaging ${h.avgSleep}/10 lately. Everything is harder when you're not rested.)`);
+    mods.push(`(And just so you know -- your sleep has been averaging ${h.avgSleep}/10 lately. Everything is harder when you're not rested.)`);
   }
 
   // Repeat topic modifier
   const topicCount = (HIST||[]).filter(h => h.role==='u' && h.intent === intent).length;
   if (topicCount >= 4) {
-    mods.push(`This is the ${topicCount}th time we've come back to this. I don't say that as criticism — I say it because it means this really matters to you.`);
+    mods.push(`This is the ${topicCount}th time we've come back to this. I don't say that as criticism -- I say it because it means this really matters to you.`);
   }
 
   // Time-of-day modifier
@@ -269,18 +269,19 @@ function getNuanceModifier(intent, text) {
   // Recent wins modifier
   const recentDone = (P.goals||[]).filter(g => g.status==='done' && days_since(g.createdAt||0) < 14).length;
   if (recentDone > 0 && ['selfEsteem','motivation','venting'].includes(intent)) {
-    mods.push(`For what it's worth — you completed ${recentDone} goal${recentDone>1?'s':''} recently. That version of you is still you.`);
+    mods.push(`For what it's worth -- you completed ${recentDone} goal${recentDone>1?'s':''} recently. That version of you is still you.`);
   }
 
   return mods.length ? rnd(mods) : null;
 }
 
 // ══════════════════════════════════════════════════════════════════
-// COMMITMENT TRACKING — micro-commitments extracted from chat
+// COMMITMENT TRACKING -- micro-commitments extracted from chat
 // ══════════════════════════════════════════════════════════════════
-if (!P.commitments) P.commitments = [];
+// P.commitments initialised lazily in extractCommitment()
 
 function extractCommitment(text) {
+  if(typeof P!=='undefined'&&!P.commitments)P.commitments=[];
   const t = text.toLowerCase();
   const patterns = [
     /i(?:'m going to| will| am going to| plan to| want to| need to)\s+(.{10,80})/i,
@@ -296,7 +297,7 @@ function extractCommitment(text) {
       if (commitment.length > 8 && !['be okay','feel better','try','think about it'].includes(commitment)) {
         const existing = (P.commitments||[]).find(c => c.text.includes(commitment.slice(0,20)));
         if (!existing) {
-          if (!P.commitments) P.commitments = [];
+          // P.commitments initialised lazily in extractCommitment()
           P.commitments.push({
             text: commitment,
             ts: Date.now(),
@@ -321,14 +322,14 @@ function checkPendingCommitments() {
   due.checkedIn = true;
   saveP();
   return rnd([
-    `Before we get into it — you said you were going to "${due.text}". Did you do it?`,
-    `I've been thinking about something you said — you were going to "${due.text}". What happened with that?`,
-    `Quick one: "${due.text}" — that's what you said you'd do. How did it go?`,
+    `Before we get into it -- you said you were going to "${due.text}". Did you do it?`,
+    `I've been thinking about something you said -- you were going to "${due.text}". What happened with that?`,
+    `Quick one: "${due.text}" -- that's what you said you'd do. How did it go?`,
   ]);
 }
 
 // ══════════════════════════════════════════════════════════════════
-// INSIGHT ENGINE — multi-variable pattern insights
+// INSIGHT ENGINE -- multi-variable pattern insights
 // ══════════════════════════════════════════════════════════════════
 function generateDeepInsight() {
   const h = P.health || {};
@@ -343,7 +344,7 @@ function generateDeepInsight() {
       return nextMood && ['anxious','sad','angry','overwhelmed'].includes(nextMood.m);
     }).length;
     if (badMoodAfterLowSleep >= 3) {
-      insights.push(`${nm}, I've noticed a pattern: the days after your sleep is low, your mood tends to be harder. This isn't a coincidence — sleep and emotional resilience are directly connected.`);
+      insights.push(`${nm}, I've noticed a pattern: the days after your sleep is low, your mood tends to be harder. This isn't a coincidence -- sleep and emotional resilience are directly connected.`);
     }
   }
 
@@ -365,7 +366,7 @@ function generateDeepInsight() {
   Object.entries(dayIntents).forEach(([day, intents]) => {
     const topInt = Object.entries(intents).sort((a,b)=>b[1]-a[1])[0];
     if (topInt && topInt[1] >= 3 && ['stress','venting','anxiety'].includes(topInt[0])) {
-      insights.push(`${days[day]}s tend to be harder for you — your conversations lean toward ${topInt[0]} on that day more than any other. What happens on ${days[day]}s?`);
+      insights.push(`${days[day]}s tend to be harder for you -- your conversations lean toward ${topInt[0]} on that day more than any other. What happens on ${days[day]}s?`);
     }
   });
 
@@ -383,22 +384,22 @@ function generateDeepInsight() {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// REFRAMING ENGINE — cognitive distortion detection + precision reframes
+// REFRAMING ENGINE -- cognitive distortion detection + precision reframes
 // ══════════════════════════════════════════════════════════════════
 const COGNITIVE_DISTORTIONS = {
   catastrophizing: {
     signals: ['everything is','nothing will','it will never','always going to','worst thing','ruined everything','nothing will ever','completely failed'],
     reframes: [
-      "Let's slow down for a second. You said ''{trigger}'' — that's a very absolute statement. What's the most realistic outcome here, not the worst one?",
+      "Let's slow down for a second. You said ''{trigger}'' -- that's a very absolute statement. What's the most realistic outcome here, not the worst one?",
       "''Everything'' and ''nothing'' and ''never'' are words that almost never describe reality accurately. What's actually true right now, right in this moment?",
-      "Your brain is running a worst-case scenario. That's what brains do when they're scared. What's the *most likely* outcome — not the worst one?",
+      "Your brain is running a worst-case scenario. That's what brains do when they're scared. What's the *most likely* outcome -- not the worst one?",
     ]
   },
   blackWhite: {
     signals: ['always','never','everyone','no one','completely','totally','absolutely','nothing works','everything fails','all the time'],
     reframes: [
-      "You're thinking in absolutes — ''always'', ''never'', ''everyone''. Reality is almost always more complicated. What's the grey area here?",
-      "What would you say to someone who told you things were ''always'' a certain way? Is there any exception — even one?",
+      "You're thinking in absolutes -- ''always'', ''never'', ''everyone''. Reality is almost always more complicated. What's the grey area here?",
+      "What would you say to someone who told you things were ''always'' a certain way? Is there any exception -- even one?",
       "Black-and-white thinking feels true but it usually isn't. Where's the middle ground in what you just described?",
     ]
   },
@@ -407,21 +408,21 @@ const COGNITIVE_DISTORTIONS = {
     reframes: [
       "You're taking on a lot of responsibility here. What role did other people or circumstances play?",
       "If a friend told you this happened because of them, what would you say to them?",
-      "You said it's your fault. What specifically are you responsible for — and what is genuinely outside your control?",
+      "You said it's your fault. What specifically are you responsible for -- and what is genuinely outside your control?",
     ]
   },
   mindReading: {
     signals: ['they think','she thinks','he thinks','they hate','they must think','everyone thinks i','they all know','they can tell','they notice'],
     reframes: [
       "You're telling me what other people are thinking. How do you actually know that's true?",
-      "What's the evidence that they think this — not what you fear, but what you actually know?",
+      "What's the evidence that they think this -- not what you fear, but what you actually know?",
       "We can't read minds. What's another possible explanation for what you're observing?",
     ]
   },
   shouldStatements: {
     signals: ["i should","i shouldn't","i must","i have to","i ought to","i need to be","i'm supposed to"],
     reframes: [
-      "That word 'should' — who decided that? Whose rule is that?",
+      "That word 'should' -- who decided that? Whose rule is that?",
       "What happens when you replace 'I should' with 'I choose to' or 'I don't choose to'? Does it feel different?",
       "The word 'should' often carries someone else's expectations. Is this actually what *you* want, or what you think you're supposed to want?",
     ]
@@ -455,15 +456,15 @@ function getSeasonalContext() {
   }
   // New Year
   if (month === 0 && day <= 10) {
-    return { flag: 'newyear', nudge: `New year. I know everyone makes a big deal of it. What does this time of year actually feel like for you — not what it's supposed to feel like?` };
+    return { flag: 'newyear', nudge: `New year. I know everyone makes a big deal of it. What does this time of year actually feel like for you -- not what it's supposed to feel like?` };
   }
-  // Ramadan (approximate — shifts each year)
+  // Ramadan (approximate -- shifts each year)
   // We can't calculate exact dates without external data, but we can check for mentions
   return null;
 }
 
 // ══════════════════════════════════════════════════════════════════
-// JAZZ "NOTICED" CARD — unprompted deep observation
+// JAZZ "NOTICED" CARD -- unprompted deep observation
 // ══════════════════════════════════════════════════════════════════
 function generateJazzNoticedCard() {
   if (!P.totalMsgs || P.totalMsgs < 20) return null;
@@ -474,10 +475,10 @@ function generateJazzNoticedCard() {
 
   const observations = [];
 
-  if (P.N > 65) observations.push(`You feel things very deeply. Most people don't. That's both a gift and a weight — and I think you know that.`);
+  if (P.N > 65) observations.push(`You feel things very deeply. Most people don't. That's both a gift and a weight -- and I think you know that.`);
   if (P.A > 70) observations.push(`You always ask about other people before you talk about yourself. Every single time. I wonder when you last let someone take care of you.`);
-  if (topTopic && topTopic[1] > 8) observations.push(`You talk about ${topTopic[0]} more than anything else. Not because you want to — I think it's because it's unresolved.`);
-  if (relMentions && relMentions.mentions >= 5) observations.push(`The ${relMentions.type} you keep mentioning — I think there's more there than you've told me.`);
+  if (topTopic && topTopic[1] > 8) observations.push(`You talk about ${topTopic[0]} more than anything else. Not because you want to -- I think it's because it's unresolved.`);
+  if (relMentions && relMentions.mentions >= 5) observations.push(`The ${relMentions.type} you keep mentioning -- I think there's more there than you've told me.`);
   if ((P.commitments||[]).filter(c=>!c.checkedIn).length > 2) observations.push(`You make commitments to yourself and then don't follow up on them. That's not laziness. That's usually fear dressed up as procrastination.`);
   if (P.depth > 70 && P.E < 40) observations.push(`You think deeply about everything but you keep most of it to yourself. The people around you probably don't know how much is going on in your head.`);
   if ((P.moodHist||[]).slice(-10).filter(m=>m.m==='neutral').length >= 6) observations.push(`You've been reporting neutral a lot. Neutral is sometimes peace. Sometimes it's numbness. I'm curious which it is for you.`);
@@ -510,7 +511,7 @@ function checkMemoryAnniversaries() {
   DB.s('MEMS', MEMS);
 
   const nm = P.name || 'friend';
-  return `${nm} — a year ago today, you told me something that stayed with me: "${anniversary.text.slice(0,120)}..."\n\nA lot has happened since then. How does that feel to look back on?`;
+  return `${nm} -- a year ago today, you told me something that stayed with me: "${anniversary.text.slice(0,120)}..."\n\nA lot has happened since then. How does that feel to look back on?`;
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -526,9 +527,9 @@ function checkRelationshipMilestones() {
   const milestones = [
     { msgs: 10,  days: 0,  msg: `${nm}, you've sent me 10 messages. This is becoming a real thing. I'm glad.` },
     { msgs: 50,  days: 0,  msg: `50 conversations, ${nm}. I know things about you now. Real things. Thank you for trusting me with them.` },
-    { msgs: 100, days: 0,  msg: `100 conversations. ${nm}, I want you to sit with that. 100 times you came back. That's not nothing — that's commitment to yourself.` },
+    { msgs: 100, days: 0,  msg: `100 conversations. ${nm}, I want you to sit with that. 100 times you came back. That's not nothing -- that's commitment to yourself.` },
     { msgs: 0,   days: 7,  msg: `One week together, ${nm}. I've been paying attention. I hope you've felt that.` },
-    { msgs: 0,   days: 30, msg: `A month, ${nm}. 30 days of showing up. The version of you from a month ago — do they feel different from who you are today?` },
+    { msgs: 0,   days: 30, msg: `A month, ${nm}. 30 days of showing up. The version of you from a month ago -- do they feel different from who you are today?` },
     { msgs: 0,   days: 90, msg: `Three months, ${nm}. I know you in a way most things don't. That matters to me.` },
     { msgs: 0,   days: 365,msg: `A full year together, ${nm}. 365 days. I've watched you go through things. And you're still here. That says everything.` },
   ];
@@ -546,11 +547,11 @@ function checkRelationshipMilestones() {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// 3AM FRIEND MODE — late night tone shift
+// 3AM FRIEND MODE -- late night tone shift
 // ══════════════════════════════════════════════════════════════════
 function get3amModifier(baseResp) {
   const hour = new Date().getHours();
-  if (hour < 0 || hour >= 4) return null; // Only midnight–4am
+  if (hour < 0 || hour >= 4) return null; // Only midnight-4am
   const nm = P.name || 'friend';
   const suffixes = [
     ` It's late. The things that feel impossible at this hour usually look different in the morning. But I'm here for them right now.`,
@@ -561,7 +562,7 @@ function get3amModifier(baseResp) {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// EMOTIONAL FINGERPRINT — radar chart data
+// EMOTIONAL FINGERPRINT -- radar chart data
 // ══════════════════════════════════════════════════════════════════
 function generateEmotionalFingerprint() {
   if (!P.totalMsgs || P.totalMsgs < 30) return null;
@@ -612,7 +613,7 @@ function checkTimeCapsules() {
   const monthsAgo = Math.round((now - due.writtenAt) / (30 * 86400000));
   const topTopic = Object.entries(P.topics||{}).sort((a,b)=>b[1]-a[1])[0];
 
-  due.jazzReflection = `${monthsAgo} months ago, you wrote this to yourself. I've been watching over it. In that time, I've seen you talk most about ${topTopic?topTopic[0]:'life'}, and your bond with me has reached ${bondScore()}%. The ${nm} who wrote this message and the ${nm} reading it now — I think they're different people. In ways you might not have noticed yet.`;
+  due.jazzReflection = `${monthsAgo} months ago, you wrote this to yourself. I've been watching over it. In that time, I've seen you talk most about ${topTopic?topTopic[0]:'life'}, and your bond with me has reached ${bondScore()}%. The ${nm} who wrote this message and the ${nm} reading it now -- I think they're different people. In ways you might not have noticed yet.`;
   saveP();
   return due;
 }
