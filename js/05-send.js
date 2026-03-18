@@ -279,12 +279,16 @@ window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault();deferredPrompt=e;
   document.getElementById('install-bar').classList.add('show');
 });
-document.getElementById('inst-btn').addEventListener('click',async()=>{
-  if(!deferredPrompt)return;
-  deferredPrompt.prompt();
-  const{outcome}=await deferredPrompt.userChoice;
-  if(outcome==='accepted')toast('Jazz Buddy installed! 🎷');
-  deferredPrompt=null;
-  document.getElementById('install-bar').style.display='none';
-});
+var _instBtn=document.getElementById('inst-btn');
+if(_instBtn){
+  _instBtn.onclick=async function(){
+    if(!deferredPrompt)return;
+    deferredPrompt.prompt();
+    var r=await deferredPrompt.userChoice;
+    if(r.outcome==='accepted')toast('Jazz Buddy installed!');
+    deferredPrompt=null;
+    var ib=document.getElementById('install-bar');
+    if(ib)ib.style.display='none';
+  };
+}
 if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
