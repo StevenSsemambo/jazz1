@@ -118,11 +118,12 @@ function renderOB(){
     html+='</div>';
     body.innerHTML=html;
 
-    // Attach single listener to parent — works on ALL mobile browsers
-    var optsList=document.getElementById('ob-opts-list');
-    if(optsList){
-      var _opts=q.opts;
-      var _key=q.key;
+    // Use setTimeout(0) to ensure DOM is fully painted before attaching listener
+    var _opts=q.opts;
+    var _key=q.key;
+    setTimeout(function(){
+      var optsList=document.getElementById('ob-opts-list');
+      if(!optsList){ console.error('ob-opts-list not found'); return; }
       var _picked=false;
       optsList.addEventListener('click',function(e){
         if(_picked)return;
@@ -140,7 +141,7 @@ function renderOB(){
           target=target.parentElement;
         }
       });
-    }
+    },0); // end setTimeout
   }
 }
 
