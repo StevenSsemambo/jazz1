@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 16-v8-productivity.js
+ * Jazz Buddy -- 16-v8-productivity.js
  * V8 Productivity: Focus/Pomodoro, morning/evening rituals,
  * habit builder, decision journal, body scan,
  * weekly planning, voice memo flow
@@ -17,7 +17,7 @@ function startFocusMode(task, minutes) {
 
   const intros = [
     `Okay, ${nm}. ${focusState.duration} minutes. "${focusState.task}". That's the only thing that exists right now. I'll check in when the time is up. Go.`,
-    `Focus mode: ON. "${focusState.task}" — ${focusState.duration} minutes. Close everything else. I'll be here when you're done.`,
+    `Focus mode: ON. "${focusState.task}" -- ${focusState.duration} minutes. Close everything else. I'll be here when you're done.`,
     `${focusState.duration} minutes, ${nm}. Just "${focusState.task}". Nothing else. I'll come back for you.`,
   ];
 
@@ -84,13 +84,13 @@ function endFocusSession(completed) {
   if (completed) {
     const msgs = [
       `Time's up, ${nm}. ${focusState.duration} minutes on "${task}". How did it go? Did you stay with it?`,
-      `Done! ${focusState.duration} minutes. "${task}" — what happened? Tell me everything.`,
+      `Done! ${focusState.duration} minutes. "${task}" -- what happened? Tell me everything.`,
       `That's ${focusState.duration} minutes. You just did the thing. How do you feel?`,
     ];
     addMsg('b', rnd(msgs), 'et-goal');
     // Offer another block
     setTimeout(() => {
-      addMsg('b', `Want to do another block? We can go again — or we can debrief and stop here. Your call.`, 'et-calm');
+      addMsg('b', `Want to do another block? We can go again -- or we can debrief and stop here. Your call.`, 'et-calm');
       setQR([
         {l:'Another block!', t:`Let's do another ${focusState.duration}-minute block`},
         {l:'Done for now', t:'I am done for now, let me debrief'},
@@ -99,7 +99,7 @@ function endFocusSession(completed) {
       ]);
     }, 1200);
   } else {
-    addMsg('b', `You ended early. That's okay. What happened — did something come up, or did you lose focus?`, 'et-calm');
+    addMsg('b', `You ended early. That's okay. What happened -- did something come up, or did you lose focus?`, 'et-calm');
   }
 }
 
@@ -108,8 +108,8 @@ function endFocusSession(completed) {
 // ══════════════════════════════════════════════════════════════════
 let morningState = { active: false, step: 0, data: {} };
 const MORNING_STEPS = [
-  { id: 'gratitude', q: "Morning. Before anything else — name one thing you're genuinely grateful for right now. Small is fine.", opts: [] },
-  { id: 'intention', q: "Good. Now: what's your one true priority for today? Not your list — the one thing that, if you did it, the day would feel worth it.", opts: [] },
+  { id: 'gratitude', q: "Morning. Before anything else -- name one thing you're genuinely grateful for right now. Small is fine.", opts: [] },
+  { id: 'intention', q: "Good. Now: what's your one true priority for today? Not your list -- the one thing that, if you did it, the day would feel worth it.", opts: [] },
   { id: 'worry',     q: "Last one: what's the one thing you're worried about today? Name it so it doesn't follow you around unnamed.", opts: [] },
 ];
 
@@ -118,7 +118,7 @@ function startMorningRitual() {
   const nm = P.name || 'friend';
   const hour = new Date().getHours();
   const intro = hour < 12
-    ? `Morning, ${nm}. Let's start the day right — three questions, one minute each. No pressure, just honesty.`
+    ? `Morning, ${nm}. Let's start the day right -- three questions, one minute each. No pressure, just honesty.`
     : `Let's do a quick morning reset, ${nm}. Three questions. Just answer what's true.`;
   addMsg('b', intro, 'et-checkin');
   histAdd('b', intro, 'neutral', 'morningRitual');
@@ -158,7 +158,7 @@ function processMorningStep(text) {
 // ══════════════════════════════════════════════════════════════════
 let eveningState = { active: false, step: 0, data: {} };
 const EVENING_STEPS = [
-  { id: 'win1',    q: "Evening. Three wins from today — they can be tiny. First one?" },
+  { id: 'win1',    q: "Evening. Three wins from today -- they can be tiny. First one?" },
   { id: 'win2',    q: "Second win?" },
   { id: 'win3',    q: "Third win?" },
   { id: 'release', q: "Good. Now: what's one thing from today you want to put down? Something you're choosing not to carry into tomorrow." },
@@ -168,7 +168,7 @@ const EVENING_STEPS = [
 function startEveningRitual() {
   eveningState = { active: true, step: 0, data: {} };
   const nm = P.name || 'friend';
-  addMsg('b', `Evening, ${nm}. Let's close the day properly. Five quick things — wins, release, sleep check.`, 'et-checkin');
+  addMsg('b', `Evening, ${nm}. Let's close the day properly. Five quick things -- wins, release, sleep check.`, 'et-checkin');
   setTimeout(() => addMsg('b', EVENING_STEPS[0].q, 'et-checkin'), 700);
 }
 
@@ -194,7 +194,7 @@ function processEveningStep(text) {
     setTimeout(() => {
       addMsg('b', summary, 'et-checkin');
       setTimeout(() => {
-        addMsg('b', `One more thing — would you like me to tell you a sleep story? Just say the word.`, 'et-calm');
+        addMsg('b', `One more thing -- would you like me to tell you a sleep story? Just say the word.`, 'et-calm');
         setQR([{l:'Yes, a sleep story', t:'Tell me a sleep story please'}, {l:'No, I\'m good', t:'No I\'m good, goodnight Jazz'}]);
       }, 1500);
     }, 600);
@@ -205,9 +205,10 @@ function processEveningStep(text) {
 // ══════════════════════════════════════════════════════════════════
 // HABIT BUILDER
 // ══════════════════════════════════════════════════════════════════
-if (!P.habits) P.habits = [];
+// P.habits initialised lazily in buildHabit()
 
 function buildHabit(habitName, anchorBehavior, frequency) {
+  if(typeof P!=='undefined'&&!P.habits)P.habits=[];
   const habit = {
     id: Date.now(),
     name: habitName,
@@ -219,7 +220,7 @@ function buildHabit(habitName, anchorBehavior, frequency) {
     createdAt: Date.now(),
     status: 'active',
   };
-  if (!P.habits) P.habits = [];
+  // P.habits initialised lazily in buildHabit()
   P.habits.push(habit);
   saveP();
   memAdd(`Habit started: "${habitName}" anchored to "${anchorBehavior}"`, ['habit','routine'], 'excited', 'habit');
@@ -238,20 +239,21 @@ function checkHabitsDue() {
   if (daysSince <= 1) {
     due.streak++;
     saveP();
-    return `"${due.name}" — did you do it yesterday? Your streak is at ${due.streak} day${due.streak>1?'s':''}.`;
+    return `"${due.name}" -- did you do it yesterday? Your streak is at ${due.streak} day${due.streak>1?'s':''}.`;
   } else {
     due.streak = 0;
     saveP();
-    return `"${due.name}" — the habit you wanted to build. It's been ${daysSince} days. What got in the way?`;
+    return `"${due.name}" -- the habit you wanted to build. It's been ${daysSince} days. What got in the way?`;
   }
 }
 
 // ══════════════════════════════════════════════════════════════════
 // DECISION JOURNAL
 // ══════════════════════════════════════════════════════════════════
-if (!P.decisions) P.decisions = [];
+// P.decisions initialised lazily in saveDecision()
 
 function saveDecision(decision, options, reasoning, choice) {
+  if(typeof P!=='undefined'&&!P.decisions)P.decisions=[];
   const entry = {
     id: Date.now(),
     decision,
@@ -262,7 +264,7 @@ function saveDecision(decision, options, reasoning, choice) {
     reviewAt: Date.now() + 180 * 86400000, // 6 months
     reviewed: false,
   };
-  if (!P.decisions) P.decisions = [];
+  // P.decisions initialised lazily in saveDecision()
   P.decisions.push(entry);
   saveP();
   return entry;
@@ -284,9 +286,9 @@ function checkDecisionReviews() {
 // ══════════════════════════════════════════════════════════════════
 let bodyScanState = { active: false, step: 0, data: {} };
 const BODY_SCAN_STEPS = [
-  { id: 'head', area: 'head and neck', q: "Let's do a body scan. Close your eyes if you can. Start with your head and neck — what do you notice? Tension? Pain? Numbness? Looseness?" },
+  { id: 'head', area: 'head and neck', q: "Let's do a body scan. Close your eyes if you can. Start with your head and neck -- what do you notice? Tension? Pain? Numbness? Looseness?" },
   { id: 'chest', area: 'chest and breathing', q: "Move to your chest and breathing. Is your breath shallow or deep right now? Does your chest feel tight or open?" },
-  { id: 'stomach', area: 'stomach and gut', q: "Stomach. What's happening there — butterflies, tightness, emptiness, warmth, nothing?" },
+  { id: 'stomach', area: 'stomach and gut', q: "Stomach. What's happening there -- butterflies, tightness, emptiness, warmth, nothing?" },
   { id: 'hands', area: 'hands and arms', q: "Hands and arms. Tense? Restless? Heavy? What do you notice?" },
   { id: 'overall', area: 'overall', q: "Overall body. If your whole body had one word to describe how it feels right now, what would it be?" },
 ];
@@ -330,7 +332,7 @@ function processBodyScanStep(text) {
     }
     const nm = P.name || 'friend';
     let summary = `Thank you for going there with me, ${nm}. Your body said:\n\nHead: ${d.head} · Chest: ${d.chest} · Stomach: ${d.stomach} · Hands: ${d.hands} · Overall: ${d.overall}.`;
-    if (bodyEmotion) summary += `\n\nI notice some signals that often come with ${bodyEmotion}. Your body is not wrong — it's picking up something real. What does that tell you?`;
+    if (bodyEmotion) summary += `\n\nI notice some signals that often come with ${bodyEmotion}. Your body is not wrong -- it's picking up something real. What does that tell you?`;
     else summary += `\n\nWhat does your body's wisdom say about how you're actually doing right now?`;
     setTimeout(() => {
       addMsg('b', summary, 'et-calm');
@@ -349,9 +351,9 @@ function processBodyScanStep(text) {
 // ══════════════════════════════════════════════════════════════════
 let weeklyPlanState = { active: false, step: 0, data: {} };
 const WEEKLY_PLAN_STEPS = [
-  { id: 'priorities', q: "Monday. New week. What are your three real priorities this week — the ones that actually matter?" },
+  { id: 'priorities', q: "Monday. New week. What are your three real priorities this week -- the ones that actually matter?" },
   { id: 'worry',      q: "What's the one thing you're most worried about this week?" },
-  { id: 'lookForward',q: "What are you looking forward to — even something small?" },
+  { id: 'lookForward',q: "What are you looking forward to -- even something small?" },
   { id: 'letGo',      q: "What do you want to let go of from last week that you don't want to carry into this one?" },
   { id: 'goodWeek',   q: "Last one: what does a good week look like for you? What would make Friday feel like a win?" },
 ];
@@ -359,7 +361,7 @@ const WEEKLY_PLAN_STEPS = [
 function startWeeklyPlan() {
   weeklyPlanState = { active: true, step: 0, data: {} };
   const nm = P.name || 'friend';
-  addMsg('b', `Monday, ${nm}. Let's set the week properly. Five questions — takes three minutes. Worth every second.`, 'et-goal');
+  addMsg('b', `Monday, ${nm}. Let's set the week properly. Five questions -- takes three minutes. Worth every second.`, 'et-goal');
   setTimeout(() => addMsg('b', WEEKLY_PLAN_STEPS[0].q, 'et-goal'), 700);
 }
 
