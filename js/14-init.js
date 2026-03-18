@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 14-init.js
- * App initialisation — runs on page load
+ * Jazz Buddy -- 14-init.js
+ * App initialisation -- runs on page load
  * Checks for returning session, delegates to auth
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
@@ -10,10 +10,15 @@
 // If a user session exists → restore it and launch app directly.
 // If no session → splash screen stays visible (default HTML state).
 function init() {
+  // Init modules that need DB (called after 01-core.js is loaded)
+  if(typeof initVS === 'function') initVS();
+  if(typeof initCUST === 'function') initCUST();
+  if(typeof _loadJournalEntries === 'function') _loadJournalEntries();
+
   const currentUser = localStorage.getItem('jb_currentUser');
 
   if (!currentUser) {
-    // No session — splash is already visible by default, focus the name input
+    // No session -- splash is already visible by default, focus the name input
     setTimeout(() => {
       const nameEl = document.getElementById('sl-name');
       if (nameEl) nameEl.focus();
@@ -21,7 +26,7 @@ function init() {
     return;
   }
 
-  // Returning session — restore prefix and data, then launch
+  // Returning session -- restore prefix and data, then launch
   window._userPrefix = 'jb_' + currentUser + '_';
 
   // Load stored data into runtime vars
