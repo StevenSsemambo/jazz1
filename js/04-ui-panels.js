@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 04-ui-panels.js
+ * Jazz Buddy -- 04-ui-panels.js
  * UI functions, onboarding, all panel renderers
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
@@ -47,14 +47,14 @@ function addMsg(role,text,tone='et-warm',memNote=null,extra=null){
   chatEl.scrollTo({top:chatEl.scrollHeight,behavior:'smooth'});
 
   // AUTO-SPEAK: Jazz reads every bot response aloud
-  if(isBuddy && text && (VS.ttsEnabled || VS.voiceMode)){
+  if(isBuddy && text && typeof VS!=='undefined' && (VS.ttsEnabled || VS.voiceMode)){
     // Small delay so the message renders first
     setTimeout(()=>{
       showSpeakingWave(d);
       jazzSpeak(text, ()=>{
         clearSpeakingWave();
         // Update voice mode overlay
-        if(VS.voiceMode){
+        if(typeof VS!=='undefined' && VS.voiceMode){
           const lastJazz=document.getElementById('vmo-last-jazz');
           if(lastJazz)lastJazz.textContent=text.slice(0,200)+(text.length>200?'...':'');
         }
@@ -80,7 +80,7 @@ function refreshStats(){
   document.getElementById('sv-days').textContent=days;
   document.getElementById('sv-msgs').textContent=P.totalMsgs;
   document.getElementById('sv-bond').textContent=bond+'%';
-  document.getElementById('sv-mood').textContent=moodEmoji[P.mood]||'—';
+  document.getElementById('sv-mood').textContent=moodEmoji[P.mood]||'--';
   document.getElementById('sv-streak').textContent='🔥'+P.streakDays;
   document.getElementById('sv-goals').textContent=(P.goals||[]).filter(g=>g.status==='active').length;
 }
@@ -93,7 +93,7 @@ function toast(msg){
 function newChat(){
   chatEl.innerHTML='';
   const nm=P.name||'friend';
-  const opens=[`Fresh start! What's on your mind, ${nm}?`,`New conversation — I'm all yours. What's going on, ${nm}?`,`Let's talk. What's happening in your world, ${nm}?`];
+  const opens=[`Fresh start! What's on your mind, ${nm}?`,`New conversation -- I'm all yours. What's going on, ${nm}?`,`Let's talk. What's happening in your world, ${nm}?`];
   addMsg('b',rnd(opens),'et-warm');
   histAdd('b',opens[0],'neutral','greeting');
   setQR(getQR('greeting'));
@@ -138,7 +138,7 @@ function renderProfile(){
         <div class="hg-card"><div class="hg-val">${P.totalMsgs}</div><div class="hg-lbl">Messages</div></div>
         <div class="hg-card"><div class="hg-val">${P.streakDays}</div><div class="hg-lbl">Streak days</div></div>
         <div class="hg-card"><div class="hg-val">${days_since(P.joinDate)+1}</div><div class="hg-lbl">Days together</div></div>
-        <div class="hg-card"><div class="hg-val">${topMood?topMood[0]:'—'}</div><div class="hg-lbl">Most common mood</div></div>
+        <div class="hg-card"><div class="hg-val">${topMood?topMood[0]:'--'}</div><div class="hg-lbl">Most common mood</div></div>
       </div>
     </div>
   `;
@@ -156,10 +156,10 @@ function renderHealth(){
     <div>
       <div class="psec-label">Wellbeing Overview</div>
       <div class="hgrid">
-        <div class="hg-card"><div class="hg-val">${ws!=null?ws+'%':'—'}</div><div class="hg-lbl">Wellbeing score</div></div>
-        <div class="hg-card"><div class="hg-val">${h.avgSleep!=null?h.avgSleep+'/10':'—'}</div><div class="hg-lbl">Avg sleep</div></div>
-        <div class="hg-card"><div class="hg-val">${h.avgStress!=null?h.avgStress+'/10':'—'}</div><div class="hg-lbl">Avg stress</div></div>
-        <div class="hg-card"><div class="hg-val">${h.avgEnergy!=null?h.avgEnergy+'/10':'—'}</div><div class="hg-lbl">Avg energy</div></div>
+        <div class="hg-card"><div class="hg-val">${ws!=null?ws+'%':'--'}</div><div class="hg-lbl">Wellbeing score</div></div>
+        <div class="hg-card"><div class="hg-val">${h.avgSleep!=null?h.avgSleep+'/10':'--'}</div><div class="hg-lbl">Avg sleep</div></div>
+        <div class="hg-card"><div class="hg-val">${h.avgStress!=null?h.avgStress+'/10':'--'}</div><div class="hg-lbl">Avg stress</div></div>
+        <div class="hg-card"><div class="hg-val">${h.avgEnergy!=null?h.avgEnergy+'/10':'--'}</div><div class="hg-lbl">Avg energy</div></div>
       </div>
     </div>
     <div>
@@ -182,7 +182,7 @@ function renderHealth(){
     <div>
       <div class="psec-label">Mood history (last 20)</div>
       <div class="mood-hist">
-        <div class="mood-dots">${recentMoods.length?recentMoods.map(m=>`<div class="md" style="height:${18+Math.random()*22}px;background:${moodColors[m.m]||'#b2bec3'};flex:1;border-radius:3px" title="${m.m}"></div>`).join(''):'<span style="font-size:12px;color:var(--tx4)">No mood data yet — just keep talking to Jazz</span>'}</div>
+        <div class="mood-dots">${recentMoods.length?recentMoods.map(m=>`<div class="md" style="height:${18+Math.random()*22}px;background:${moodColors[m.m]||'#b2bec3'};flex:1;border-radius:3px" title="${m.m}"></div>`).join(''):'<span style="font-size:12px;color:var(--tx4)">No mood data yet -- just keep talking to Jazz</span>'}</div>
       </div>
     </div>
     ${P.moodHist.length>10?`<div class="insight"><div class="insight-title">💡 Health insight</div><div class="insight-text">${getHealthInsight()}</div></div>`:''}
@@ -209,9 +209,9 @@ function getHealthInsight(){
   const topMood=Object.entries(moodCounts).sort((a,b)=>b[1]-a[1])[0];
   if(h.avgSleep&&h.avgSleep<5)return "Your sleep quality is quite low. Poor sleep is one of the biggest drivers of low mood and high stress. This might be worth addressing first.";
   if(h.avgStress&&h.avgStress>7)return "Your stress levels are consistently high. Prolonged high stress has real physical and mental effects. What's the biggest driver?";
-  if(topMood&&topMood[0]==='anxious'&&topMood[1]>3)return "You've been feeling anxious quite a bit lately. Anxiety is manageable — but it helps to identify the main sources.";
+  if(topMood&&topMood[0]==='anxious'&&topMood[1]>3)return "You've been feeling anxious quite a bit lately. Anxiety is manageable -- but it helps to identify the main sources.";
   if(topMood&&topMood[0]==='happy'&&topMood[1]>5)return "Your mood has been mostly positive lately. That's genuinely good. Keep doing what you're doing.";
-  return "Keep logging your health data — the more I know, the more I can help you understand patterns in how you're feeling.";
+  return "Keep logging your health data -- the more I know, the more I can help you understand patterns in how you're feeling.";
 }
 
 // ── PANEL: MEMORIES ───────────────────────────────────────────────
@@ -223,12 +223,12 @@ function renderMem(){
 
   document.getElementById('pb-mem').innerHTML=`
     <div style="font-size:12.5px;color:var(--tx3);background:var(--s1);border:1px solid var(--b1);border-radius:var(--rs);padding:10px 12px">
-      Jazz stores important things you share — goals, feelings, experiences. These are ${MEMS.length} things Jazz remembers about you.
+      Jazz stores important things you share -- goals, feelings, experiences. These are ${MEMS.length} things Jazz remembers about you.
     </div>
     ${pinned.length?`<div><div class="psec-label">📌 Pinned</div>${pinned.map(m=>`<div class="mem-item"><div class="mtag">${m.tags[0]||'note'} · ${m.emotion}</div>${m.text.slice(0,120)}${m.text.length>120?'...':''}<div class="mem-time">${timeAgo(m.ts)}</div></div>`).join('')}</div>`:''}
     <div>
       <div class="psec-label">Recent memories (${Math.min(regular.length,20)} of ${MEMS.length})</div>
-      ${regular.length?regular.slice(0,20).map(m=>`<div class="mem-item"><div class="mtag">${m.tags[0]||'note'} · ${m.emotion}</div>${m.text.slice(0,120)}${m.text.length>120?'...':''}<div class="mem-time">${timeAgo(m.ts)}</div></div>`).join(''):'<div style="font-size:13px;color:var(--tx4);padding:12px">No memories yet — share something meaningful with Jazz and it will be remembered here.</div>'}
+      ${regular.length?regular.slice(0,20).map(m=>`<div class="mem-item"><div class="mtag">${m.tags[0]||'note'} · ${m.emotion}</div>${m.text.slice(0,120)}${m.text.length>120?'...':''}<div class="mem-time">${timeAgo(m.ts)}</div></div>`).join(''):'<div style="font-size:13px;color:var(--tx4);padding:12px">No memories yet -- share something meaningful with Jazz and it will be remembered here.</div>'}
     </div>
     <button onclick="if(confirm('Clear all memories?')){MEMS=[];DB.s(\'MEMS\',MEMS);renderMem();toast(\'Memories cleared\');}" style="background:rgba(214,48,49,.1);border:1px solid rgba(214,48,49,.3);color:#ff7675;border-radius:var(--rs);padding:8px 14px;font-size:12px;cursor:pointer;font-family:var(--fb)">Clear all memories</button>
   `;
@@ -274,7 +274,7 @@ function renderGoals(){
           <button class="action-btn" onclick="goalAction('${g.id}','pause')" style="font-size:11px">Pause</button>
         </div>
       </div>
-    `).join('')}</div>`:'<div style="font-size:13px;color:var(--tx3);padding:8px 0">No active goals yet. Add one above — or just tell Jazz about a goal in chat. It gets tracked automatically.</div>'}
+    `).join('')}</div>`:'<div style="font-size:13px;color:var(--tx3);padding:8px 0">No active goals yet. Add one above -- or just tell Jazz about a goal in chat. It gets tracked automatically.</div>'}
     ${done.length?`<div><div class="psec-label">Completed 🏆 (${done.length})</div>${done.map(g=>`<div class="goal-card goal-status-done"><div class="goal-title">✓ ${g.title}</div><div class="goal-meta"><span>${g.category}</span></div></div>`).join('')}</div>`:'' }
   `;
 }
@@ -288,7 +288,7 @@ function addGoalFromPanel(){
   toast('Goal set! 🎯 Jazz will check in on it.');
   refreshStats();
   setTimeout(()=>{
-    addMsg('b',`Goal locked in: *"${title}"*. ${why?`The reason — "${why}" — is what will pull you forward when motivation dips. `:''}I'll check in on this in a few days. What's the very first step?`,'et-goal');
+    addMsg('b',`Goal locked in: *"${title}"*. ${why?`The reason -- "${why}" -- is what will pull you forward when motivation dips. `:''}I'll check in on this in a few days. What's the very first step?`,'et-goal');
     histAdd('b','','neutral','goals');
     setQR(getQR('goals'));
   },400);
@@ -301,7 +301,7 @@ function goalAction(id,action){
     toast('Goal completed! 🏆');
     closePanel();
     setTimeout(()=>{
-      addMsg('b',`YOU DID IT! 🏆 *"${g.title}"* — DONE. That is not nothing. That is real. How does it feel?`,'et-play');
+      addMsg('b',`YOU DID IT! 🏆 *"${g.title}"* -- DONE. That is not nothing. That is real. How does it feel?`,'et-play');
       histAdd('b','','neutral','shareGoodNews');
     },400);
   }else if(action==='pause'){
@@ -310,7 +310,7 @@ function goalAction(id,action){
     renderGoals();
   }else if(action==='checkin'){
     closePanel();
-    const msgs=[`Let's check in on *"${g.title}"*. Where are you with it? Be honest — progress, setbacks, all of it.`,`*"${g.title}"* — update time. What's happened since you set this goal?`];
+    const msgs=[`Let's check in on *"${g.title}"*. Where are you with it? Be honest -- progress, setbacks, all of it.`,`*"${g.title}"* -- update time. What's happened since you set this goal?`];
     addMsg('b',rnd(msgs),'et-goal');
     histAdd('b','','neutral','goalProgress');
     setQR(getQR('goalProgress'));
