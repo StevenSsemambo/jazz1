@@ -203,7 +203,7 @@ function detectEmotion(txt){
 const IM={
   greeting:{w:10,s:['hi','hello','hey','hiya','sup','wassup','good morning','good afternoon','good evening','morning','evening','howdy','yo ','hi there','hey there','greetings','hi jazz','hey jazz','hello jazz']},
   farewell:{w:10,s:['bye','goodbye','see you','see ya','later','gotta go','take care','night','goodnight','good night','talk later','cya','gtg','leaving now','heading out','ttyl']},
-  howAreYou:{w:9,s:['how are you','how are u','you okay','you good','how r u','hows it going','how is it going','hows your day','how was your day','how are things','you doing okay','you alright','you doing well']},
+  howAreYou:{w:12,s:['how are you','how are u','you okay','you good','how r u','hows it going','how is it going','hows your day','how was your day','how are things','you doing okay','you alright','you doing well']},
   askName:{w:10,s:['your name','who are you','what are you','what is your name','what are you called','call you','who am i talking to','introduce yourself']},
   myName:{w:9,s:['my name is','i am called','call me','im called','name is','people call me','you can call me','known as']},
   venting:{w:9,s:['i feel','feeling','so stressed','cant handle','falling apart','breaking down','too much','overwhelmed','cant cope','im done','had enough','everything is','nothing is right','i just need','i dont know what','cant take it','really struggling','having a hard time','rough day','rough week','rough time']},
@@ -221,7 +221,7 @@ const IM={
   family:{w:9,s:['my mom','my dad','my parents','my family','my sister','my brother','my son','my daughter','my husband','my wife','my children','home problems','family problems','family drama','parent issues']},
   goals:{w:8,s:['goal','dream','want to be','plan to','future plans','career goals','life goals','want to achieve','my ambition','aspire to','working towards','saving for','building towards','long term']},
   gratitude:{w:7,s:['thank you','thanks jazz','appreciate you','you helped','love talking to you','glad i have you','you always understand','you make me feel','you are amazing','means a lot']},
-  joke:{w:7,s:['joke','tell me a joke','make me laugh','something funny','cheer me up','i need a laugh','funny story','humor me','entertain me','make me smile']},
+  joke:{w:6,s:['joke','humor me','entertain me']},
   philosophical:{w:7,s:['meaning of life','why are we here','what is the point','existence','consciousness','reality','universe','truth','purpose of life','why do we exist','is life worth','big questions','deep question','think about life']},
   bored:{w:7,s:['bored','nothing to do','so bored','boring day','killing time','entertain me','what should i do','nothing is happening','nothing interesting']},
   selfEsteem:{w:10,s:['im ugly','im fat','im stupid','im worthless','im not good enough','i hate myself','im a failure','nobody likes me','im terrible','im useless','im pathetic','im so bad at everything','cant do anything right','not worth it','no one would miss me','not smart enough','not attractive','never good enough']},
@@ -265,12 +265,12 @@ const IM={
   creative:{w:6,s:['art','draw','paint','write','music','dance','create','design','hobby','craft','photography','film','poetry','creative','sketch','play']},
   friendship:{w:7,s:['friend','friends','friendship','best friend','buddy','hang out','social','party','group','mate','pal','companion','crew','squad']},
   lifePhilosophy:{w:7,s:['life','purpose','meaning','believe','opinion','philosophy','mind','think','perspective','view','lesson','wisdom','truth','change','grow']},
-  playful:{w:8,s:['haha','lol','funny','joke','laugh','random','bored','game','fun','silly','weird','crazy','wild','hilarious','ridiculous']},
+  playful:{w:8,s:['haha','lol','random','bored','game','fun','silly','weird','crazy','wild','hilarious','ridiculous']},
   morning:{w:8,s:['good morning','morning','wake up','just woke','start of day','early','today is going to']},
   evening:{w:8,s:['good evening','evening','tonight','night time','end of day','winding down','before bed','good night']},
   world:{w:6,s:['world','news','politics','society','humanity','global','current events','happening','country','government','economy']},
   opinion:{w:7,s:['what do you think','your opinion','agree','disagree','hot take','unpopular opinion','debate','argue','perspective']},
-  casual:{w:3,s:['just chatting','nothing much','bored','random','talk','chat','conversation','whats up','sup','wassup']},
+  casual:{w:3,s:['just chatting','nothing much','random','talk','chat','whats up','sup','wassup']},
 
   // ── DEEP LIFE TOPICS ──────────────────────────────────────────────
   love:{w:8,s:['love','in love','relationship','partner','crush','romantic','dating','heartfelt','feelings for','fall in love','soulmate','together','broke up with','my boyfriend','my girlfriend','my husband','my wife','my ex']},
@@ -302,10 +302,10 @@ const IM={
   toughLove:{w:5,s:['be honest with me','give it to me straight','no sugarcoat','real talk','truth is','brutal honesty']},
   ubuntu:{w:7,s:['community','helping others','giving back','ubuntu','together','solidarity','support system','circle','my people looked out']},
   social:{w:6,s:['social media','instagram','twitter','tiktok','followers','online','comparison','highlight reel','performance','authentic']},
-  jazzThinks:{w:3,s:['what do you think','jazz what','your opinion','do you believe','are you']},
+  jazzThinks:{w:3,s:['what do you think','jazz what','your opinion','do you believe']},
 
   // ── FUN & COMEDY INTENTS ──────────────────────────────────────────
-  tellJoke:{w:10,s:['tell me a joke','make me laugh','say something funny','cheer me up','i need a laugh','got any jokes','joke please','funny','make me smile','crack a joke','joke time']},
+  tellJoke:{w:12,s:['tell me a joke','make me laugh','say something funny','cheer me up','i need a laugh','got any jokes','joke please','funny','make me smile','crack a joke','joke time','tell me something funny','be funny']},
   tellStory:{w:10,s:['tell me a story','tell a story','story time','share a story','interesting story','bedtime story','tell me something interesting','entertain me','tell me about']},
   boredFix:{w:9,s:['so bored','bored out','nothing to do','killing time','bored as','bored af','dying of boredom','entertain me','boredom','got nothing']},
   moodLift:{w:9,s:['cheer me up','lift my mood','make me feel better','i need something positive','brighten my day','boost my mood','i need cheering','feeling low','need a pick me up']},
