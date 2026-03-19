@@ -109,20 +109,73 @@
         <div class="jst"><span class="sdot"></span><span id="jst-txt">Here for you</span></div>
       </div>
     </div>
-    <div class="hdr-r">
+    <div class="hdr-r" id="hdr-r">
       <button class="hbtn" id="voice-toggle-btn" onclick="toggleVoiceMode()" title="Voice mode">🔊</button>
       <button class="hbtn" onclick="startCheckIn()" title="Daily Check-in">☀️</button>
-      <button class="hbtn" onclick="openPanel('journal')" title="Journal">📓</button>
-      <button class="hbtn" onclick="openPanel('affirmations')" title="Affirmations">✨</button>
-      <button class="hbtn" onclick="openPanel('goals')" title="Goals">🎯</button>
-      <button class="hbtn" id="hlth-btn" onclick="openPanel('health')" title="Health Dashboard">🏥</button>
+      <button class="hbtn" onclick="newChat()" title="New chat">✏️</button>
       <button class="hbtn" id="prof-btn" onclick="openPanel('profile')" title="Your Profile"><span>👤</span><span class="badge" id="notif-badge" style="display:none"></span></button>
-      <button class="hbtn" onclick="openPanel('mem')" title="Memories">💭</button>
-      <button class="hbtn" onclick="openPanel('settings')" title="Settings">⚙️</button>
-      <button class="hbtn" onclick="openPanel('letter')" title="Letter from Jazz">📝</button>
-      <button class="hbtn" onclick="openPanel('bookmarks')" title="Highlights">💾</button>
-      <button class="hbtn" onclick="openPanel('fingerprint')" title="Emotional Fingerprint">🔮</button>
-      <button class="hbtn" onclick="newChat()" title="New chat">✨</button>
+      <button class="hbtn" onclick="openMoreMenu()" title="More" style="font-size:18px;font-weight:700">⋯</button>
+    </div>
+  </div>
+
+  <!-- MORE MENU -->
+  <div id="more-menu-overlay" onclick="closeMoreMenu()"></div>
+  <div id="more-menu">
+    <div class="more-hdr">
+      <span class="more-title">Menu</span>
+      <button class="more-close" onclick="closeMoreMenu()">✕</button>
+    </div>
+    <div class="more-section-title">Daily</div>
+    <div class="more-item" onclick="closeMoreMenu();startCheckIn()">
+      <span class="more-item-icon">☀️</span>
+      <span class="more-item-label">Daily Check-in</span>
+    </div>
+    <div class="more-item" onclick="closeMoreMenu();openPanel('goals')">
+      <span class="more-item-icon">🎯</span>
+      <span class="more-item-label">Goals</span>
+    </div>
+    <div class="more-item" onclick="closeMoreMenu();openPanel('journal')">
+      <span class="more-item-icon">📓</span>
+      <span class="more-item-label">Journal</span>
+    </div>
+    <div class="more-section-title">Insights</div>
+    <div class="more-item" onclick="closeMoreMenu();openPanel('health')">
+      <span class="more-item-icon">🏥</span>
+      <span class="more-item-label">Health Dashboard</span>
+    </div>
+    <div class="more-item" onclick="closeMoreMenu();openPanel('profile')">
+      <span class="more-item-icon">👤</span>
+      <span class="more-item-label">Your Profile</span>
+    </div>
+    <div class="more-item" onclick="closeMoreMenu();openPanel('fingerprint')">
+      <span class="more-item-icon">🔮</span>
+      <span class="more-item-label">Emotional Fingerprint</span>
+    </div>
+    <div class="more-item" onclick="closeMoreMenu();openPanel('mem')">
+      <span class="more-item-icon">💭</span>
+      <span class="more-item-label">Memories</span>
+    </div>
+    <div class="more-section-title">Jazz</div>
+    <div class="more-item" onclick="closeMoreMenu();openPanel('affirmations')">
+      <span class="more-item-icon">✨</span>
+      <span class="more-item-label">Affirmations</span>
+    </div>
+    <div class="more-item" onclick="closeMoreMenu();openPanel('letter')">
+      <span class="more-item-icon">📝</span>
+      <span class="more-item-label">Letter from Jazz</span>
+    </div>
+    <div class="more-item" onclick="closeMoreMenu();openPanel('bookmarks')">
+      <span class="more-item-icon">💾</span>
+      <span class="more-item-label">Saved Highlights</span>
+    </div>
+    <div class="more-section-title">Settings</div>
+    <div class="more-item" onclick="closeMoreMenu();openPanel('settings')">
+      <span class="more-item-icon">⚙️</span>
+      <span class="more-item-label">Settings & Style</span>
+    </div>
+    <div class="more-item" onclick="closeMoreMenu();signOut()">
+      <span class="more-item-icon">🚪</span>
+      <span class="more-item-label">Sign Out</span>
     </div>
   </div>
   <div id="sbar">
