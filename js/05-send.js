@@ -92,12 +92,24 @@ function send(){
     const{text:resp,tone}=compose(intent.primary,emotion,intensity,text);
     let resp_tone=tone;
 
+    // Apply human layer — may override response or add addon
+    const humanResult = (typeof applyHumanLayer==='function')
+      ? applyHumanLayer(resp, intent.primary, emotion, text, P.name||'friend')
+      : {override:null, addon:null};
+
+    const finalResp = humanResult.override || resp;
+
     // Memory surface (only for meaningful exchanges, not every message)
     const rec=intent.primary!=='memory'?memRecall(text,emotion,[]):null;
     const memNote=rec&&rec.surfaced===0&&rec.importance>6?`Earlier: "${rec.text.slice(0,55)}..."`:null;
 
-    addMsg('b',resp,tone,memNote);
-    histAdd('b',resp,emotion,intent.primary);
+    addMsg('b',finalResp,tone,memNote);
+    histAdd('b',finalResp,emotion,intent.primary);
+
+    // Human layer addon (opinion, pattern, memory, meta)
+    if(humanResult.addon){
+      setTimeout(()=>addMsg('b',humanResult.addon.text,humanResult.addon.tone||'et-deep'),humanResult.addon.delay||2500);
+    }
 
     // Crisis: show resource directory
     if(intent.primary==='crisis'){
