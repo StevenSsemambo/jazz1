@@ -282,19 +282,19 @@ function send(){
 }
 
 // ── PHASE 7: PWA SETUP ────────────────────────────────────────────
-var deferredPrompt=null;
+window.deferredPrompt=window.deferredPrompt||null;
 window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();deferredPrompt=e;
+  e.preventDefault();window.deferredPrompt=e;
   document.getElementById('install-bar').classList.add('show');
 });
 var _instBtn=document.getElementById('inst-btn');
 if(_instBtn){
   _instBtn.onclick=async function(){
-    if(!deferredPrompt)return;
-    deferredPrompt.prompt();
-    var r=await deferredPrompt.userChoice;
+    if(!window.deferredPrompt)return;
+    window.deferredPrompt.prompt();
+    var r=await window.deferredPrompt.userChoice;
     if(r.outcome==='accepted')toast('Jazz Buddy installed!');
-    deferredPrompt=null;
+    window.deferredPrompt=null;
     var ib=document.getElementById('install-bar');
     if(ib)ib.style.display='none';
   };
