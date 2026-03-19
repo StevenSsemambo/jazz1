@@ -63,6 +63,7 @@ function loadUserData(username) {
   const storedP = localStorage.getItem(prefix + 'P');
   if (storedP) {
     try { Object.assign(P, JSON.parse(storedP)); } catch(e) { console.warn('Profile load err', e); }
+  if(typeof sanitizeP==='function')sanitizeP();
   }
 
   // Memories
