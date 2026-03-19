@@ -50,7 +50,7 @@ function loadVoices() {
       if (picked) break;
     }
     if (!picked) picked = VS.voices.find(v => v.lang.startsWith('en')) || VS.voices[0];
-    if (picked) { VS.selectedVoice = picked.name; DB.s('vs_voice', picked.name); }
+    if (picked) { VS.selectedVoice = picked.name; if(typeof DB!=='undefined')DB.s('vs_voice', picked.name); }
   }
 }
 
