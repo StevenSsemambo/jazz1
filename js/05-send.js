@@ -282,7 +282,7 @@ function send(){
 }
 
 // ── PHASE 7: PWA SETUP ────────────────────────────────────────────
-let deferredPrompt=null;
+var deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault();deferredPrompt=e;
   document.getElementById('install-bar').classList.add('show');
