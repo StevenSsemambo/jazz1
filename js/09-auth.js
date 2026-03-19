@@ -191,28 +191,13 @@ function startAppSession() {
   const nm = P.name || 'friend';
   let msg;
 
-  if (h < 0.5) {
-    msg = `Hey ${nm}! You're back. What's on your mind?`;
-  } else if (typeof HIST !== 'undefined' && HIST.length > 10 && typeof getPredictiveGreeting === 'function') {
-    msg = getPredictiveGreeting(nm);
-  } else if (h < 3)  { msg = `${nm}! Good to see you. How has the day been?`; }
-  else if (h < 24)   { msg = `Hey ${nm}! How has the rest of your day been?`; }
-  else if (h < 48)   { msg = `${nm}! It's been a day. I've been thinking about you. How are you?`; }
-  else if (h < 96)   { msg = `${nm}! It's been a couple of days. What's been happening?`; }
-  else if (h < 168)  { msg = `${nm}! A whole week. I've genuinely missed you. What have I missed?`; }
-  else               { msg = `${nm}! It's been a while. I'm really glad you came back.`; }
+  // Try continuity opener first (Jazz kept thinking about last conversation)
+  const continuityMsg = (h > 6 && typeof getContinuityOpener==='function') ? getContinuityOpener(nm, h) : null;
+  // Then try proactive opener (Jazz initiates with something specific)
+  const proactiveMsg = (typeof getProactiveOpening==='function') ? getProactiveOpening(nm, h) : null;
+  msg = continuityMsg || proactiveMsg || (h < 0.5 ? `Hey ${nm}! You're back. What's on your mind?` : `${nm}. Good to have you back. What's going on?`);
 
-  // Append goal/thread context
-  if (typeof lastUserMsg === 'function') {
-    const lastU = lastUserMsg();
-    if (lastU) {
-      const d = typeof days_since === 'function' ? days_since(lastU.ts) : 0;
-      if (d > 0 && d < 7 && ['venting','mentalHealth','grief','goals','relationships'].includes(lastU.intent)) {
-        const topicLabel = { goals:'your goals', relationships:'a relationship situation', grief:'grief', mentalHealth:'how you were feeling', venting:'something difficult' }[lastU.intent] || 'something';
-        msg += ` Last time you were dealing with ${topicLabel}. How has that been?`;
-      }
-    }
-  }
+  // Context handled by proactive/continuity opener above
 
   // Goal check
   const overdueGoals = (P.goals || []).filter(g => g.status === 'active' && g.nextCheckIn && g.nextCheckIn < Date.now());
