@@ -328,6 +328,36 @@ function compose(intent,emotion,intensity,text){
   else if(intent==='evening'){pool=RL2.evening.any;tone='et-warm';}
   else if(intent==='world'){pool=RL2.world.any;tone='et-deep';}
   else if(intent==='opinion'){pool=RL2.opinion.any;tone='et-firm';}
+  else if(intent==='love'){pool=RL3.love.any;tone='et-care';}
+  else if(intent==='ambition'){pool=RL3.ambition.any;tone='et-firm';}
+  else if(intent==='failure'){pool=RL3.failure.any;tone='et-care';}
+  else if(intent==='fear'){pool=RL3.fear.any;tone='et-calm';}
+  else if(intent==='change'){pool=RL3.change.any;tone='et-deep';}
+  else if(intent==='time'){pool=RL3.time.any;tone='et-deep';}
+  else if(intent==='africa'){pool=RL3.africa.any;tone='et-warm';}
+  else if(intent==='spiritual'){pool=RL3.spiritual.any;tone='et-deep';}
+  else if(intent==='money_deep'){pool=RL3.money_deep.any;tone='et-calm';}
+  else if(intent==='mentalHealthReal'){pool=RL3.mentalHealthReal.any;tone='et-care';}
+  else if(intent==='purpose'){pool=RL3.purpose.any;tone='et-deep';}
+  else if(intent==='education'){pool=RL3.education.any;tone='et-warm';}
+  else if(intent==='aging'){pool=RL3.aging.any;tone='et-deep';}
+  else if(intent==='nostalgia'){pool=RL3.nostalgia.any;tone='et-warm';}
+  else if(intent==='conflict'){pool=RL3.conflict.any;tone='et-care';}
+  else if(intent==='belonging'){pool=RL3.belonging.any;tone='et-deep';}
+  else if(intent==='selfaware'){pool=RL3.selfaware.any;tone='et-deep';}
+  else if(intent==='happiness'){pool=RL3.happiness.any;tone='et-warm';}
+  else if(intent==='dailyLife'){pool=RL3.dailyLife.any;tone='et-warm';}
+  else if(intent==='profound'){pool=RL3.profound.any;tone='et-deep';}
+  else if(intent==='dreams'){pool=RL3.dreams.any;tone='et-warm';}
+  else if(intent==='nature'){pool=RL3.nature.any;tone='et-calm';}
+  else if(intent==='conversation'){pool=RL3.conversation.any;tone='et-deep';}
+  else if(intent==='workReal'){pool=RL3.workReal.any;tone='et-calm';}
+  else if(intent==='family_deep'){pool=RL3.family_deep.any;tone='et-care';}
+  else if(intent==='longing_deep'){pool=RL3.longing_deep.any;tone='et-care';}
+  else if(intent==='toughLove'){pool=RL3.toughLove.any;tone='et-firm';}
+  else if(intent==='ubuntu'){pool=RL3.ubuntu.any;tone='et-warm';}
+  else if(intent==='social'){pool=RL3.social.any;tone='et-calm';}
+  else if(intent==='jazzThinks'){pool=RL3.jazzThinks.any;tone='et-deep';}
   else if(intent==='casual'){pool=RL2.casual.any;tone='et-warm';}
   else if(emotion==='excited'||emotion==='happy'){pool=[...RL.shareGoodNews.any,...RL2.laughing.any];tone='et-play';}
   else{pool=isDeep?RL.fallback.deep.map(r=>r.replace('{name}',nm)):RL.fallback.early;tone='et-warm';}
