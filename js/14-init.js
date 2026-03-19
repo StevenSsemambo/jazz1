@@ -1,70 +1,79 @@
 /* ═══════════════════════════════════════════════════════
  * Jazz Buddy -- 14-init.js
- * App initialisation -- runs on page load
- * Checks for returning session, delegates to auth
+ * App initialisation
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
 
-// ── INIT ──────────────────────────────────────────────────────────
-// Runs once on page load.
-// If a user session exists → restore it and launch app directly.
-// If no session → splash screen stays visible (default HTML state).
 function init() {
-  // Init modules that need DB (called after 01-core.js is loaded)
+  // Safety: if core globals not loaded yet, abort silently
+  if(typeof DB === 'undefined' || typeof P === 'undefined') {
+    console.error('14-init: DB or P not defined — aborting init');
+    return;
+  }
+
+  // Init modules that need DB
   if(typeof initDBOverrides === 'function') initDBOverrides();
   if(typeof initVS === 'function') initVS();
   if(typeof initCUST === 'function') initCUST();
   if(typeof _loadJournalEntries === 'function') _loadJournalEntries();
+  if(typeof sanitizeP === 'function') sanitizeP();
 
   const currentUser = localStorage.getItem('jb_currentUser');
 
   if (!currentUser) {
-    // No session -- splash is already visible by default, focus the name input
-    setTimeout(() => {
-      const nameEl = document.getElementById('sl-name');
+    // No session — show splash, focus name input
+    setTimeout(function(){
+      var nameEl = document.getElementById('sl-name');
       if (nameEl) nameEl.focus();
     }, 300);
     return;
   }
 
-  // Returning session -- restore prefix and data, then launch
+  // Restore session
   window._userPrefix = 'jb_' + currentUser + '_';
 
-  // Load stored data into runtime vars
-  const storedP = localStorage.getItem(window._userPrefix + 'P');
-  if (storedP) { try { Object.assign(P, JSON.parse(storedP)); } catch(e) {} }
-  if(typeof sanitizeP==='function')sanitizeP();
+  try {
+    var storedP = localStorage.getItem(window._userPrefix + 'P');
+    if (storedP) Object.assign(P, JSON.parse(storedP));
+  } catch(e) {}
 
-  const storedMems = localStorage.getItem(window._userPrefix + 'MEMS');
-  if (storedMems) { try { MEMS = JSON.parse(storedMems); } catch(e) {} }
+  try {
+    var storedMems = localStorage.getItem(window._userPrefix + 'MEMS');
+    if (storedMems) MEMS = JSON.parse(storedMems);
+  } catch(e) {}
 
-  const storedHist = localStorage.getItem(window._userPrefix + 'HIST');
-  if (storedHist) { try { HIST = JSON.parse(storedHist); } catch(e) {} }
+  try {
+    var storedHist = localStorage.getItem(window._userPrefix + 'HIST');
+    if (storedHist) HIST = JSON.parse(storedHist);
+  } catch(e) {}
 
-  const storedJournal = localStorage.getItem(window._userPrefix + 'JOURNAL');
-  if (storedJournal) { try { journalEntries = JSON.parse(storedJournal); } catch(e) {} }
+  try {
+    var storedJournal = localStorage.getItem(window._userPrefix + 'JOURNAL');
+    if (storedJournal && typeof journalEntries !== 'undefined') journalEntries = JSON.parse(storedJournal);
+  } catch(e) {}
+
+  if(typeof sanitizeP === 'function') sanitizeP();
 
   // Hide splash
-  const splash = document.getElementById('splash');
+  var splash = document.getElementById('splash');
   if (splash) splash.style.display = 'none';
 
-  // Returning user with completed onboarding → go to app
-  const isOnboarded = localStorage.getItem(window._userPrefix + 'onboarded');
-  const hasProfile  = P.joinDate && P.totalMsgs > 0;
+  var isOnboarded = localStorage.getItem(window._userPrefix + 'onboarded');
+  var hasProfile  = P.joinDate && P.totalMsgs > 0;
 
   if (isOnboarded || hasProfile) {
-    const ob  = document.getElementById('ob');
-    const app = document.getElementById('app');
+    var ob  = document.getElementById('ob');
+    var app = document.getElementById('app');
     if (ob)  ob.style.display  = 'none';
     if (app) app.style.display = 'flex';
-    // Delegate session start to auth module
     if (typeof startAppSession === 'function') startAppSession();
   } else {
-    // User record exists but onboarding not done (edge case)
-    const ob = document.getElementById('ob');
-    if (ob) { ob.style.display = 'flex'; }
+    var ob2 = document.getElementById('ob');
+    if (ob2) ob2.style.display = 'flex';
     if (typeof renderOB === 'function') renderOB();
   }
 }
 
-init();
+// Wait for all scripts to be ready before calling init()
+// Use setTimeout(0) to ensure all synchronous script loading is complete
+setTimeout(init, 0);
