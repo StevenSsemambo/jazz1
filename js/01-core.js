@@ -303,6 +303,18 @@ const IM={
   ubuntu:{w:7,s:['community','helping others','giving back','ubuntu','together','solidarity','support system','circle','my people looked out']},
   social:{w:6,s:['social media','instagram','twitter','tiktok','followers','online','comparison','highlight reel','performance','authentic']},
   jazzThinks:{w:3,s:['what do you think','jazz what','your opinion','do you believe','are you']},
+
+  // ── FUN & COMEDY INTENTS ──────────────────────────────────────────
+  tellJoke:{w:10,s:['tell me a joke','make me laugh','say something funny','cheer me up','i need a laugh','got any jokes','joke please','funny','make me smile','crack a joke','joke time']},
+  tellStory:{w:10,s:['tell me a story','tell a story','story time','share a story','interesting story','bedtime story','tell me something interesting','entertain me','tell me about']},
+  boredFix:{w:9,s:['so bored','bored out','nothing to do','killing time','bored as','bored af','dying of boredom','entertain me','boredom','got nothing']},
+  moodLift:{w:9,s:['cheer me up','lift my mood','make me feel better','i need something positive','brighten my day','boost my mood','i need cheering','feeling low','need a pick me up']},
+  wildFact:{w:8,s:['fun fact','tell me a fact','random fact','did you know','something interesting','blow my mind','wow me','amaze me','interesting fact','weird fact']},
+  wouldYouRather:{w:9,s:['would you rather','wyr','either or','pick one','choose between','versus','vs ']},
+  hotTake:{w:8,s:['hot take','unpopular opinion','controversial opinion','spicy take','fight me','change my mind','debate','i think that','strong opinion']},
+  playGame:{w:8,s:['lets play','play a game','game time','challenge me','quiz me','test me','give me a challenge','let us play']},
+  roastMe:{w:9,s:['roast me','call me out','read me','be honest about me','what do you really think of me','am i being']},
+  hypothetical:{w:8,s:['hypothetically','what if','imagine if','suppose','scenario','if you could','if i could','if the world']},
   crisis:{w:10,s:['want to end it','dont want to live','no reason to live','want to disappear','what is the point of living','cant do this anymore','ending everything','final goodbye','saying goodbye','last message']},
 };
 
