@@ -203,7 +203,7 @@ function detectEmotion(txt){
 const IM={
   greeting:{w:8,s:['hi','hello','hey','hiya','sup','wassup','good morning','good afternoon','good evening','morning','evening','howdy','yo ','hi there','hey there','greetings','hi jazz','hey jazz','hello jazz']},
   farewell:{w:10,s:['bye','goodbye','see you','see ya','later','gotta go','take care','night','goodnight','good night','talk later','cya','gtg','leaving now','heading out','ttyl']},
-  howAreYou:{w:12,s:['how are you','how are u','you okay','you good','how r u','hows it going','how is it going','hows your day','how was your day','how are things','you doing okay','you alright','you doing well']},
+  howAreYou:{w:11,s:['how are you','how are u','you okay','you good','how r u','hows it going','how is it going','hows your day','how was your day','how are things','you doing okay','you alright','you doing well']},
   askName:{w:10,s:['your name','who are you','what are you','what is your name','what are you called','call you','who am i talking to','introduce yourself']},
   myName:{w:9,s:['my name is','i am called','call me','im called','name is','people call me','you can call me','known as']},
   venting:{w:9,s:['i feel','feeling','so stressed','cant handle','falling apart','breaking down','too much','overwhelmed','cant cope','im done','had enough','everything is','nothing is right','i just need','i dont know what','cant take it','really struggling','having a hard time','rough day','rough week','rough time']},
@@ -221,7 +221,7 @@ const IM={
   family:{w:9,s:['my mom','my dad','my parents','my family','my sister','my brother','my son','my daughter','my husband','my wife','my children','home problems','family problems','family drama','parent issues']},
   goals:{w:8,s:['goal','dream','want to be','plan to','future plans','career goals','life goals','want to achieve','my ambition','aspire to','working towards','saving for','building towards','long term']},
   gratitude:{w:7,s:['thank you','thanks jazz','appreciate you','you helped','love talking to you','glad i have you','you always understand','you make me feel','you are amazing','means a lot']},
-  joke:{w:6,s:['joke','humor me','entertain me']},
+  joke:{w:8,s:['joke','humor me','entertain me']},
   philosophical:{w:10,s:['meaning of life','why are we here','existence','consciousness','free will','what is reality','truth of life','justice','morality','ethics','soul exist','universe meaning','is there a god','religion vs science','what is death','is there afterlife','philosophy','what is the meaning']},
   bored:{w:7,s:['bored','nothing to do','so bored','boring day','killing time','entertain me','what should i do','nothing is happening','nothing interesting']},
   selfEsteem:{w:10,s:['im ugly','im fat','im stupid','im worthless','im not good enough','i hate myself','im a failure','nobody likes me','im terrible','im useless','im pathetic','im so bad at everything','cant do anything right','not worth it','no one would miss me','not smart enough','not attractive','never good enough']},
@@ -305,7 +305,7 @@ const IM={
   jazzThinks:{w:3,s:['what do you think','jazz what','your opinion','do you believe']},
 
   // ── FUN & COMEDY INTENTS ──────────────────────────────────────────
-  tellJoke:{w:12,s:['tell me a joke','make me laugh','say something funny','cheer me up','i need a laugh','got any jokes','joke please','funny','make me smile','crack a joke','joke time','tell me something funny','be funny']},
+  tellJoke:{w:18,s:['tell me a joke','make me laugh','say something funny','cheer me up','i need a laugh','got any jokes','joke please','funny','make me smile','crack a joke','joke time','tell me something funny','be funny']},
   tellStory:{w:9,s:['tell me a story','tell a story','tell me some story','share a story with me','story time','tell me something','entertain me with a story']},
   boredFix:{w:9,s:['so bored','bored out','nothing to do','killing time','bored as','bored af','dying of boredom','entertain me','boredom','got nothing']},
   moodLift:{w:9,s:['cheer me up','lift my mood','make me feel better','i need something positive','brighten my day','boost my mood','i need cheering','feeling low','need a pick me up']},
@@ -356,7 +356,9 @@ function detectIntent(txt){
   if(P.depth>65)scores.philosophical=(scores.philosophical||0)+3;
   if(P.N>65)scores.venting=(scores.venting||0)+2;
   // Anti-repeat: penalise last 3 intents
-  P.lastIntents.slice(-3).forEach((li,i)=>{ if(scores[li])scores[li]-=(3-i)*2; });
+  // Anti-repeat: penalise last 3 intents (but not fun intents — user may want more)
+  const _noRepeatPenalty=['tellJoke','wouldYouRather','playGame','hotTake','hypothetical','wildFactRequest','roastMe','moodLift','boredFix','tellStory','kidsBedtime','kidsAdventure','motivationalStory','funnyStory','africanStory','historicalStory','loveStory'];
+  P.lastIntents.slice(-3).forEach((li,i)=>{ if(scores[li]&&!_noRepeatPenalty.includes(li))scores[li]-=(3-i)*2; });
 
   const boostedScores=(typeof getThreadBoost==="function")?getThreadBoost(scores):scores;
   const sorted=Object.entries(boostedScores).sort((a,b)=>b[1]-a[1]);
