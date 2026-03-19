@@ -12,6 +12,7 @@ const CORE_ASSETS = [
   './js/01-core.js',
   './js/02-engine.js',
   './js/03-responses.js',
+  './js/03b-responses-expanded.js',
   './js/04-ui-panels.js',
   './js/05-send.js',
   './js/06-checkin-goals-crisis.js',
