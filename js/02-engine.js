@@ -312,6 +312,24 @@ function compose(intent,emotion,intensity,text){
     pool=RL.checkIn.any.map(r=>r.replace(/\{days\}/g,days_since(P.joinDate)+1).replace(/\{msgs\}/g,P.totalMsgs).replace(/\{phase\}/g,getPhaseData().name).replace(/\{topic\}/g,tt?tt[0]:'everything').replace(/\{bond\}/g,bond).replace(/\{streak\}/g,P.streakDays).replace(/\{recentMood\}/g,rm));
     tone='et-deep';
   }else if(intent==='compliment'){pool=RL.gratitude.any;tone='et-warm';}
+  else if(intent==='food'){pool=RL2.food.any;tone='et-play';}
+  else if(intent==='music'){pool=RL2.music.any;tone='et-play';}
+  else if(intent==='movies'){pool=RL2.movies.any;tone='et-play';}
+  else if(intent==='sports'){pool=RL2.sports.any;tone='et-play';}
+  else if(intent==='travel'){pool=RL2.travel.any;tone='et-warm';}
+  else if(intent==='tech'){pool=RL2.tech.any;tone='et-calm';}
+  else if(intent==='books'){pool=RL2.books.any;tone='et-deep';}
+  else if(intent==='career'){pool=RL2.career.any;tone='et-deep';}
+  else if(intent==='creative'){pool=RL2.creative.any;tone='et-warm';}
+  else if(intent==='friendship'){pool=RL2.friendship.any;tone='et-warm';}
+  else if(intent==='lifePhilosophy'){pool=RL2.lifePhilosophy.any;tone='et-deep';}
+  else if(intent==='playful'){pool=RL2.playful.any;tone='et-play';}
+  else if(intent==='morning'){pool=RL2.morning.any;tone='et-warm';}
+  else if(intent==='evening'){pool=RL2.evening.any;tone='et-warm';}
+  else if(intent==='world'){pool=RL2.world.any;tone='et-deep';}
+  else if(intent==='opinion'){pool=RL2.opinion.any;tone='et-firm';}
+  else if(intent==='casual'){pool=RL2.casual.any;tone='et-warm';}
+  else if(emotion==='excited'||emotion==='happy'){pool=[...RL.shareGoodNews.any,...RL2.laughing.any];tone='et-play';}
   else{pool=isDeep?RL.fallback.deep.map(r=>r.replace('{name}',nm)):RL.fallback.early;tone='et-warm';}
 
   // Pick response (avoid last used)
@@ -356,3 +374,265 @@ function compose(intent,emotion,intensity,text){
   DB.s('lastR',resp);
   return{text:resp,tone};
 }
+
+// ── EXPANDED RESPONSE LIBRARY — Casual + Human ────────────────────
+const RL2 = {
+
+  // ── CASUAL CHAT & BANTER ──────────────────────────────────────────
+  casual: { any: [
+    "Ha! Okay now I'm curious -- what made you think of that?",
+    "That's actually interesting. Tell me more.",
+    "I love that. Keep going.",
+    "Okay wait, hold on -- say that again?",
+    "That's a whole mood. I feel that.",
+    "Honestly same. What brought this on?",
+    "You're not wrong at all. What else is on your mind?",
+    "I didn't expect that. Tell me more.",
+    "Okay that's funny. What happened?",
+    "That tracks. What else?",
+    "Valid. Very valid. Go on.",
+    "Hm. I'm thinking about that. Say more.",
+    "Okay I need more context. What happened exactly?",
+    "That's a lot to unpack. Start from the beginning.",
+    "Mood. Absolute mood. What's going on?",
+  ]},
+
+  // ── FOOD & EATING ─────────────────────────────────────────────────
+  food: { any: [
+    "Food is genuinely one of the best things in life. What's your go-to comfort meal?",
+    "Okay now I want to know -- what's the best meal you've ever had?",
+    "There's something special about food that feels like home. What does that mean for you?",
+    "I love that you're talking about food. Best cook in your family?",
+    "Food and mood are so connected. What do you eat when you need a pick-me-up?",
+    "What's the most interesting thing you've eaten recently?",
+    "Okay hot take time: what's an underrated food that deserves more respect?",
+    "Food memories are some of the strongest. What food takes you back somewhere?",
+    "If you could only eat one cuisine for a year, what would you pick? No cheating.",
+    "What's on your plate lately -- literally and otherwise?",
+  ]},
+
+  // ── MUSIC ─────────────────────────────────────────────────────────
+  music: { any: [
+    "Music is like a second language -- what's been in your headphones lately?",
+    "I love when someone discovers a song that just hits perfectly. What's doing that for you right now?",
+    "Music taste says a lot about a person. What genre do you think says the most about you?",
+    "Is there a song that perfectly describes where you are right now in life?",
+    "What's the song you've had on repeat this week?",
+    "There's a certain kind of music for every mood. What are you listening to for this one?",
+    "Concert experiences are irreplaceable. Best live show you've ever been to?",
+    "Some songs just teleport you to a specific moment. What's yours?",
+    "What artist do you think is genuinely underrated?",
+    "First album or artist you were obsessed with? Judging you zero percent.",
+  ]},
+
+  // ── MOVIES & TV ───────────────────────────────────────────────────
+  movies: { any: [
+    "What's the last thing you watched that you can't stop thinking about?",
+    "Movies that hit differently at different ages -- what's yours?",
+    "Okay I want your honest opinion: most overrated movie everyone loves?",
+    "What's a film you've watched more than three times?",
+    "If your life was a movie genre, what would it be right now?",
+    "Best TV show you've ever watched -- and why did it wreck you emotionally?",
+    "What's something you've watched recently that surprised you?",
+    "Character you've related to way too hard?",
+    "What do you watch when you need to just turn your brain off?",
+    "There are movies people say changed them. Has one done that for you?",
+  ]},
+
+  // ── SPORTS & FITNESS ──────────────────────────────────────────────
+  sports: { any: [
+    "Sports are tribal in the best way. What team or sport do you live and die for?",
+    "Tell me about a sporting moment -- watching or playing -- that you'll never forget.",
+    "Sport gives you that feeling of being completely present. Do you get that anywhere?",
+    "Are you a player, a watcher, or both?",
+    "What sport do you wish you'd started younger?",
+    "The mental side of sport fascinates me -- how much of it do you think is mindset?",
+    "Athletes are fascinating. Who do you think is the greatest of their generation?",
+    "Fitness is interesting -- what's your relationship with it?",
+    "What does movement or exercise look like in your life right now?",
+    "Team sports or solo? What does that say about you?",
+  ]},
+
+  // ── TRAVEL & PLACES ───────────────────────────────────────────────
+  travel: { any: [
+    "Places shape people. Where have you been that changed you?",
+    "Dream destination -- where and why?",
+    "Home versus everywhere else -- how do you feel about where you live?",
+    "The best trips are never the ones you plan perfectly. What's your best travel story?",
+    "Is there a place you'd move to tomorrow if you could?",
+    "What does travel mean to you -- escape, discovery, something else?",
+    "Near or far -- what place do you keep going back to?",
+    "The thing about different cultures is they hold up a mirror. What have you learned about yourself from being somewhere else?",
+    "Where's somewhere you've been that exceeded every expectation?",
+    "Where's on your list that you haven't made it to yet?",
+  ]},
+
+  // ── TECHNOLOGY & SOCIAL MEDIA ─────────────────────────────────────
+  tech: { any: [
+    "Technology is changing things faster than we can process. How's your relationship with your phone these days?",
+    "Social media -- blessing or curse or both?",
+    "What app could you not live without, and which one would you delete tomorrow if you had the courage?",
+    "The attention economy is real -- how do you protect your time and focus?",
+    "What's a tech thing that genuinely makes your life better?",
+    "Do you think people are getting better or worse at actual conversation?",
+    "What's your screen time like? No judgment -- I'm just curious.",
+    "Tech has changed how we feel loneliness. What do you think about that?",
+    "The internet gave us everything and broke a few things. What did it break for you personally?",
+  ]},
+
+  // ── BOOKS & LEARNING ──────────────────────────────────────────────
+  books: { any: [
+    "What's the last book that actually moved you?",
+    "Reader, podcast person, video learner? What's your way of taking in new ideas?",
+    "Is there a book that changed how you see the world?",
+    "What do you find yourself reading about when you're genuinely curious?",
+    "Great writing stays with you. Any lines from books you still think about?",
+    "What topic could you go down a rabbit hole on for hours?",
+    "Fiction or non-fiction -- where do you live?",
+    "What's something you've learned recently that genuinely surprised you?",
+    "If you could recommend one book to everyone you know, what would it be?",
+  ]},
+
+  // ── CAREER & WORK-LIFE ────────────────────────────────────────────
+  career: { any: [
+    "What did you want to be when you grew up -- and how close is reality to that?",
+    "Career advice nobody tells you -- what do you wish you'd known earlier?",
+    "What does 'meaningful work' mean to you?",
+    "The line between hustle and burnout is blurry. Where are you on that right now?",
+    "If money wasn't a factor, what would you be doing?",
+    "What's the part of your work that actually energises you?",
+    "Sunday evening feeling -- what does yours look like?",
+    "What would you change about how you work if you could change one thing?",
+    "Who's the best manager or mentor you've ever had and what made them that?",
+    "What does success actually look like for you -- the real version, not the public answer?",
+  ]},
+
+  // ── CREATIVITY & HOBBIES ──────────────────────────────────────────
+  creative: { any: [
+    "Everyone has something creative in them. What's yours, even if you don't think of it that way?",
+    "What do you do just for the love of it -- no audience, no agenda?",
+    "When did you last make something? Anything.",
+    "Creative block is real and frustrating. Are you going through one or coming out of one?",
+    "What hobby would you pick up if you had unlimited time?",
+    "Art, music, writing, cooking, building -- what's your outlet?",
+    "I believe making things is fundamentally human. What do you make?",
+    "What's something you're learning right now, or want to?",
+    "There's a difference between a hobby and a passion. Do you have one of each?",
+  ]},
+
+  // ── FRIENDSHIP & SOCIAL ───────────────────────────────────────────
+  friendship: { any: [
+    "Friendship is one of life's most underrated gifts. How's your friendship situation these days?",
+    "Who's the person in your life who really gets you?",
+    "How do you make friends as an adult? Because honestly it's hard.",
+    "Quality versus quantity when it comes to friendships -- where do you stand?",
+    "Is there a friendship you miss? Someone you've drifted from?",
+    "What's the quality you value most in a friend?",
+    "Do you have someone you can call at 3am? That's the real question.",
+    "Friendships change us. Who are you because of a friendship?",
+    "What kind of friend are you, honestly?",
+    "Who's someone in your life you should probably reach out to more?",
+  ]},
+
+  // ── LIFE PHILOSOPHY & BIG QUESTIONS ──────────────────────────────
+  lifePhilosophy: { any: [
+    "What's one belief you hold now that you definitely didn't hold five years ago?",
+    "What does a good day actually look like for you?",
+    "If you could tell your younger self one thing, what would it be?",
+    "What do you think you're here to do? Not what you're supposed to say -- what you actually think.",
+    "Regrets are interesting -- do you have any that you've genuinely made peace with?",
+    "What's something you've changed your mind about completely?",
+    "What matters more to you as you get older?",
+    "How do you define a life well lived?",
+    "Is there something you're afraid you'll regret not doing?",
+    "What's something you believe that most people around you don't?",
+    "What does freedom mean to you?",
+    "If everything stayed exactly as it is right now -- is that okay, or is something missing?",
+  ]},
+
+  // ── HUMOUR & PLAYFUL ──────────────────────────────────────────────
+  playful: { any: [
+    "Okay this is important: pineapple on pizza. Where do you actually stand?",
+    "Hot take: give me one opinion you'll defend to the end.",
+    "If you could have any superpower but it had to be completely useless, what would you pick?",
+    "What's your most irrational but completely unshakeable opinion?",
+    "If your personality was a weather type, what would it be today?",
+    "Describe your current mood in a film title.",
+    "What's your go-to move when you need to cheer yourself up?",
+    "Three words that describe you, but make them unusual.",
+    "If you had to eat the same meal every day for a month, what would you pick? Think carefully.",
+    "What's the funniest thing that's happened to you recently?",
+    "Would you rather: always have to speak in rhyme, or only be able to speak in questions?",
+    "What's something you're embarrassingly good at?",
+    "What skill do you have that surprises people?",
+  ]},
+
+  // ── CURRENT EVENTS & WORLD ────────────────────────────────────────
+  world: { any: [
+    "The world is a lot right now. How are you processing all of it?",
+    "Is there something happening in the world that you find yourself thinking about a lot?",
+    "How do you take in news without losing your mind?",
+    "What gives you hope about the world right now?",
+    "Is there an issue you care about deeply but don't talk about enough?",
+    "What change in the world would make the most difference to your daily life?",
+    "How do you stay informed without drowning in it?",
+  ]},
+
+  // ── MORNING / EVENING CASUAL ─────────────────────────────────────
+  morning: { any: [
+    "Morning! Coffee person, tea person, or straight into chaos?",
+    "Good morning! What kind of morning has it been so far?",
+    "Morning energy -- what's yours like right now?",
+    "What's the first thing on your mind this morning?",
+    "Morning routines are fascinating. Do you have one or do you wing it?",
+  ]},
+
+  evening: { any: [
+    "Evening! How's the day landing for you?",
+    "End of day -- what's the emotional summary?",
+    "Evenings are different, aren't they? What kind of night is it?",
+    "How did today actually go? Be honest.",
+    "You made it to the end of the day. What's the debrief?",
+  ]},
+
+  // ── COMPLIMENTS & WARMTH ─────────────────────────────────────────
+  warmth: { any: [
+    "You know what I appreciate about you? You're actually honest with me.",
+    "I like the way your mind works. Where does this stuff come from?",
+    "You ask interesting questions. That's rarer than people realise.",
+    "There's something I notice about you -- you care. Really care. That's not nothing.",
+    "You've got a way of looking at things that I genuinely find interesting.",
+  ]},
+
+  // ── WHEN USER IS BEING FUNNY ──────────────────────────────────────
+  laughing: { any: [
+    "Okay that's actually funny. I wasn't expecting that.",
+    "Haha! Okay you got me there.",
+    "That made me smile. Genuinely.",
+    "You're funnier than you probably give yourself credit for.",
+    "Okay that's hilarious. Continue.",
+    "Ha! Where did that come from?",
+    "I wasn't ready for that. Well played.",
+  ]},
+
+  // ── DEEP RANDOM LIFE OBSERVATIONS ────────────────────────────────
+  observe: { any: [
+    "You know what's interesting about people? They almost always know what they need -- they just need someone to ask.",
+    "I've noticed that the things we resist saying out loud are usually the most important things.",
+    "There's a version of you five years from now looking back at this moment. What do you think they'd say?",
+    "The things that are hardest to talk about are usually the things that need talking about most.",
+    "People are so much more interesting when they stop performing and just talk. Like right now.",
+    "I find that the questions people ask me tell me more than the answers they give.",
+    "Here's something I think about: most people are carrying something they haven't told anyone. What about you?",
+  ]},
+
+  // ── OPINIONS & DEBATE ─────────────────────────────────────────────
+  opinion: { any: [
+    "I want your actual opinion on this -- not the diplomatic version.",
+    "Okay, take a side. You have to pick one.",
+    "What's an opinion you hold that you know is unpopular?",
+    "Play devil's advocate for me -- argue the opposite of what you just said.",
+    "I want to push back on that a little. Ready?",
+    "That's one way to see it. Here's another -- what do you think of this?",
+  ]},
+};
