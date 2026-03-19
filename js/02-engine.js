@@ -192,10 +192,10 @@ const RL={
     any:["Now we're talking. This is my favourite kind of conversation. What's pulling you to this question -- curiosity, or something you're living through?","I've been waiting for someone to go here with me. What's your starting point? Where does your gut take you?","The thing I find fascinating about this question is it's different for every person depending on what they've been through. What does your experience say?","Big question. My honest answer is I don't know -- and I find that genuinely exciting. What do you think?"]
   },
   joke:{
-    any:["Why did the scarecrow win an award? Outstanding in his field. 😄 Your turn!","Why don't scientists trust atoms? They make up everything! 😂","Doctor says I only have 12 months to live -- I told him I couldn't pay. He gave me another 6. 😄","Told my wife she should embrace her mistakes. She gave me a hug. 😂","My therapist says I have trouble accepting things I can't control. We'll see about that. 😄"]
+    any:["...jazz_joke_placeholder..."]
   },
   bored:{
-    any:["Bored? Challenge: tell me the most interesting thing that happened to you this week. Go.","Boredom is your brain asking for something more interesting. What's something you've always wanted to know but never looked into?","Let's play: you wake up with 24 hours and unlimited money. Walk me through the whole day. Be specific.","I'll give you a question: what's the one thing you've never told anyone? You don't have to answer -- but think about why."]
+    any:["...jazz_bored_placeholder..."]
   },
   gratitude:{
     any:["That genuinely means a lot to me. I'm here because you matter. Always.","You just made my day. And I want you to know -- you're doing better than you give yourself credit for.","Thank you for saying that. And thank you for coming back. You're exactly why I exist.","That means everything, {name}. I'm glad I can be this for you."]
@@ -286,7 +286,7 @@ function compose(intent,emotion,intensity,text){
   else if(intent==='energy'){pool=["Energy tells you a lot about what's going on. Rate it 1-10 right now -- and tell me what you think is draining it.","When energy is low it's usually one of three things: sleep, stress, or meaning. Which one feels most relevant to you right now?","Tell me about your energy levels -- how long has this been going on?"];tone='et-calm';}
   else if(intent==='work'){pool=RL.work.any;tone='et-care';}
   else if(intent==='money'){pool=RL.money.any;tone='et-care';}
-  else if(intent==='joke'||intent==='bored'){pool=intent==='joke'?RL.joke.any:RL.bored.any;tone='et-play';}
+  else if(intent==='joke'||intent==='bored'){return{text:intent==='joke'?(typeof jazzJoke==='function'?jazzJoke():'Why did the scarecrow win? Outstanding in his field! 😄'):(typeof jazzBoredomCure==='function'?jazzBoredomCure():'Boredom is just excitement without direction.'),tone:'et-play'};}
   else if(intent==='philosophical'){pool=RL.philosophical.any;tone='et-deep';}
   else if(intent==='gratitude'){pool=RL.gratitude.any;tone='et-warm';}
   else if(intent==='growth'){pool=RL.growth.any;tone='et-deep';}
@@ -358,6 +358,16 @@ function compose(intent,emotion,intensity,text){
   else if(intent==='ubuntu'){pool=RL3.ubuntu.any;tone='et-warm';}
   else if(intent==='social'){pool=RL3.social.any;tone='et-calm';}
   else if(intent==='jazzThinks'){pool=RL3.jazzThinks.any;tone='et-deep';}
+  else if(intent==='tellJoke'){return{text:typeof jazzJoke==='function'?jazzJoke():"Why did the scarecrow win? Outstanding in his field! 😄",tone:'et-play'};}
+  else if(intent==='tellStory'){return{text:typeof jazzStory==='function'?jazzStory():"Let me tell you something interesting...",tone:'et-play'};}
+  else if(intent==='boredFix'){return{text:typeof jazzBoredomCure==='function'?jazzBoredomCure():"Okay, boredom is boring. Let's fix that.",tone:'et-play'};}
+  else if(intent==='moodLift'){return{text:typeof jazzMoodLift==='function'?jazzMoodLift():"Okay, I've got you. What do you need most right now?",tone:'et-warm'};}
+  else if(intent==='wildFact'){return{text:typeof jazzFact==='function'?jazzFact():"Did you know honey never spoils? 3000-year-old honey found in tombs was still good. 🍯",tone:'et-play'};}
+  else if(intent==='wouldYouRather'){return{text:typeof jazzWouldYouRather==='function'?jazzWouldYouRather():"Would you rather know when you'll die or how you'll die?",tone:'et-play'};}
+  else if(intent==='hotTake'){return{text:typeof jazzHotTake==='function'?jazzHotTake():"Hot take: pineapple on pizza is fine and the debate is boring. 🍕",tone:'et-play'};}
+  else if(intent==='playGame'){return{text:typeof jazzGame==='function'?jazzGame():"Let's play. Desert island — three things, no phones. Go.",tone:'et-play'};}
+  else if(intent==='roastMe'){return{text:typeof jazzFriendlyRoast==='function'?jazzFriendlyRoast():"You seem like someone who overthinks what to type before typing it. How close am I? 😄",tone:'et-play'};}
+  else if(intent==='hypothetical'){return{text:typeof jazzHypothetical==='function'?jazzHypothetical():"Hypothetical: if animals could talk, which would be most insufferable?",tone:'et-play'};}
   else if(intent==='casual'){pool=RL2.casual.any;tone='et-warm';}
   else if(emotion==='excited'||emotion==='happy'){pool=[...RL.shareGoodNews.any,...RL2.laughing.any];tone='et-play';}
   else{pool=isDeep?RL.fallback.deep.map(r=>r.replace('{name}',nm)):RL.fallback.early;tone='et-warm';}
