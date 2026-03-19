@@ -335,3 +335,45 @@ body.light-mode #chat{background:var(--bg)}
 /* Typing speed variable */
 .typ{--typ-speed:.9s}
 .td{animation-duration:var(--typ-speed)!important}
+
+/* ═══════════════════════════════════════════════════════
+   FEATURES MOBILE RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+@media(max-width:600px){
+  /* Voice mode overlay */
+  #voice-mode-overlay{padding:30px 16px 40px}
+  .vmo-avatar{font-size:52px;margin-bottom:16px}
+  .vmo-status{font-size:14px}
+  .vmo-last-jazz{font-size:13px;padding:10px 14px;max-height:120px}
+  .vmo-controls{gap:12px;margin-top:20px}
+  .vmo-btn{width:52px;height:52px;font-size:20px}
+
+  /* Tour */
+  .tour-box{width:calc(100vw - 32px);padding:18px 16px;border-radius:16px}
+  .tour-title{font-size:15px}
+  .tour-text{font-size:13px}
+
+  /* Settings/customization */
+  .theme-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .theme-btn{padding:10px 8px}
+  .theme-name{font-size:10px}
+
+  /* Noticed card */
+  .noticed-text{font-size:13px}
+  .noticed-title{font-size:12px}
+
+  /* Focus card */
+  .focus-timer{font-size:28px}
+  .focus-task{font-size:11px}
+
+  /* Bookmarks */
+  .bookmark-item{padding:8px 10px}
+  .bookmark-text{font-size:12px}
+
+  /* Music card */
+  .music-card{padding:10px 12px}
+  .music-query{font-size:11px}
+
+  /* Capsule */
+  .capsule-msg{font-size:13px}
+}
