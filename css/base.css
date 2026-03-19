@@ -61,7 +61,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .jst{font-size:11px;color:var(--tx3);display:flex;align-items:center;gap:4px;margin-top:1px}
 .sdot{width:5px;height:5px;border-radius:50%;background:var(--gn);animation:pulse-dot 2.5s ease-in-out infinite}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-.hdr-r{display:flex;gap:6px}
+.hdr-r{display:flex;gap:6px;flex-wrap:nowrap}
 .hbtn{width:34px;height:34px;border-radius:var(--rx);border:1px solid var(--b1);background:var(--s1);color:var(--tx2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:15px;position:relative}
 .hbtn:hover{background:var(--s2);color:var(--tx);border-color:var(--b2)}
 .hbtn .badge{position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--w1);border:1.5px solid var(--bg)}
@@ -244,7 +244,122 @@ to{opacity:1;transform:none}}
 .hm-label{font-size:13px;color:var(--tx2);margin-bottom:4px}
 
 /* ─── RESPONSIVE ──────────────────────────────────────────────── */
-@media(max-width:600px){.mc{max-width:86%}.panel{width:100vw}}
+/* ═══════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — full override for small screens
+   ═══════════════════════════════════════════════════════ */
+
+/* Tablet — up to 768px */
+@media(max-width:768px){
+  #app{max-width:100%}
+  .hdr-r{gap:4px}
+  .hbtn{width:30px;height:30px;font-size:13px}
+}
+
+/* Mobile — up to 600px — the main breakpoint */
+@media(max-width:600px){
+  /* Root scale down */
+  :root{
+    --rr:10px;--rs:6px;
+  }
+  body{font-size:14px}
+
+  /* Orbs — much smaller on mobile */
+  .orb1{width:280px;height:280px}
+  .orb2{width:240px;height:240px}
+  .orb3{width:200px;height:200px}
+
+  /* Header */
+  #hdr{padding:10px 12px}
+  .jav{width:34px;height:34px;font-size:15px}
+  .jname{font-size:15px}
+  .jst{font-size:10px}
+  .hdr-r{gap:3px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-right:2px;max-width:calc(100vw - 130px)}
+  .hdr-r::-webkit-scrollbar{display:none}
+  .hbtn{width:28px;height:28px;font-size:12px;flex-shrink:0}
+
+  /* Stats bar */
+  .sv{min-width:56px;padding:7px 6px}
+  .sv-n{font-size:13px}
+  .sv-l{font-size:8px}
+
+  /* Chat */
+  #chat{padding:12px 10px;gap:10px}
+  .mav{width:26px;height:26px;font-size:11px}
+  .mc{max-width:86%}
+  .bbl{padding:9px 12px;font-size:14px;line-height:1.6;border-radius:10px}
+  .etag{font-size:9px;padding:2px 6px}
+  .mt{font-size:9px}
+
+  /* Quick reply chips */
+  #qr{padding:6px 10px;gap:5px}
+  .chip{padding:5px 10px;font-size:12px}
+
+  /* Input area */
+  #inp-area{padding:8px 10px}
+  #txta{font-size:14px;padding:10px 12px;min-height:42px}
+  #sbtn{width:40px;height:40px;font-size:15px}
+  #mic-btn{width:36px;height:36px;font-size:15px}
+  #inp-row{gap:6px}
+
+  /* Panels — full screen on mobile */
+  .panel{width:100vw;right:-100vw;border-radius:0}
+  .panel.open{right:0}
+  .phdr{padding:14px 16px}
+  .ptitle{font-size:15px}
+  .pbody{padding:12px 14px}
+
+  /* Splash screen */
+  .splash-card{padding:28px 20px;margin:16px;border-radius:18px}
+  .splash-logo{font-size:28px}
+  .splash-tagline{font-size:13px}
+  .splash-inp{font-size:16px;padding:12px 14px}
+  .splash-btn{font-size:15px;padding:13px}
+
+  /* Onboarding */
+  #ob{padding:12px 12px 32px}
+  .ob-card{padding:20px 16px 20px;border-radius:16px}
+  .ob-q{font-size:16px}
+  .ob-hint{font-size:11px;margin-bottom:12px}
+  .ob-opts{gap:10px}
+  .ob-opt{padding:13px 12px;font-size:14px}
+  .ob-btn{padding:13px;font-size:15px}
+  .ob-input{font-size:16px;padding:12px 13px}
+  .ob-logo{font-size:24px}
+
+  /* Notifications bars */
+  #install-bar{font-size:12px;padding:7px 12px}
+  #ci-nudge{font-size:11.5px;padding:7px 12px}
+  #voice-bar{font-size:12px;padding:7px 12px}
+
+  /* Stats panel items */
+  .trt-n,.trt-v{font-size:12px}
+  .bond-lbl{font-size:12px}
+  .psec-label{font-size:9px}
+
+  /* Cards inside chat */
+  .weekly-card,.reflect-card,.exercise-card{padding:12px}
+  .weekly-title{font-size:13px}
+  .aff-text{font-size:14px}
+  .milestone-num{font-size:26px}
+  .milestone-txt{font-size:12px}
+
+  /* Journal */
+  #journal-ta{font-size:14px;min-height:110px;padding:12px}
+
+  /* Goal form */
+  .goal-form input,.goal-form select{font-size:14px;padding:9px 11px}
+}
+
+/* Very small phones — 375px and below */
+@media(max-width:375px){
+  body{font-size:13px}
+  .hbtn{width:26px;height:26px;font-size:11px}
+  .jname{font-size:14px}
+  .bbl{font-size:13px;padding:8px 10px}
+  .ob-q{font-size:15px}
+  .sv{min-width:48px}
+  .sv-n{font-size:12px}
+}
 
 /* check-in tag */
 .et-checkin{background:rgba(253,203,110,.15);color:var(--w2)}
