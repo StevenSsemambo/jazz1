@@ -87,7 +87,12 @@ function loadUserData(username) {
 
 // ── LAUNCH APP ────────────────────────────────────────────────────
 function launchApp(name) {
-  if(typeof P==='undefined'){console.error('P not defined in launchApp');return;}
+  // If P not ready yet, wait briefly and retry
+  if(typeof P==='undefined'||P===null){
+    console.warn('P not ready, retrying launchApp in 100ms');
+    setTimeout(function(){launchApp(name);},100);
+    return;
+  }
   // Hide splash
   const splash = document.getElementById('splash');
   if (splash) splash.style.display = 'none';
