@@ -359,7 +359,47 @@ function compose(intent,emotion,intensity,text){
   else if(intent==='social'){pool=RL3.social.any;tone='et-calm';}
   else if(intent==='jazzThinks'){pool=RL3.jazzThinks.any;tone='et-deep';}
   else if(intent==='tellJoke'){return{text:typeof jazzJoke==='function'?jazzJoke():"Why did the scarecrow win? Outstanding in his field! 😄",tone:'et-play'};}
-  else if(intent==='tellStory'){return{text:typeof jazzStory==='function'?jazzStory():"Let me tell you something interesting...",tone:'et-play'};}
+  else if(intent==='kidsBedtime'){
+    var _s=typeof getKidsBedtimeStory==='function'?getKidsBedtimeStory():null;
+    if(_s)return{text:(_s.intro?_s.intro+'\n\n':'')+(_s.title?'**'+_s.title+'**\n\n':'')+_s.text+(_s.outro?'\n\n'+_s.outro:''),tone:'et-calm'};
+  }
+  else if(intent==='kidsAdventure'){
+    var _s=typeof getKidsAdventureStory==='function'?getKidsAdventureStory():null;
+    if(_s)return{text:(_s.intro?_s.intro+'\n\n':'')+(_s.title?'**'+_s.title+'**\n\n':'')+_s.text+(_s.outro?'\n\n'+_s.outro:''),tone:'et-play'};
+  }
+  else if(intent==='adultBedtime'){
+    var _s=typeof getMoodStory==='function'?getMoodStory('tired'):null;
+    if(_s)return{text:(_s.intro?_s.intro+'\n\n':'')+(_s.title?'**'+_s.title+'**\n\n':'')+_s.text+(_s.outro?'\n\n'+_s.outro:''),tone:'et-calm'};
+  }
+  else if(intent==='motivationalStory'){
+    var _s=typeof getMotivationalStory==='function'?getMotivationalStory():null;
+    if(_s)return{text:(_s.intro?_s.intro+'\n\n':'')+(_s.title?'**'+_s.title+'**\n\n':'')+_s.text+(_s.outro?'\n\n'+_s.outro:''),tone:'et-firm'};
+  }
+  else if(intent==='funnyStory'){
+    var _s=typeof getFunnyStory==='function'?getFunnyStory():null;
+    if(_s)return{text:(_s.intro?_s.intro+'\n\n':'')+(_s.title?'**'+_s.title+'**\n\n':'')+_s.text+(_s.outro?'\n\n'+_s.outro:''),tone:'et-play'};
+  }
+  else if(intent==='africanStory'){
+    var _s=typeof getAfricanStory==='function'?getAfricanStory():null;
+    if(_s)return{text:(_s.intro?_s.intro+'\n\n':'')+(_s.title?'**'+_s.title+'**\n\n':'')+_s.text+(_s.outro?'\n\n'+_s.outro:''),tone:'et-deep'};
+  }
+  else if(intent==='historicalStory'){
+    var _s=typeof getHistoricalStory==='function'?getHistoricalStory():null;
+    if(_s)return{text:(_s.intro?_s.intro+'\n\n':'')+(_s.title?'**'+_s.title+'**\n\n':'')+_s.text+(_s.outro?'\n\n'+_s.outro:''),tone:'et-deep'};
+  }
+  else if(intent==='loveStory'){
+    var _s=typeof getLoveStory==='function'?getLoveStory():null;
+    if(_s)return{text:(_s.intro?_s.intro+'\n\n':'')+(_s.title?'**'+_s.title+'**\n\n':'')+_s.text+(_s.outro?'\n\n'+_s.outro:''),tone:'et-warm'};
+  }
+  else if(intent==='wildFactRequest'){
+    var _s=typeof getWildFact==='function'?getWildFact():null;
+    if(_s)return{text:_s.text+(_s.outro?'\n\n'+_s.outro:''),tone:'et-play'};
+  }
+  else if(intent==='tellStory'){
+    var _s=typeof getMoodStory==='function'?getMoodStory(emotion):null;
+    if(_s)return{text:(_s.intro?_s.intro+'\n\n':'')+(_s.title?'**'+_s.title+'**\n\n':'')+_s.text+(_s.outro?'\n\n'+_s.outro:''),tone:'et-warm'};
+  }
+  else if(intent==='tellStory_old'){return{text:typeof jazzStory==='function'?jazzStory():"Let me tell you something interesting...",tone:'et-play'};}
   else if(intent==='boredFix'){return{text:typeof jazzBoredomCure==='function'?jazzBoredomCure():"Okay, boredom is boring. Let's fix that.",tone:'et-play'};}
   else if(intent==='moodLift'){return{text:typeof jazzMoodLift==='function'?jazzMoodLift():"Okay, I've got you. What do you need most right now?",tone:'et-warm'};}
   else if(intent==='wildFact'){return{text:typeof jazzFact==='function'?jazzFact():"Did you know honey never spoils? 3000-year-old honey found in tombs was still good. 🍯",tone:'et-play'};}
