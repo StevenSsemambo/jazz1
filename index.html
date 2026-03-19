@@ -48,8 +48,8 @@
         onkeydown="if(event.key==='Enter')doEnter()"
         oninput="document.getElementById('splash-err').textContent=''"
       />
-      <button class="splash-btn" onclick="doEnter()">Start talking to Jazz →</button>
-      <button class="splash-guest" onclick="doGuest()">Continue as Guest</button>
+      <button class="splash-btn" id="enter-btn" onclick="if(typeof doEnter==='function')doEnter();else alert('Still loading, please wait a moment')">Start talking to Jazz</button>
+      <button class="splash-guest" onclick="if(typeof doGuest==='function')doGuest();else alert('Still loading, please wait a moment')">Continue as Guest</button>
     </div>
     <div class="splash-err" id="splash-err"></div>
   </div>
