@@ -25,12 +25,15 @@ const VS = {
 
 // initVS -- called after DB is available
 function initVS(){
-  VS.ttsEnabled   = DB.g('vs_tts', false);
-  VS.autoListen   = DB.g('vs_autoListen', false);
-  VS.pitch        = DB.g('vs_pitch', 1.05);
-  VS.rate         = DB.g('vs_rate', 0.92);
-  VS.volume       = DB.g('vs_volume', 1.0);
-  VS.selectedVoice= DB.g('vs_voice', null);
+  try{
+    if(typeof DB==='undefined')return;
+    VS.ttsEnabled   = DB.g('vs_tts', false);
+    VS.autoListen   = DB.g('vs_autoListen', false);
+    VS.pitch        = DB.g('vs_pitch', 1.05);
+    VS.rate         = DB.g('vs_rate', 0.92);
+    VS.volume       = DB.g('vs_volume', 1.0);
+    VS.selectedVoice= DB.g('vs_voice', null);
+  }catch(e){}
 }
 
 // ── Load voices ──────────────────────────────────────────────────
