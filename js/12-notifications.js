@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy — 12-notifications.js
+ * Jazz Buddy -- 12-notifications.js
  * Push notifications: request, schedule, proactive
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
@@ -67,11 +67,11 @@ function checkProactiveNotifs() {
   // Goal check
   else if (P.goals && P.goals.filter(g => g.status === 'active').length > 0) {
     const g = P.goals.find(g => g.status === 'active' && (!g.lastCheckedIn || now - g.lastCheckedIn > 259200000));
-    if (g) notif = { title: `Goal check-in, ${nm}`, body: `"${g.title}" — it's been a few days. What happened?` };
+    if (g) notif = { title: `Goal check-in, ${nm}`, body: `"${g.title}" -- it's been a few days. What happened?` };
   }
   // Check-in reminder
   else if ((P.lastCheckInDate || '') !== new Date().toDateString() && hour >= 8 && hour <= 10) {
-    notif = { title: `Morning check-in, ${nm} ☀️`, body: 'Start your day with Jazz — 2 minutes, big difference.' };
+    notif = { title: `Morning check-in, ${nm} ☀️`, body: 'Start your day with Jazz -- 2 minutes, big difference.' };
   }
 
   if (notif) {
