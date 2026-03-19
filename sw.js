@@ -59,10 +59,8 @@ self.addEventListener('activate', e => {
       ))
       .then(() => self.clients.claim())
       .then(() => {
-        console.log('[SW] Active. Telling all clients to reload.');
-        return self.clients.matchAll({type:'window'});
+        console.log('[SW] Active.');
       })
-      .then(clients => clients.forEach(c => c.postMessage({type:'SW_UPDATED'})))
   );
 });
 
