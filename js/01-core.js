@@ -207,7 +207,7 @@ const IM={
   askName:{w:10,s:['your name','who are you','what are you','what is your name','what are you called','call you','who am i talking to','introduce yourself']},
   myName:{w:9,s:['my name is','i am called','call me','im called','name is','people call me','you can call me','known as']},
   venting:{w:9,s:['i feel','feeling','so stressed','cant handle','falling apart','breaking down','too much','overwhelmed','cant cope','im done','had enough','everything is','nothing is right','i just need','i dont know what','cant take it','really struggling','having a hard time','rough day','rough week','rough time']},
-  askAdvice:{w:11,s:['what should i do','what do i do now','need advice','give me advice','advise me','what would you do','help me decide','i dont know what to do','what is the right thing','should i do this','help me choose','need your advice','i need guidance','not sure what to do','what do you think i should do','help me figure out','what are my options']},
+  askAdvice:{w:11,s:['what should i do','what do i do now','need advice','i need some advice','i need advice','give me advice','advise me','what would you do','help me decide','i dont know what to do','what is the right thing','should i do this','help me choose','need your advice','i need guidance','not sure what to do','what do you think i should do','help me figure out','what are my options','looking for advice','seeking advice']},
   shareGoodNews:{w:9,s:['guess what','i got','i made it','i passed','i won','promotion','accepted','they said yes','it worked','i did it','great news','exciting news','amazing news','i got in','i got the','i finally','i just found out','big news']},
   shareBadNews:{w:9,s:['bad news','terrible news','failed my exam','failed my test','failed my interview','got rejected','lost my job','didnt get the job','awful thing happened','went wrong today','things fell apart','disaster happened','catastrophe','something bad happened','terrible day']},
   healthCheck:{w:9,s:['not feeling well','feeling sick','headache','stomachache','cant sleep','sleep','body pain','need a doctor','my health','feeling ill','unwell','nauseous','dizzy','flu','fever','cold','ache','sore throat','chest pain','back pain']},
@@ -306,7 +306,7 @@ const IM={
 
   // ── FUN & COMEDY INTENTS ──────────────────────────────────────────
   tellJoke:{w:18,s:['tell me a joke','make me laugh','say something funny','cheer me up','i need a laugh','got any jokes','joke please','funny','make me smile','crack a joke','joke time','tell me something funny','be funny']},
-  tellStory:{w:9,s:['tell me a story','tell a story','tell me some story','share a story with me','story time','tell me something','entertain me with a story']},
+  tellStory:{w:9,s:['tell me a story','tell a story','tell me some story','share a story with me','story time','tell me something','entertain me with a story','i want a story','narrate a story','give me a story']},
   boredFix:{w:9,s:['so bored','bored out','nothing to do','killing time','bored as','bored af','dying of boredom','entertain me','boredom','got nothing']},
   moodLift:{w:9,s:['cheer me up','lift my mood','make me feel better','i need something positive','brighten my day','boost my mood','i need cheering','feeling low','need a pick me up']},
   wildFact:{w:8,s:['fun fact','tell me a fact','random fact','did you know','something interesting','blow my mind','wow me','amaze me','interesting fact','weird fact']},
@@ -325,7 +325,7 @@ const IM={
   africanStory:{w:13,s:['tell me an african story','african story','tell me some african folklore','african folklore','african tale','african legend','story from africa','traditional african story','african bedtime story','african wisdom story','ancestor story']},
   historicalStory:{w:13,s:['tell me a true story from history','historical story','true story from history','real historical story','story from history','something that happened in history','historical event story','tell me about a historical event','real story that really happened']},
   loveStory:{w:13,s:['tell me a love story','love story','romantic story','story about love','heartwarming story','touching story','beautiful love story','story about romance','love and relationship story']},
-  wildFactRequest:{w:14,s:['wild fact','tell me a wild fact','crazy fact','mind blowing fact','unbelievable fact','insane fact','tell me a random fact','blow my mind','fun fact','did you know','amaze me with a fact','give me a fact','interesting fact','tell me something i didnt know']},
+  wildFactRequest:{w:14,s:['wild fact','tell me a wild fact','crazy fact','mind blowing fact','unbelievable fact','insane fact','tell me a random fact','tell me some facts','tell me facts','give me facts','blow my mind','fun fact','did you know','amaze me with a fact','give me a fact','interesting fact','tell me something i didnt know','random fact','facts please','share a fact']},
   crisis:{w:15,s:['want to end it','dont want to live','no reason to live','want to disappear','what is the point of living','cant do this anymore','ending everything','final goodbye','saying goodbye','last message']},
 };
 
