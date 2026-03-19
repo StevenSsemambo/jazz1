@@ -78,6 +78,17 @@ function send(){
     try{
     hideTyping();sbtn.disabled=false;
 
+    // Intents where Jazz must stay focused — no interruptions, no injections
+    const _focusedIntents = [
+      'tellJoke','tellStory','kidsBedtime','kidsAdventure','adultBedtime',
+      'motivationalStory','funnyStory','africanStory','historicalStory',
+      'loveStory','wildFactRequest','wouldYouRather','playGame','hotTake',
+      'hypothetical','roastMe','boredFix','moodLift','wildFact',
+      'sleepStory','crisis','mentalHealth','grief','trauma'
+    ];
+    const _isFocused = _focusedIntents.includes(intent.primary);
+
+
     if(healthLog&&healthLog.type==='health-log'){
       const responses={sleep:{low:"That's pretty rough. Poor sleep affects everything -- mood, focus, energy. What do you think's been getting in the way of sleeping?",mid:"Okay. Not terrible, not great. What's your sleep like lately -- is it consistent?",high:"That's actually good to hear! Good sleep makes everything easier. How long has it been that way?"},stress:{low:"Good -- low stress is a real gift. What's keeping you so grounded right now?",mid:"Medium stress. Manageable, but not nothing. What's the main thing driving it?",high:"That's a significant stress level. Your body and mind are working overtime. What's the biggest source?"},energy:{low:"Low energy is draining in itself. When did it start feeling this way?",mid:"Medium energy. What's it been like this week overall -- consistent or up and down?",high:"Good energy! That's great. What's been going well that's giving you that?"}};
       const cat=healthLog.val<=3?'low':healthLog.val<=7?'mid':'high';
@@ -106,8 +117,8 @@ function send(){
     addMsg('b',finalResp,tone,memNote);
     histAdd('b',finalResp,emotion,intent.primary);
 
-    // Human layer addon (opinion, pattern, memory, meta)
-    if(humanResult.addon){
+    // Human layer addon (opinion, pattern, memory, meta) — skip when focused
+    if(!_isFocused&&humanResult.addon){
       setTimeout(()=>addMsg('b',humanResult.addon.text,humanResult.addon.tone||'et-deep'),humanResult.addon.delay||2500);
     }
 
@@ -138,23 +149,23 @@ function send(){
     }
 
     // ── Pattern interruption
-    if(checkPatternInterruption(intent.primary)&&Math.random()>.55){
+    if(!_isFocused&&typeof checkPatternInterruption==='function'&&checkPatternInterruption(intent.primary)&&Math.random()>.55){
       setTimeout(()=>{addMsg('b',getPatternInterruptMsg(intent.primary,P.name||'friend'),'et-firm');},1400);
     }
 
     // ── Emotional arc check
-    const arcMsg=checkEmotionalShift();
+    const arcMsg=!_isFocused&&(typeof checkEmotionalShift==='function'?checkEmotionalShift():null);
     if(arcMsg&&Math.random()>.7){setTimeout(()=>{addMsg('b',arcMsg,'et-deep');},1800);}
 
     // ── Pending challenge follow-up
-    const chFollow=checkPendingChallenge();
+    const chFollow=!_isFocused&&(typeof checkPendingChallenge==='function'?checkPendingChallenge():null);
     if(chFollow){setTimeout(()=>{addMsg('b',chFollow,'et-goal');},2200);}
 
     // ── Relationship nudge (occasional)
-    if(P.totalMsgs%12===0){const rNudge=getRelationshipNudge();if(rNudge)setTimeout(()=>addMsg('b',rNudge,'et-care'),2500);}
+    if(!_isFocused&&P.totalMsgs%12===0&&typeof getRelationshipNudge==='function'){const rNudge=getRelationshipNudge();if(rNudge)setTimeout(()=>addMsg('b',rNudge,'et-care'),2500);}
 
     // ── Weekly report trigger (Sunday or first open after 7 days)
-    const isWeekly=new Date().getDay()===0&&Date.now()-P.lastWeeklyReport>604800000;
+    const isWeekly=!_isFocused&&new Date().getDay()===0&&Date.now()-P.lastWeeklyReport>604800000;
     if(isWeekly&&P.totalMsgs%3===0){setTimeout(()=>renderWeeklyReport(),3000);}
 
     // ── Streak milestone check
@@ -165,7 +176,7 @@ function send(){
     },2000);
 
     // ── Structured exercise suggestion
-    const exType=shouldSuggestExercise(intent.primary,emotion,intensity);
+    const exType=!_isFocused&&(typeof shouldSuggestExercise==='function'?shouldSuggestExercise(intent.primary,emotion,intensity):null);
     if(exType&&Math.random()>.65){
       setTimeout(()=>{
         const exHtml=buildExerciseCard(exType);
@@ -176,7 +187,7 @@ function send(){
 
     // ── Mini challenge (occasional, after meaningful exchanges)
     const deepIntents=['venting','mentalHealth','goals','stress','loneliness','grief','motivation','anxiety'];
-    if(deepIntents.includes(intent.primary)&&P.totalMsgs%10===0){
+    if(!_isFocused&&deepIntents.includes(intent.primary)&&P.totalMsgs%10===0){
       const ch=issueChallenge(intent.primary,P.name||'friend');
       if(ch){
         setTimeout(()=>{
@@ -187,19 +198,19 @@ function send(){
     }
 
     // ── Reflection card after long emotional session
-    if(P.totalMsgs%8===0&&deepIntents.includes(intent.primary)){
+    if(!_isFocused&&P.totalMsgs%8===0&&deepIntents.includes(intent.primary)){
       const refHtml=buildReflectionCard(P.name||'friend');
       if(refHtml){setTimeout(()=>{addMsg('b','Before we move on -- let me reflect back what I heard:','et-deep','',refHtml);},3500);}
     }
 
     // ── Mood picker (occasional)
-    if(P.totalMsgs%15===0&&intent.primary!=='checkIn'){setTimeout(()=>showMoodPicker(),4000);}
+    if(!_isFocused&&P.totalMsgs%15===0&&intent.primary!=='checkIn'){setTimeout(()=>showMoodPicker(),4000);}
 
     // ── Variable reward: Jazz quotes user back to themselves
-    if(P.totalMsgs%11===0){const wq=quoteBackWisdom();if(wq)setTimeout(()=>addMsg('b',wq,'et-deep'),4500);}
+    if(!_isFocused&&P.totalMsgs%11===0&&typeof quoteBackWisdom==='function'){const wq=quoteBackWisdom();if(wq)setTimeout(()=>addMsg('b',wq,'et-deep'),4500);}
 
     // ── Variable reward: mirror user phrase back
-    if(P.totalMsgs%7===0&&P.userPhrases&&P.userPhrases.length>1){
+    if(!_isFocused&&P.totalMsgs%7===0&&P.userPhrases&&P.userPhrases.length>1){
       const ph=getUserPhraseMirror();
       if(ph){const phResps=[`You described something once as "${ph}" -- I've been thinking about that phrase. Does that still apply to how you're feeling?`,`"${ph}" -- you said that before. Is that where you are now?`];setTimeout(()=>addMsg('b',rnd(phResps),'et-deep'),5000);}
     }
@@ -211,49 +222,49 @@ function send(){
     // (already done in compose for deep bonds)
 
     // V8: Contradiction check
-    const contradict=detectContradiction(text,emotion);
+    const contradict=!_isFocused&&detectContradiction(text,emotion);
     if(contradict&&Math.random()>.6)setTimeout(()=>addMsg('b',contradict,'et-deep'),2600);
 
     // V8: Trajectory shift
-    const trajMsg=checkTrajectoryShift();
+    const trajMsg=!_isFocused&&(typeof checkTrajectoryShift==='function'?checkTrajectoryShift():null);
     if(trajMsg&&Math.random()>.7)setTimeout(()=>addMsg('b',trajMsg,'et-deep'),3200);
 
     // V8: Nuance modifier
-    const nuance=getNuanceModifier(intent.primary,text);
+    const nuance=!_isFocused&&(typeof getNuanceModifier==='function'?getNuanceModifier(intent.primary,text):null);
     if(nuance&&Math.random()>.65)setTimeout(()=>addMsg('b',nuance,'et-calm'),3800);
 
     // V8: Commitment check
-    const commitCheck=checkPendingCommitments();
+    const commitCheck=!_isFocused&&(typeof checkPendingCommitments==='function'?checkPendingCommitments():null);
     if(commitCheck)setTimeout(()=>addMsg('b',commitCheck,'et-goal'),4200);
 
     // V8: Habit check
-    const habitMsg=checkHabitsDue&&checkHabitsDue();
+    const habitMsg=!_isFocused&&(typeof checkHabitsDue==='function'?checkHabitsDue():null);
     if(habitMsg)setTimeout(()=>addMsg('b',habitMsg,'et-goal'),4800);
 
     // V8: Decision review
-    const decReview=checkDecisionReviews&&checkDecisionReviews();
+    const decReview=!_isFocused&&(typeof checkDecisionReviews==='function'?checkDecisionReviews():null);
     if(decReview)setTimeout(()=>addMsg('b',decReview,'et-deep'),5000);
 
     // V8: Memory anniversary
-    const anniv=checkMemoryAnniversaries&&checkMemoryAnniversaries();
+    const anniv=!_isFocused&&(typeof checkMemoryAnniversaries==='function'?checkMemoryAnniversaries():null);
     if(anniv)setTimeout(()=>addMsg('b',anniv,'et-deep'),5200);
 
     // V8: Relationship milestone
-    const relMilestone=checkRelationshipMilestones&&checkRelationshipMilestones();
+    const relMilestone=!_isFocused&&(typeof checkRelationshipMilestones==='function'?checkRelationshipMilestones():null);
     if(relMilestone)setTimeout(()=>addMsg('b',relMilestone,'et-warm'),2000);
 
     // V8: "Jazz noticed" card (occasional)
-    if(P.totalMsgs%13===0)setTimeout(()=>injectNoticedCard&&injectNoticedCard(),5500);
+    if(!_isFocused&&P.totalMsgs%13===0)setTimeout(()=>injectNoticedCard&&injectNoticedCard(),5500);
 
     // V8: Deep insight (every 18 messages)
-    if(P.totalMsgs%18===0){const ins=generateDeepInsight&&generateDeepInsight();if(ins)setTimeout(()=>addMsg('b',ins,'et-deep'),6000);}
+    if(!_isFocused&&P.totalMsgs%18===0){const ins=generateDeepInsight&&generateDeepInsight();if(ins)setTimeout(()=>addMsg('b',ins,'et-deep'),6000);}
 
     // V8: Cognitive distortion reframe
-    const distortion=detectCognitiveDistortion&&detectCognitiveDistortion(text);
+    const distortion=!_isFocused&&(typeof detectCognitiveDistortion==='function'?detectCognitiveDistortion(text):null);
     if(distortion&&Math.random()>.55)setTimeout(()=>addMsg('b',distortion.reframe,'et-firm'),2800);
 
-    // Fun injections — Jazz keeps things alive
-    if(P.totalMsgs%8===0&&!['crisis','mentalHealth','grief','trauma'].includes(intent.primary)){
+    // Fun injections — Jazz keeps things alive (never when focused on a story/joke)
+    if(!_isFocused&&P.totalMsgs%8===0&&!['crisis','mentalHealth','grief','trauma'].includes(intent.primary)){
       const funPool=['fact','joke','hypothetical'];
       const funType=rnd(funPool);
       setTimeout(()=>{
@@ -267,7 +278,7 @@ function send(){
 
     // V8: Mood music (occasional, after emotional messages)
     const emotionalIntents=['venting','anxiety','stress','sad','lonely','grief','overwhelmed'];
-    if(emotionalIntents.includes(intent.primary)&&P.totalMsgs%9===0){
+    if(!_isFocused&&emotionalIntents.includes(intent.primary)&&P.totalMsgs%9===0){
       const query=getMoodMusic&&getMoodMusic(emotion);
       if(query){
         setTimeout(()=>{
