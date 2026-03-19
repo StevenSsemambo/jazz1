@@ -1,319 +1,302 @@
 /* ═══════════════════════════════════════════════════════
- * Jazz Buddy -- 01-core.js
- * Core utilities, storage, profile, memory, history, health
+ * Jazz Buddy -- 05-send.js
+ * Main send() pipeline + PWA setup
  * SayMy Tech Developers
  * ═══════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════════════════════════════════
-   JAZZ BUDDY -- COMPLETE ENGINE  (All 8 Phases)
-   Phase 1: Core chat + rule engine
-   Phase 2: Personality profile + deep onboarding
-   Phase 3: Weighted multi-signal intent detection + rich response library
-   Phase 4: Health module -- mood, sleep, stress, wellbeing scoring
-   Phase 5: Memory system -- extraction, indexing, intelligent surfacing
-   Phase 6: Friendship depth -- 8-dimension bond + relationship evolution
-   Phase 7: PWA packaging -- installable, offline-ready
-   Phase 8: Polish -- edge cases, calibration, insights, anti-patterns
-═══════════════════════════════════════════════════════════════════ */
+// ── MAIN SEND ─────────────────────────────────────────────────────
+function send(){
+  const text=txta.value.trim();if(!text||isTyping)return;
+  txta.value='';txta.style.height='46px';sbtn.disabled=true;
 
-// ── UTILS ─────────────────────────────────────────────────────────
-const lerp=(a,b,t)=>a+(b-a)*t;
-const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-const rnd=(arr)=>arr[Math.floor(Math.random()*arr.length)];
-const fmt_time=()=>new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-const days_since=(ts)=>Math.floor((Date.now()-ts)/86400000);
+  addMsg('u',text);
 
-// ── STORAGE ───────────────────────────────────────────────────────
-const DB={
-  g:(k,d=null)=>{try{const v=localStorage.getItem('jb3_'+k);return v!=null?JSON.parse(v):d}catch{return d}},
-  s:(k,v)=>{try{localStorage.setItem('jb3_'+k,JSON.stringify(v))}catch{}},
-  del:(k)=>{try{localStorage.removeItem('jb3_'+k)}catch{}}
-};
+  const{emotion,intensity}=detectEmotion(text);
+  const intent=detectIntent(text);
+  if(typeof updateConvState==='function')updateConvState(intent.primary,emotion,intensity,text);
+  if(typeof trackEmotionalTrajectory==='function')trackEmotionalTrajectory(emotion,intensity);
+  if(typeof extractCommitment==='function')extractCommitment(text);
 
-// ── USER PROFILE (Big Five + custom) ─────────────────────────────
-let P=DB.g('P',{
-  name:'',age:null,
-  joinDate:Date.now(),lastSeen:Date.now(),
-  streakDays:1,totalMsgs:0,sessionCount:0,
-  // Big Five
-  O:50,C:50,E:50,A:50,N:50,
-  // Custom
-  humor:50,depth:50,direct:50,empathy:50,resilience:50,
-  // State
-  mood:null,moodHist:[],
-  sleepScores:[],stressScores:[],energyScores:[],wellbeingScores:[],
-  // Preferences (learned)
-  prefShort:false,likesChallenged:false,needsValidation:false,
-  prefTone:'balanced', // warm/deep/playful/honest
-  // Topics
-  topics:{},
-  // Calibration flags
-  calCount:0,lastCalDate:0,
-  // Relationship phase
-  phase:0, // 0=new 1=acquaint 2=friend 3=close 4=deep 5=soul
-  phaseHist:[{phase:0,date:Date.now()}],
-  // Anti-repeat tracking
-  lastIntents:[],
-  // Health profile
-  health:{
-    avgSleep:null,avgStress:null,avgEnergy:null,avgWellbeing:null,
-    conditions:[],medications:[],concerns:[],
-    lastCheckIn:null,
-    weeklyPattern:{}, // day→{mood,energy}
-  },
-  // Bond dimensions
-  bond:{trust:0,vuln:0,humor:0,consist:0,support:0,mem:0,growth:0,depth:0},
-  // Insights generated
-  insights:[],
-  // First message date per day (streak tracking)
-  activeDays:[],
+  // Check-in intercept
+  if(typeof ciState!=="undefined"&&ciState.active){
+    learn(text,emotion,intensity,intent.primary);
+    histAdd('u',text,emotion,intent.primary);
+    processCIStep(text);
+    sbtn.disabled=false;
+    return;
+  }
+
+  learn(text,emotion,intensity,intent.primary);
+  histAdd('u',text,emotion,intent.primary);
+
+  // V8 multi-state intercepts
+  if(typeof morningState!=="undefined"&&morningState.active){processMorningStep(text);sbtn.disabled=false;return;}
+  if(typeof eveningState!=="undefined"&&eveningState.active){processEveningStep(text);sbtn.disabled=false;return;}
+  if(typeof weeklyPlanState!=="undefined"&&weeklyPlanState.active){processWeeklyPlanStep(text);sbtn.disabled=false;return;}
+  if(typeof bodyScanState!=="undefined"&&bodyScanState.active){processBodyScanStep(text);sbtn.disabled=false;return;}
+  if(typeof focusState!=="undefined"&&focusState.active&&text.toLowerCase().includes('done')){endFocusEarly();sbtn.disabled=false;return;}
+
+  // Relationship letter intercept
+  if(typeof relLetterState!=="undefined"&&relLetterState.active){
+    learn(text,emotion,intensity,intent.primary);
+    histAdd('u',text,emotion,intent.primary);
+    processRelLetter(text);
+    sbtn.disabled=false;
+    return;
+  }
+
+  // Custom emotion detector
+  const customEmo=(typeof detectCustomEmotion==='function')?detectCustomEmotion(text):null;
+  if(customEmo&&typeof handleCustomEmotionResponse==='function'){
+    const customResp=handleCustomEmotionResponse(customEmo);
+    showTyping();
+    setTimeout(()=>{hideTyping();sbtn.disabled=false;addMsg('b',customResp,'et-deep');setQR(getQR('venting'));},1000);
+    return;
+  }
+
+  // Emotional suppression detector
+  const suppressMsg=(typeof detectSuppression==='function')?detectSuppression(text,emotion,intensity):null;
+  if(suppressMsg){
+    setTimeout(()=>{hideTyping();sbtn.disabled=false;addMsg('b',suppressMsg,'et-deep');setQR([{l:'You\'re right',t:'You\'re right, I\'m not really fine'},{l:'I actually am okay',t:'I actually am okay, just tired'},{l:'Let me explain',t:'Let me explain what\'s actually going on'}]);},900);
+    showTyping();return;
+  }
+
+  // Clarification when confidence is low
+  const clarifyMsg=(typeof needsClarification==='function')?needsClarification(intent.primary,intent.confidence,text):null;
+  if(clarifyMsg&&Math.random()>.6){
+    setTimeout(()=>{hideTyping();sbtn.disabled=false;addMsg('b',clarifyMsg,'et-warm');},700);
+    showTyping();return;
+  }
+
+  // Health convo intercept
+  const healthLog=buildHealthConvo(intent.primary,text);
+
+  showTyping();
+  const delay=['philosophical','mentalHealth','grief','trauma','venting','askAdvice','crisis'].includes(intent.primary)?1800:['sad','lonely','selfEsteem','relationships'].includes(intent.primary)?1400:900;
+
+  setTimeout(()=>{
+    try{
+    hideTyping();sbtn.disabled=false;
+
+    if(healthLog&&healthLog.type==='health-log'){
+      const responses={sleep:{low:"That's pretty rough. Poor sleep affects everything -- mood, focus, energy. What do you think's been getting in the way of sleeping?",mid:"Okay. Not terrible, not great. What's your sleep like lately -- is it consistent?",high:"That's actually good to hear! Good sleep makes everything easier. How long has it been that way?"},stress:{low:"Good -- low stress is a real gift. What's keeping you so grounded right now?",mid:"Medium stress. Manageable, but not nothing. What's the main thing driving it?",high:"That's a significant stress level. Your body and mind are working overtime. What's the biggest source?"},energy:{low:"Low energy is draining in itself. When did it start feeling this way?",mid:"Medium energy. What's it been like this week overall -- consistent or up and down?",high:"Good energy! That's great. What's been going well that's giving you that?"}};
+      const cat=healthLog.val<=3?'low':healthLog.val<=7?'mid':'high';
+      const resp=responses[healthLog.logged][cat];
+      addMsg('b',`✓ ${healthLog.logged.charAt(0).toUpperCase()+healthLog.logged.slice(1)} logged: ${healthLog.val}/10\n\n${resp}`,'et-calm');
+      histAdd('b',resp,'neutral','healthCheck');
+      setQR(getQR('healthCheck'));
+      refreshStats();
+      return;
+    }
+
+    const{text:resp,tone}=compose(intent.primary,emotion,intensity,text);
+    let resp_tone=tone;
+
+    // Memory surface (only for meaningful exchanges, not every message)
+    const rec=intent.primary!=='memory'?memRecall(text,emotion,[]):null;
+    const memNote=rec&&rec.surfaced===0&&rec.importance>6?`Earlier: "${rec.text.slice(0,55)}..."`:null;
+
+    addMsg('b',resp,tone,memNote);
+    histAdd('b',resp,emotion,intent.primary);
+
+    // Crisis: show resource directory
+    if(intent.primary==='crisis'){
+      setTimeout(()=>{
+        const crisisEl=document.createElement('div');crisisEl.innerHTML=buildCrisisCard();
+        const lastMsg=chatEl.lastElementChild;
+        if(lastMsg)lastMsg.querySelector('.mc')?.appendChild(crisisEl);
+      },600);
+    }
+
+    // Health log prompts after health messages (occasionally)
+    if(HEALTH_INTENTS.includes(intent.primary)&&P.totalMsgs%6===0){
+      setTimeout(()=>{
+        const prompts=["One thing that helps me understand you better -- can you rate your sleep quality lately from 1-10?","Quick check -- how would you rate your stress level right now from 1-10?","How's your energy been lately? Give me a number from 1 (empty) to 10 (full)."];
+        addMsg('b',rnd(prompts),'et-calm');
+      },800);
+    }
+
+    // Periodic calibration (every 20 messages)
+    if(P.totalMsgs>0&&P.totalMsgs%20===0&&Date.now()-P.lastCalDate>86400000*2){
+      P.lastCalDate=Date.now();saveP();
+      setTimeout(()=>{
+        const calQ=["Quick question -- am I responding in a way that feels right to you? Too serious? Not serious enough?","I want to make sure I'm actually helping. Is there something you wish I did differently?","Check-in: am I the kind of friend you need right now, or is there something I could do better?"];
+        addMsg('b',rnd(calQ),'et-deep');
+      },1200);
+    }
+
+    // ── Pattern interruption
+    if(checkPatternInterruption(intent.primary)&&Math.random()>.55){
+      setTimeout(()=>{addMsg('b',getPatternInterruptMsg(intent.primary,P.name||'friend'),'et-firm');},1400);
+    }
+
+    // ── Emotional arc check
+    const arcMsg=checkEmotionalShift();
+    if(arcMsg&&Math.random()>.7){setTimeout(()=>{addMsg('b',arcMsg,'et-deep');},1800);}
+
+    // ── Pending challenge follow-up
+    const chFollow=checkPendingChallenge();
+    if(chFollow){setTimeout(()=>{addMsg('b',chFollow,'et-goal');},2200);}
+
+    // ── Relationship nudge (occasional)
+    if(P.totalMsgs%12===0){const rNudge=getRelationshipNudge();if(rNudge)setTimeout(()=>addMsg('b',rNudge,'et-care'),2500);}
+
+    // ── Weekly report trigger (Sunday or first open after 7 days)
+    const isWeekly=new Date().getDay()===0&&Date.now()-P.lastWeeklyReport>604800000;
+    if(isWeekly&&P.totalMsgs%3===0){setTimeout(()=>renderWeeklyReport(),3000);}
+
+    // ── Streak milestone check
+    const milestone=checkStreakMilestone(P.streakDays);
+    if(milestone)setTimeout(()=>{
+      let html=`<div class="milestone-msg"><div class="milestone-num">🔥${P.streakDays}</div><div class="milestone-txt">${milestone}</div></div>`;
+      addMsg('b','',  'et-warm','',html);
+    },2000);
+
+    // ── Structured exercise suggestion
+    const exType=shouldSuggestExercise(intent.primary,emotion,intensity);
+    if(exType&&Math.random()>.65){
+      setTimeout(()=>{
+        const exHtml=buildExerciseCard(exType);
+        const exIntros={breathing:'Anxiety like this deserves more than words. Try this:',worstBest:'Let\'s work through this properly:',journalPrompt:'Sometimes writing it out is better than talking through it. Try this:',decisionMatrix:'Let me walk you through a proper decision framework:',gratitudeScan:'Let\'s shift gears for just two minutes:'};
+        addMsg('b',exIntros[exType]||'Try this:','et-calm','',exHtml);
+      },1600);
+    }
+
+    // ── Mini challenge (occasional, after meaningful exchanges)
+    const deepIntents=['venting','mentalHealth','goals','stress','loneliness','grief','motivation','anxiety'];
+    if(deepIntents.includes(intent.primary)&&P.totalMsgs%10===0){
+      const ch=issueChallenge(intent.primary,P.name||'friend');
+      if(ch){
+        setTimeout(()=>{
+          const html=`<div class="challenge-pill" title="Your challenge">🎯 Challenge: ${ch.txt}</div>`;
+          addMsg('b','I want to give you something to do before we talk next time -- something small but real:','et-goal','',html);
+        },3000);
+      }
+    }
+
+    // ── Reflection card after long emotional session
+    if(P.totalMsgs%8===0&&deepIntents.includes(intent.primary)){
+      const refHtml=buildReflectionCard(P.name||'friend');
+      if(refHtml){setTimeout(()=>{addMsg('b','Before we move on -- let me reflect back what I heard:','et-deep','',refHtml);},3500);}
+    }
+
+    // ── Mood picker (occasional)
+    if(P.totalMsgs%15===0&&intent.primary!=='checkIn'){setTimeout(()=>showMoodPicker(),4000);}
+
+    // ── Variable reward: Jazz quotes user back to themselves
+    if(P.totalMsgs%11===0){const wq=quoteBackWisdom();if(wq)setTimeout(()=>addMsg('b',wq,'et-deep'),4500);}
+
+    // ── Variable reward: mirror user phrase back
+    if(P.totalMsgs%7===0&&P.userPhrases&&P.userPhrases.length>1){
+      const ph=getUserPhraseMirror();
+      if(ph){const phResps=[`You described something once as "${ph}" -- I've been thinking about that phrase. Does that still apply to how you're feeling?`,`"${ph}" -- you said that before. Is that where you are now?`];setTimeout(()=>addMsg('b',rnd(phResps),'et-deep'),5000);}
+    }
+
+    // ── Value injection into response (retroactive -- already done, but remind on advice)
+    // done inline in compose via valueAdviceInject
+
+    // V8: Apply personality layer
+    // (already done in compose for deep bonds)
+
+    // V8: Contradiction check
+    const contradict=detectContradiction(text,emotion);
+    if(contradict&&Math.random()>.6)setTimeout(()=>addMsg('b',contradict,'et-deep'),2600);
+
+    // V8: Trajectory shift
+    const trajMsg=checkTrajectoryShift();
+    if(trajMsg&&Math.random()>.7)setTimeout(()=>addMsg('b',trajMsg,'et-deep'),3200);
+
+    // V8: Nuance modifier
+    const nuance=getNuanceModifier(intent.primary,text);
+    if(nuance&&Math.random()>.65)setTimeout(()=>addMsg('b',nuance,'et-calm'),3800);
+
+    // V8: Commitment check
+    const commitCheck=checkPendingCommitments();
+    if(commitCheck)setTimeout(()=>addMsg('b',commitCheck,'et-goal'),4200);
+
+    // V8: Habit check
+    const habitMsg=checkHabitsDue&&checkHabitsDue();
+    if(habitMsg)setTimeout(()=>addMsg('b',habitMsg,'et-goal'),4800);
+
+    // V8: Decision review
+    const decReview=checkDecisionReviews&&checkDecisionReviews();
+    if(decReview)setTimeout(()=>addMsg('b',decReview,'et-deep'),5000);
+
+    // V8: Memory anniversary
+    const anniv=checkMemoryAnniversaries&&checkMemoryAnniversaries();
+    if(anniv)setTimeout(()=>addMsg('b',anniv,'et-deep'),5200);
+
+    // V8: Relationship milestone
+    const relMilestone=checkRelationshipMilestones&&checkRelationshipMilestones();
+    if(relMilestone)setTimeout(()=>addMsg('b',relMilestone,'et-warm'),2000);
+
+    // V8: "Jazz noticed" card (occasional)
+    if(P.totalMsgs%13===0)setTimeout(()=>injectNoticedCard&&injectNoticedCard(),5500);
+
+    // V8: Deep insight (every 18 messages)
+    if(P.totalMsgs%18===0){const ins=generateDeepInsight&&generateDeepInsight();if(ins)setTimeout(()=>addMsg('b',ins,'et-deep'),6000);}
+
+    // V8: Cognitive distortion reframe
+    const distortion=detectCognitiveDistortion&&detectCognitiveDistortion(text);
+    if(distortion&&Math.random()>.55)setTimeout(()=>addMsg('b',distortion.reframe,'et-firm'),2800);
+
+    // V8: Mood music (occasional, after emotional messages)
+    const emotionalIntents=['venting','anxiety','stress','sad','lonely','grief','overwhelmed'];
+    if(emotionalIntents.includes(intent.primary)&&P.totalMsgs%9===0){
+      const query=getMoodMusic&&getMoodMusic(emotion);
+      if(query){
+        setTimeout(()=>{
+          const yt='https://www.youtube.com/results?search_query='+encodeURIComponent(query);
+          const html='<div class="music-card" onclick="window.open(\'' +yt+ '\')">'
+            +'<div class="music-icon">🎵</div>'
+            +'<div><div class="music-query">'+query+'</div><div class="music-label">Search on YouTube / Spotify</div></div>'
+            +'</div>';
+          addMsg('b','For how you are feeling right now -- look this up:','et-calm',null,html);
+        },4000);
+      }
+    }
+
+    // V8: Avatar state
+    if(typeof setAvatarState==='function'){
+      const avState=avatarFromEmotion&&avatarFromEmotion(emotion,intent.primary);
+      setTimeout(()=>setAvatarState('listening'),200);
+      setTimeout(()=>setAvatarState(avState||'neutral'),2000);
+    }
+
+    // V8: Emotional skin
+    if(P.mood&&typeof applyEmotionalSkin==='function')applyEmotionalSkin(P.mood);
+
+    // V8: Haptics
+    if(typeof haptic==='function')haptic(resp_tone||'et-warm');
+
+    setQR(getQR(intent.primary));
+    if(typeof refreshStatsAnimated==='function')refreshStatsAnimated();else refreshStats();
+    }catch(err){
+      console.error('Jazz send error:',err);
+      sbtn.disabled=false;
+      hideTyping();
+      // Show a fallback response so user knows Jazz is there
+      addMsg('b',"I'm here. Tell me more.",'et-warm');
+    }
+  },delay);
+}
+
+// ── PHASE 7: PWA SETUP ────────────────────────────────────────────
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredPrompt=e;
+  document.getElementById('install-bar').classList.add('show');
 });
-
-const saveP=()=>DB.s('P',P);
-
-// ── MEMORIES ──────────────────────────────────────────────────────
-let MEMS=DB.g('MEMS',[]);
-// {id,text,tags,emotion,intent,ts,importance,surfaced,pinned}
-const IMP={mentalHealth:10,selfEsteem:9,goals:9,relationships:9,shareBadNews:8,grief:9,trauma:9,shareGoodNews:7,health:7,work:6,family:9,venting:6,general:3};
-
-function memAdd(text,tags,emotion,intent){
-  const imp=IMP[intent]||IMP.general;
-  MEMS.push({id:Date.now(),text:text.slice(0,300),tags:[...new Set([intent,emotion,...tags])],emotion,intent,ts:Date.now(),importance:imp,surfaced:0,pinned:false});
-  if(MEMS.length>600)MEMS=MEMS.sort((a,b)=>b.importance-a.importance).slice(0,500);
-  DB.s('MEMS',MEMS);
+var _instBtn=document.getElementById('inst-btn');
+if(_instBtn){
+  _instBtn.onclick=async function(){
+    if(!deferredPrompt)return;
+    deferredPrompt.prompt();
+    var r=await deferredPrompt.userChoice;
+    if(r.outcome==='accepted')toast('Jazz Buddy installed!');
+    deferredPrompt=null;
+    var ib=document.getElementById('install-bar');
+    if(ib)ib.style.display='none';
+  };
 }
-
-function memRecall(input,emotion,exclude=[]){
-  const words=input.toLowerCase().split(/\W+/).filter(w=>w.length>3);
-  const scored=MEMS
-    .filter(m=>!exclude.includes(m.id))
-    .map(m=>{
-      let s=0;
-      words.forEach(w=>{if(m.tags.some(t=>t.includes(w)||w.includes(t)))s+=3;if(m.text.toLowerCase().includes(w))s+=1;});
-      if(m.emotion===emotion)s+=2;
-      s+=m.importance*.5;
-      s-=m.surfaced*2;
-      if(days_since(m.ts)<7)s+=1.5;
-      if(days_since(m.ts)>30)s-=1;
-      return{m,s};
-    })
-    .filter(x=>x.s>3)
-    .sort((a,b)=>b.s-a.s);
-  return scored.length?scored[0].m:null;
-}
-
-// ── HISTORY ───────────────────────────────────────────────────────
-let HIST=DB.g('HIST',[]);
-function histAdd(role,text,emotion,intent){
-  HIST.push({role,text:text.slice(0,400),emotion,intent,ts:Date.now()});
-  if(HIST.length>150)HIST=HIST.slice(-120);
-  DB.s('HIST',HIST);
-}
-function lastBotMsg(){return[...HIST].reverse().find(h=>h.role==='b');}
-function lastUserMsg(){return[...HIST].reverse().find(h=>h.role==='u');}
-
-// ── PHASE 4: HEALTH MODULE ────────────────────────────────────────
-const HEALTH_INTENTS=['healthCheck','sleep','stress','mentalHealth','energy','pain','anxiety','depression','nutrition','exercise'];
-
-function healthScore(){
-  const h=P.health;
-  const scores=[];
-  if(h.avgSleep!=null)scores.push(h.avgSleep*10);
-  if(h.avgStress!=null)scores.push((10-h.avgStress)*10);
-  if(h.avgEnergy!=null)scores.push(h.avgEnergy*10);
-  if(!scores.length)return null;
-  return Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
-}
-
-function logHealth(type,val){
-  const h=P.health;
-  if(type==='sleep'){P.sleepScores.push({v:val,ts:Date.now()});if(P.sleepScores.length>30)P.sleepScores.shift();h.avgSleep=+(P.sleepScores.reduce((a,b)=>a+b.v,0)/P.sleepScores.length).toFixed(1);}
-  else if(type==='stress'){P.stressScores.push({v:val,ts:Date.now()});if(P.stressScores.length>30)P.stressScores.shift();h.avgStress=+(P.stressScores.reduce((a,b)=>a+b.v,0)/P.stressScores.length).toFixed(1);}
-  else if(type==='energy'){P.energyScores.push({v:val,ts:Date.now()});if(P.energyScores.length>30)P.energyScores.shift();h.avgEnergy=+(P.energyScores.reduce((a,b)=>a+b.v,0)/P.energyScores.length).toFixed(1);}
-  h.lastCheckIn=Date.now();
-  const day=new Date().getDay();
-  if(!h.weeklyPattern[day])h.weeklyPattern[day]={moods:[],energies:[]};
-  if(P.mood)h.weeklyPattern[day].moods.push(P.mood);
-  if(type==='energy')h.weeklyPattern[day].energies.push(val);
-  saveP();
-}
-
-// ── PHASE 5: EMOTION ENGINE ───────────────────────────────────────
-const EL={
-  happy:['happy','great','amazing','wonderful','joy','love','fantastic','awesome','brilliant','good','smile','laugh','fun','yay','blessed','grateful','thrilled','glad','delighted','ecstatic','overjoyed','excited','pumped','stoked','hyped','pleased','content','proud','relieved'],
-  sad:['sad','unhappy','depressed','down','low','cry','tears','hopeless','empty','alone','miss','lost','hurt','pain','heartbroken','lonely','grief','terrible','awful','miserable','devastated','gutted','broken','shattered','numb','hollow','crushed','despairing'],
-  anxious:['anxious','worried','nervous','scared','fear','panic','stress','overwhelmed','dread','uneasy','restless','tense','overthink','what if','freaking out','on edge','apprehensive','dreading','spiraling','catastrophizing','cant breathe','heart racing'],
-  angry:['angry','mad','furious','annoyed','frustrated','irritated','hate','rage','pissed','fed up','sick of','cant stand','fuming','livid','seething','boiling','resentful','bitter','infuriated'],
-  tired:['tired','exhausted','drained','sleepy','fatigued','no energy','burnout','worn out','spent','depleted','wiped','running on empty','dead on my feet','zombie'],
-  excited:['excited','cant wait','thrilled','pumped','hyped','stoked','fired up','amazing news','great news','incredible','unbelievable','cant believe'],
-  confused:['confused','lost','dont understand','unsure','not sure','idk','what do i','torn','conflicted','cant decide','going in circles'],
-  grateful:['thank','grateful','appreciate','means a lot','blessed','lucky','fortunate','thankful','touched','moved'],
-  grieving:['died','passed away','lost someone','funeral','grief','mourning','miss them so much','gone forever','death'],
-  lonely:['lonely','alone','no one','nobody','isolated','no friends','no one cares','invisible'],
-  neutral:[]
-};
-
-function detectEmotion(txt){
-  const t=txt.toLowerCase();
-  const scores={};
-  Object.entries(EL).forEach(([e,ws])=>{scores[e]=ws.filter(w=>t.includes(w)).length;});
-  // Negation
-  if(t.match(/not (happy|great|good|fine|okay|well)/)){scores.sad=(scores.sad||0)+2;scores.happy=Math.max(0,(scores.happy||0)-2);}
-  if(t.match(/not (sad|bad|terrible|depressed)/)){scores.happy=(scores.happy||0)+2;}
-  // Intensifiers
-  const intense=['very','so','really','extremely','incredibly','absolutely','utterly','completely'];
-  const hasIntense=intense.some(i=>t.includes(i));
-  const best=Object.entries(scores).filter(([k])=>k!=='neutral').sort((a,b)=>b[1]-a[1]);
-  if(!best.length||best[0][1]===0)return{emotion:'neutral',intensity:1};
-  return{emotion:best[0][0],intensity:clamp(best[0][1]*(hasIntense?1.5:1)+(txt.includes('!')?1:0),1,10)};
-}
-
-// ── PHASE 3: INTENT ENGINE (60+ signals) ─────────────────────────
-const IM={
-  greeting:{w:10,s:['hi','hello','hey','hiya','sup','wassup','good morning','good afternoon','good evening','morning','evening','howdy','yo ','hi there','hey there','greetings','hi jazz','hey jazz','hello jazz']},
-  farewell:{w:10,s:['bye','goodbye','see you','see ya','later','gotta go','take care','night','goodnight','good night','talk later','cya','gtg','leaving now','heading out','ttyl']},
-  howAreYou:{w:9,s:['how are you','how are u','you okay','you good','how r u','hows it going','how is it going','hows your day','how was your day','how are things','you doing okay','you alright','you doing well']},
-  askName:{w:10,s:['your name','who are you','what are you','what is your name','what are you called','call you','who am i talking to','introduce yourself']},
-  myName:{w:9,s:['my name is','i am called','call me','im called','name is','people call me','you can call me','known as']},
-  venting:{w:9,s:['i feel','feeling','so stressed','cant handle','falling apart','breaking down','too much','overwhelmed','cant cope','im done','had enough','everything is','nothing is right','i just need','i dont know what','cant take it','really struggling','having a hard time','rough day','rough week','rough time']},
-  askAdvice:{w:8,s:['what should i','what do i do','advice','help me decide','what would you do','should i','what do you think','your opinion','tell me what to do','what would you recommend','what is the best','how do i deal','how should i handle']},
-  shareGoodNews:{w:9,s:['guess what','i got','i made it','i passed','i won','promotion','accepted','they said yes','it worked','i did it','great news','exciting news','amazing news','i got in','i got the','i finally','i just found out','big news']},
-  shareBadNews:{w:9,s:['bad news','terrible thing','horrible thing','worst day','failed','rejected','lost my','broke up','they said no','didnt get','everything went wrong','disaster','catastrophe','awful news','something bad']},
-  healthCheck:{w:9,s:['not feeling well','feeling sick','headache','stomachache','cant sleep','sleep','body pain','need a doctor','my health','feeling ill','unwell','nauseous','dizzy','flu','fever','cold','ache','sore throat','chest pain','back pain']},
-  mentalHealth:{w:10,s:['depressed','depression','anxiety disorder','mental health','therapy','therapist','counselor','psychiatrist','suicidal','worthless','no point','cant go on','empty inside','numb','hopeless','meaningless','want to die','end it all','self harm','cutting','hurting myself','breakdown','losing my mind','going crazy']},
-  sleep:{w:9,s:['cant sleep','insomnia','trouble sleeping','sleep issues','woke up','wake up','sleeping too much','oversleeping','tired all the time','exhausted all day','never rested','nightmares','sleep schedule','bed time','falling asleep']},
-  stress:{w:8,s:['stressed','so much stress','under pressure','too much pressure','too much going on','cant handle the pressure','pressure at work','pressure at school','pressure from','so much on my plate']},
-  energy:{w:7,s:['no energy','so tired','low energy','high energy','feeling energetic','drained','cant get up','motivation to do anything','get out of bed']},
-  anxiety:{w:9,s:['panic attack','anxiety attack','heart racing','cant breathe','chest tight','spiraling','catastrophizing','worst case scenario','something bad will happen','going to fail','everyone hates me']},
-  motivation:{w:8,s:['motivate me','im lazy','procrastinating','cant start','no motivation','push me','encourage me','give up','want to quit','whats the point','how do i start','stuck','cant do anything']},
-  relationships:{w:8,s:['friend','boyfriend','girlfriend','partner','family','mom','dad','sister','brother','colleague','boss','relationship','love','broke up','argument','fight','miss them','miss her','miss him','toxic relationship','toxic person','manipulation','abuse','setting boundaries','they hurt me']},
-  family:{w:9,s:['my mom','my dad','my parents','my family','my sister','my brother','my son','my daughter','my husband','my wife','my children','home problems','family problems','family drama','parent issues']},
-  goals:{w:8,s:['goal','dream','want to be','plan to','future plans','career goals','life goals','want to achieve','my ambition','aspire to','working towards','saving for','building towards','long term']},
-  gratitude:{w:7,s:['thank you','thanks jazz','appreciate you','you helped','love talking to you','glad i have you','you always understand','you make me feel','you are amazing','means a lot']},
-  joke:{w:7,s:['joke','tell me a joke','make me laugh','something funny','cheer me up','i need a laugh','funny story','humor me','entertain me','make me smile']},
-  philosophical:{w:7,s:['meaning of life','why are we here','what is the point','existence','consciousness','reality','universe','truth','purpose of life','why do we exist','is life worth','big questions','deep question','think about life']},
-  bored:{w:7,s:['bored','nothing to do','so bored','boring day','killing time','entertain me','what should i do','nothing is happening','nothing interesting']},
-  selfEsteem:{w:10,s:['im ugly','im fat','im stupid','im worthless','im not good enough','i hate myself','im a failure','nobody likes me','im terrible','im useless','im pathetic','im so bad at everything','cant do anything right','not worth it','no one would miss me','not smart enough','not attractive','never good enough']},
-  work:{w:7,s:['work','job','boss','office','deadline','meeting','presentation','colleague','fired','promotion','career','workplace','coworker','resign','quit my job','toxic workplace','overworked','underpaid']},
-  money:{w:7,s:['money','broke','debt','loan','afford','expensive','bills','salary','income','financial','struggling financially','cant afford','running out of money','savings','investment']},
-  grief:{w:10,s:['someone died','passed away','lost someone','death of','funeral','grief','mourning','miss them so much','gone forever','they died','she died','he died','my pet died','losing someone']},
-  trauma:{w:10,s:['trauma','traumatic','abuse','assault','violence','accident','ptsd','flashback','nightmares about','terrible thing happened','something bad happened to me','hurt me','harmed me']},
-  loneliness:{w:9,s:['so lonely','feel alone','no friends','nobody cares','invisible','no one talks to me','isolated','left out','excluded','dont belong','no one understands','no one to talk to']},
-  identity:{w:8,s:['who am i','dont know who i am','finding myself','lost myself','identity','gender','sexuality','dont fit in','feel different','not like others','feel like im different']},
-  growth:{w:7,s:['want to grow','self improvement','getting better','working on myself','personal development','becoming better','new habits','better version of myself']},
-  memory:{w:8,s:['remember when','do you remember','we talked about','you told me','last time','you said','you mentioned','didnt i tell you','i told you before']},
-  checkIn:{w:6,s:['show my stats','my profile','how am i doing','check in','my progress','bond score','what do you know about me','what have you learned']},
-  compliment:{w:6,s:['you are amazing','you understand me','best friend','you really get me','love you jazz','youre incredible','you always know','you are so helpful']},
-
-  heartbreak:{w:9,s:['heartbroken','my heart is broken','she left me','he left me','they left','got dumped','broke up with','she cheated','he cheated','cheated on me','unrequited love','still in love with','cant get over them','pining for','grieving relationship','miss them so much','wish they would come back']},
-  goalProgress:{w:9,s:['progress on my goal','update on my goal','working on my goal','goal is going','how my goal is','made progress','completed my goal','finished my goal','achieved my goal','goal update','i did the goal','stuck on my goal','goal check in','how am i doing on my goal']},
-  imposterSyndrome:{w:8,s:['imposter','dont deserve','got lucky','not qualified','they will find out','not as smart','fraud','fake','dont belong here','out of my depth','imposter syndrome','not good enough for this position']},
-  bigDecision:{w:8,s:['big decision','life changing decision','dont know what to do','crossroads','big choice','major decision','which path','should i leave','should i stay','move or stay','take the job','take the risk','start the business','quit or stay']},
-  comparison:{w:7,s:['everyone else','other people','compared to','not as good as','they have','why do they','why cant i','other people seem','everyone around me','peers are doing better','behind everyone','left behind']},
-  perfectionism:{w:7,s:['not perfect','not good enough yet','have to be perfect','perfectionist','everything has to be','scared to fail','afraid of mistakes','impossible standard','hard on myself','nothing i do is enough','standards too high']},
-  longing:{w:7,s:['i wish','i miss','if only','should have','could have','would have','regret','wish things were different','want things back','miss how things were','wish i could go back','things used to be']},
-  faith:{w:7,s:['god','faith','pray','church','spiritual','believe','religion','mosque','bible','quran','prayer','blessing','miracle','sin','forgiveness','spirituality','divine']},
-  addiction:{w:9,s:['addicted','addiction','cant stop','substance','alcohol','drinking too much','drugs','smoking','relapse','sobriety','clean','recovery','trying to quit','cant stop drinking','dependent on']},
-  sleepStory:{w:9,s:['sleep story','bedtime story','tell me a story','help me sleep','night time','story to sleep','goodnight story','can you tell me','send me to sleep','story before bed']},
-  relLetter:{w:9,s:['write a letter','unsent letter','letter to my','write to my','help me write to','letter for my','never sent','things i never said']},
-  birthday:{w:8,s:['my birthday','born on','date of birth','dob','birthday is','i turn','turning \d']},
-  weeklyReport:{w:9,s:['weekly report','weekly insight','week in review','how was my week','weekly summary','weekly check','my week at a glance']},
-  moodCheck:{w:8,s:['how am i feeling','pick my mood','mood check','log my mood','what is my mood']},
-  affirmationReq:{w:8,s:['affirmation','affirmations','something positive','remind me','encourage me','say something nice','lift me up','i need encouragement']},
-  journalReq:{w:8,s:['journal','write something','need to write','journaling','write in my journal','open my journal']},
-  crisis:{w:10,s:['want to end it','dont want to live','no reason to live','want to disappear','what is the point of living','cant do this anymore','ending everything','final goodbye','saying goodbye','last message']},
-};
-
-function detectIntent(txt){
-  const t=txt.toLowerCase();
-  const scores={};
-  Object.entries(IM).forEach(([intent,data])=>{
-    let s=0;
-    data.s.forEach(sig=>{
-      if(t.includes(sig))s+=data.w;
-      else if(sig.split(' ').length>1&&sig.split(' ').some(w=>w.length>4&&t.includes(w)))s+=data.w*.35;
-    });
-    scores[intent]=s;
-  });
-  // Context boost from last bot message
-  const lastB=lastBotMsg();
-  if(lastB){
-    const lb=lastB.text.toLowerCase();
-    if(lb.includes('sleep')||lb.includes('rest'))scores.sleep=(scores.sleep||0)+8;
-    if(lb.includes('feel')&&lb.includes('?'))scores.venting=(scores.venting||0)+5;
-    if(lb.includes('stress'))scores.stress=(scores.stress||0)+6;
-    if(lb.includes('goal'))scores.goals=(scores.goals||0)+6;
-    if(lb.includes('work'))scores.work=(scores.work||0)+5;
-    if(lb.includes('family'))scores.family=(scores.family||0)+6;
-    if(lb.includes('what happened'))scores.venting=(scores.venting||0)+4;
-  }
-  // Boost based on personality
-  if(P.depth>65)scores.philosophical=(scores.philosophical||0)+3;
-  if(P.N>65)scores.venting=(scores.venting||0)+2;
-  // Anti-repeat: penalise last 3 intents
-  P.lastIntents.slice(-3).forEach((li,i)=>{ if(scores[li])scores[li]-=(3-i)*2; });
-
-  const boostedScores=(typeof getThreadBoost==="function")?getThreadBoost(scores):scores;
-  const sorted=Object.entries(boostedScores).sort((a,b)=>b[1]-a[1]);
-  const primary=sorted[0][0];
-  const secondary=(sorted[1]&&sorted[1][1]>sorted[0][1]*.55)?sorted[1][0]:null;
-  return{primary,secondary,confidence:sorted[0][1]};
-}
-
-// ── PHASE 6: FRIENDSHIP DEPTH SYSTEM ─────────────────────────────
-const PHASES=[
-  {name:'Strangers',desc:"Just getting acquainted",min:0},
-  {name:'Acquaintances',desc:"Something is forming here",min:8},
-  {name:'Friends',desc:"A real bond is growing",min:20},
-  {name:'Close friends',desc:"You trust each other deeply",min:38},
-  {name:'Confidants',desc:"Jazz really, truly gets you",min:58},
-  {name:'Soul friends',desc:"An unbreakable connection",min:78},
-];
-
-function bondScore(){
-  const v=Object.values(P.bond);
-  return Math.round(v.reduce((a,b)=>a+b,0)/v.length);
-}
-function getPhaseData(){
-  const s=bondScore();
-  let pd=PHASES[0];
-  PHASES.forEach(ph=>{if(s>=ph.min)pd=ph;});
-  return{...pd,score:s};
-}
-function updatePhase(){
-  const pd=getPhaseData();
-  const phIdx=PHASES.indexOf(PHASES.find(p=>p.name===pd.name));
-  if(phIdx>P.phase){
-    P.phase=phIdx;
-    P.phaseHist.push({phase:phIdx,date:Date.now()});
-    saveP();
-    return PHASES[phIdx].name; // Return new phase name for notification
-  }
-  return null;
-}
-
-function updateBond(intent,emotion,intensity){
-  const b=P.bond;
-  // Trust: consistent use + vulnerability
-  b.trust=clamp(b.trust+0.4,0,100);
-  if(['venting','mentalHealth','selfEsteem','grief','trauma','loneliness'].includes(intent))b.trust=clamp(b.trust+2.5,0,100);
-  // Vulnerability
-  if(['mentalHealth','selfEsteem','grief','trauma','venting','loneliness','identity'].includes(intent))b.vuln=clamp(b.vuln+3,0,100);
-  // Humor
-  if(intent==='joke'||emotion==='happy')b.humor=clamp(b.humor+1.5,0,100);
-  if(intent==='bored'&&emotion==='happy')b.humor=clamp(b.humor+2,0,100);
-  // Consistency: every message
-  b.consist=clamp(b.consist+0.25,0,100);
-  // Support
-  if(['askAdvice','motivation','goals','grief'].includes(intent))b.support=clamp(b.support+2.5,0,100);
-  // Shared memories
-  if(intent==='memory')b.mem=clamp(b.mem+3,0,100);
-  // Growth
-  if(['goals','growth','motivation','identity'].includes(intent))b.growth=clamp(b.growth+2,0,100);
-  // Depth
-  if(['philosophical','venting','mentalHealth','grief','trauma','identity'].includes(intent))b.depth=clamp(b.depth+2.5,0,100);
-  // Intensity bonus
-  if(intensity>6){b.vuln=clamp(b.vuln+1,0,100);b.depth=clamp(b.depth+1,0,100);}
-  P.bond=b;
-
-}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
