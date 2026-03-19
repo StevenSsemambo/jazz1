@@ -87,6 +87,7 @@ function loadUserData(username) {
 
 // ── LAUNCH APP ────────────────────────────────────────────────────
 function launchApp(name) {
+  if(typeof P==='undefined'){console.error('P not defined in launchApp');return;}
   // Hide splash
   const splash = document.getElementById('splash');
   if (splash) splash.style.display = 'none';
@@ -244,6 +245,7 @@ function startAppSession() {
 const GLOBAL_KEYS = ['jb_currentUser','vs_tts','vs_rate','vs_pitch','vs_volume','vs_voice','vs_autoListen','cust','jb_tourDone'];
 
 function initDBOverrides(){
+  if(typeof DB==='undefined')return;
   const _orig_s = DB.s.bind(DB);
   const _orig_g = DB.g.bind(DB);
   const _orig_d = DB.del.bind(DB);
