@@ -315,6 +315,17 @@ const IM={
   playGame:{w:8,s:['lets play','play a game','game time','challenge me','quiz me','test me','give me a challenge','let us play']},
   roastMe:{w:9,s:['roast me','call me out','read me','be honest about me','what do you really think of me','am i being']},
   hypothetical:{w:8,s:['hypothetically','what if','imagine if','suppose','scenario','if you could','if i could','if the world']},
+
+  // ── STORY & FACT INTENTS ─────────────────────────────────────────
+  kidsBedtime:{w:10,s:['bedtime story','story for my child','story for my kid','story for children','kids story','childrens story','tell my child','story for baby','story for toddler','goodnight story','put my child to sleep','story for my daughter','story for my son']},
+  kidsAdventure:{w:9,s:['adventure story for kids','exciting story for child','fun story for kids','action story for children','tell my kid an exciting']},
+  adultBedtime:{w:9,s:['help me sleep','story to sleep','bedtime story for me','sleep story','story before bed','calm me down','wind me down']},
+  motivationalStory:{w:9,s:['motivational story','inspire me','inspiring story','story about overcoming','i need motivation','success story','comeback story','give me strength','story about resilience']},
+  funnyStory:{w:8,s:['funny story','make me laugh with a story','amusing story','comic story','hilarious story','absurd story']},
+  africanStory:{w:9,s:['african story','african folklore','tell me an african','story from africa','african wisdom','folklore','ancestors story','traditional story']},
+  historicalStory:{w:8,s:['historical story','true story','history story','real story','something that happened','historical fact','tell me about history']},
+  loveStory:{w:8,s:['love story','romantic story','story about love','heartwarming story','beautiful story','touching story']},
+  wildFactRequest:{w:8,s:['wild fact','crazy fact','mind blowing fact','unbelievable fact','insane fact','weird fact','random fact','blow my mind','fun fact','did you know','amaze me']},
   crisis:{w:10,s:['want to end it','dont want to live','no reason to live','want to disappear','what is the point of living','cant do this anymore','ending everything','final goodbye','saying goodbye','last message']},
 };
 
