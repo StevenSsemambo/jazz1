@@ -1,6 +1,6 @@
 // Jazz Buddy Service Worker — v7 Modular
 // SayMy Tech Developers
-const CACHE = 'jazz-buddy-v7';
+const CACHE = 'jazz-buddy-v10';
 const FONTS_CACHE = 'jazz-buddy-fonts-v1';
 
 // All app assets — cache everything for full offline support
