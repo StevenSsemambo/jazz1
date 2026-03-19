@@ -302,8 +302,7 @@ to{opacity:1;transform:none}}
   #inp-row{gap:6px}
 
   /* Panels — full screen on mobile */
-  .panel{width:100vw;right:-100vw;border-radius:0}
-  .panel.open{right:0}
+  .panel{width:100vw;border-radius:0}
   .phdr{padding:14px 16px}
   .ptitle{font-size:15px}
   .pbody{padding:12px 14px}
@@ -466,3 +465,40 @@ to{opacity:1;transform:none}}
 .ob-btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--acc3),var(--acc));color:#fff;font-family:var(--fh);font-size:16px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-appearance:none;appearance:none;margin-top:4px}
 .ob-btn:active{opacity:0.85}
 @keyframes ob-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ── MORE MENU ──────────────────────────────────────────── */
+#more-menu{
+  position:fixed;top:0;right:0;bottom:0;width:min(280px,85vw);
+  background:var(--bg2);border-left:1px solid var(--b1);
+  z-index:52;transform:translateX(110%);
+  transition:transform .3s var(--ease);
+  display:flex;flex-direction:column;overflow-y:auto;
+  padding:0 0 20px;
+}
+#more-menu.on{transform:translateX(0)}
+#more-menu-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:51;display:none;
+}
+#more-menu-overlay.on{display:block}
+.more-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px;border-bottom:1px solid var(--b1);
+  flex-shrink:0;
+}
+.more-title{font-family:var(--fh);font-size:16px;font-weight:600;color:var(--tx)}
+.more-close{background:none;border:none;color:var(--tx3);font-size:20px;cursor:pointer;padding:4px;line-height:1}
+.more-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  transition:background .15s;color:var(--tx2);
+  touch-action:manipulation;
+}
+.more-item:hover,.more-item:active{background:var(--s2);color:var(--tx)}
+.more-item-icon{font-size:20px;width:32px;text-align:center;flex-shrink:0}
+.more-item-label{font-size:14px;font-family:var(--fb)}
+.more-section-title{
+  font-size:10px;color:var(--tx3);text-transform:uppercase;
+  letter-spacing:.8px;padding:14px 18px 6px;font-weight:500;
+}
