@@ -18,7 +18,7 @@ function send(){
   if(typeof extractCommitment==='function')extractCommitment(text);
 
   // Check-in intercept
-  if(ciState.active){
+  if(typeof ciState!=="undefined"&&ciState.active){
     learn(text,emotion,intensity,intent.primary);
     histAdd('u',text,emotion,intent.primary);
     processCIStep(text);
@@ -30,14 +30,14 @@ function send(){
   histAdd('u',text,emotion,intent.primary);
 
   // V8 multi-state intercepts
-  if(morningState&&morningState.active){processMorningStep(text);sbtn.disabled=false;return;}
-  if(eveningState&&eveningState.active){processEveningStep(text);sbtn.disabled=false;return;}
-  if(weeklyPlanState&&weeklyPlanState.active){processWeeklyPlanStep(text);sbtn.disabled=false;return;}
-  if(bodyScanState&&bodyScanState.active){processBodyScanStep(text);sbtn.disabled=false;return;}
-  if(focusState&&focusState.active&&text.toLowerCase().includes('done')){endFocusEarly();sbtn.disabled=false;return;}
+  if(typeof morningState!=="undefined"&&morningState.active){processMorningStep(text);sbtn.disabled=false;return;}
+  if(typeof eveningState!=="undefined"&&eveningState.active){processEveningStep(text);sbtn.disabled=false;return;}
+  if(typeof weeklyPlanState!=="undefined"&&weeklyPlanState.active){processWeeklyPlanStep(text);sbtn.disabled=false;return;}
+  if(typeof bodyScanState!=="undefined"&&bodyScanState.active){processBodyScanStep(text);sbtn.disabled=false;return;}
+  if(typeof focusState!=="undefined"&&focusState.active&&text.toLowerCase().includes('done')){endFocusEarly();sbtn.disabled=false;return;}
 
   // Relationship letter intercept
-  if(relLetterState.active){
+  if(typeof relLetterState!=="undefined"&&relLetterState.active){
     learn(text,emotion,intensity,intent.primary);
     histAdd('u',text,emotion,intent.primary);
     processRelLetter(text);
