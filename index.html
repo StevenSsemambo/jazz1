@@ -229,16 +229,6 @@
      JavaScript Modules — SayMy Tech Developers
      Load order matters: core → engine → ui → features → init
      ═══════════════════════════════════════════════════════════ -->
-  <script>
-    // Force reload when service worker updates to clear stale cached files
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.addEventListener('message', function(e) {
-        if (e.data && e.data.type === 'SW_UPDATED') {
-          window.location.reload();
-        }
-      });
-    }
-  </script>
   <script src="js/01-core.js"></script>
   <script src="js/02-engine.js"></script>
   <script src="js/03-responses.js"></script>
