@@ -240,6 +240,19 @@ function send(){
     const distortion=detectCognitiveDistortion&&detectCognitiveDistortion(text);
     if(distortion&&Math.random()>.55)setTimeout(()=>addMsg('b',distortion.reframe,'et-firm'),2800);
 
+    // Fun injections — Jazz keeps things alive
+    if(P.totalMsgs%8===0&&!['crisis','mentalHealth','grief','trauma'].includes(intent.primary)){
+      const funPool=['fact','joke','hypothetical'];
+      const funType=rnd(funPool);
+      setTimeout(()=>{
+        let funMsg='';
+        if(funType==='fact'&&typeof jazzFact==='function')funMsg='Random thing I just thought of: '+jazzFact();
+        else if(funType==='joke'&&typeof jazzJoke==='function')funMsg=jazzJoke();
+        else if(funType==='hypothetical'&&typeof jazzHypothetical==='function')funMsg=jazzHypothetical();
+        if(funMsg)addMsg('b',funMsg,'et-play');
+      },5000);
+    }
+
     // V8: Mood music (occasional, after emotional messages)
     const emotionalIntents=['venting','anxiety','stress','sad','lonely','grief','overwhelmed'];
     if(emotionalIntents.includes(intent.primary)&&P.totalMsgs%9===0){
