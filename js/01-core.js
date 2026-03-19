@@ -252,6 +252,25 @@ const IM={
   moodCheck:{w:8,s:['how am i feeling','pick my mood','mood check','log my mood','what is my mood']},
   affirmationReq:{w:8,s:['affirmation','affirmations','something positive','remind me','encourage me','say something nice','lift me up','i need encouragement']},
   journalReq:{w:8,s:['journal','write something','need to write','journaling','write in my journal','open my journal']},
+
+  // ── CASUAL & LIFE TOPICS ──────────────────────────────────────────
+  food:{w:7,s:['food','eat','hungry','meal','cook','recipe','restaurant','pizza','breakfast','lunch','dinner','snack','taste','delicious','yummy','cooking','bake','drink','coffee','tea','hungry']},
+  music:{w:7,s:['music','song','playlist','album','artist','concert','lyrics','band','singer','genre','rap','jazz','pop','afrobeats','reggae','beat','melody','listen','headphones','spotify']},
+  movies:{w:7,s:['movie','film','watch','series','show','netflix','episode','actor','cinema','documentary','tv show','anime','drama','comedy','horror','binge','streaming']},
+  sports:{w:7,s:['sport','football','soccer','basketball','tennis','cricket','game','match','team','player','gym','workout','exercise','fitness','running','training','league','cup','tournament']},
+  travel:{w:7,s:['travel','trip','vacation','holiday','visit','country','city','flight','hotel','abroad','adventure','destination','explore','tourist','passport','beach','mountain']},
+  tech:{w:6,s:['phone','app','social media','instagram','twitter','tiktok','youtube','internet','computer','laptop','screen time','technology','gaming','online','wifi','digital']},
+  books:{w:6,s:['book','read','reading','novel','story','author','library','learn','podcast','study','knowledge','chapter','fiction']},
+  career:{w:7,s:['career','job','work','profession','salary','interview','office','boss','colleague','cv','resume','promotion','business','entrepreneurship','startup']},
+  creative:{w:6,s:['art','draw','paint','write','music','dance','create','design','hobby','craft','photography','film','poetry','creative','sketch','play']},
+  friendship:{w:7,s:['friend','friends','friendship','best friend','buddy','hang out','social','party','group','mate','pal','companion','crew','squad']},
+  lifePhilosophy:{w:7,s:['life','purpose','meaning','believe','opinion','philosophy','mind','think','perspective','view','lesson','wisdom','truth','change','grow']},
+  playful:{w:8,s:['haha','lol','funny','joke','laugh','random','bored','game','fun','silly','weird','crazy','wild','hilarious','ridiculous']},
+  morning:{w:8,s:['good morning','morning','wake up','just woke','start of day','early','today is going to']},
+  evening:{w:8,s:['good evening','evening','tonight','night time','end of day','winding down','before bed','good night']},
+  world:{w:6,s:['world','news','politics','society','humanity','global','current events','happening','country','government','economy']},
+  opinion:{w:7,s:['what do you think','your opinion','agree','disagree','hot take','unpopular opinion','debate','argue','perspective']},
+  casual:{w:3,s:['just chatting','nothing much','bored','random','talk','chat','conversation','whats up','sup','wassup']},
   crisis:{w:10,s:['want to end it','dont want to live','no reason to live','want to disappear','what is the point of living','cant do this anymore','ending everything','final goodbye','saying goodbye','last message']},
 };
 
