@@ -359,3 +359,17 @@ function renderFingerprintPanel(){
     ${P.totalMsgs>30?`<div class="insight" style="margin-top:14px"><div class="insight-title">What this means</div><div class="insight-text">This radar shows 6 dimensions of your emotional life as Jazz has observed them. No dimension is better or worse than another. The shape is yours.</div></div>`:''}
   `;
 }
+
+// ── MORE MENU ─────────────────────────────────────────────────────
+function openMoreMenu(){
+  var m = document.getElementById('more-menu');
+  var o = document.getElementById('more-menu-overlay');
+  if(m) m.classList.add('on');
+  if(o) o.classList.add('on');
+}
+function closeMoreMenu(){
+  var m = document.getElementById('more-menu');
+  var o = document.getElementById('more-menu-overlay');
+  if(m) m.classList.remove('on');
+  if(o) o.classList.remove('on');
+}
