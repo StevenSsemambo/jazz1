@@ -33,6 +33,7 @@ function init() {
   // Load stored data into runtime vars
   const storedP = localStorage.getItem(window._userPrefix + 'P');
   if (storedP) { try { Object.assign(P, JSON.parse(storedP)); } catch(e) {} }
+  if(typeof sanitizeP==='function')sanitizeP();
 
   const storedMems = localStorage.getItem(window._userPrefix + 'MEMS');
   if (storedMems) { try { MEMS = JSON.parse(storedMems); } catch(e) {} }
