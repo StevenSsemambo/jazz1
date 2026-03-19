@@ -206,20 +206,32 @@ const DECLARATIVE_RESPONSES = {
 function getDeclarativeResponse(emotion, intent, text) {
   const t = text.toLowerCase();
 
-  // Laughter signals
-  if (t.includes('lol') || t.includes('haha') || t.includes('😂') || t.includes('funny')) {
-    return Math.random() > 0.4 ? rnd(DECLARATIVE_RESPONSES.laugh) : null;
+  // NEVER override these intents — they have specific expected responses
+  const neverOverride = [
+    'howAreYou','askName','greeting','farewell','joke','tellJoke','bored','boredFix',
+    'tellStory','kidsBedtime','kidsAdventure','adultBedtime','motivationalStory',
+    'funnyStory','africanStory','historicalStory','loveStory','wildFactRequest',
+    'wildFact','wouldYouRather','playGame','hotTake','hypothetical','roastMe',
+    'moodLift','checkIn','goals','askAdvice','sleepStory','crisis','mentalHealth'
+  ];
+  if (neverOverride.includes(intent)) return null;
+
+  // Laughter signals — only when NOT asking for a joke
+  if (!t.includes('joke') && !t.includes('funny story') &&
+      (t.includes('lol') || t.includes('haha') || t.includes('😂'))) {
+    return Math.random() > 0.5 ? rnd(DECLARATIVE_RESPONSES.laugh) : null;
   }
-  // Short heavy statements that just need acknowledgment
-  if (text.length < 60 && ['sad','anxious','overwhelmed','grieving'].includes(emotion) && Math.random() > 0.5) {
+  // Short heavy emotional statements only
+  if (text.length < 60 && ['sad','anxious','overwhelmed','grieving'].includes(emotion) && Math.random() > 0.6) {
     return rnd(DECLARATIVE_RESPONSES.acknowledge);
   }
-  // After something vulnerable is shared
-  if (['mentalHealth','grief','trauma','loneliness','heartbreak'].includes(intent) && Math.random() > 0.6) {
+  // After something vulnerable
+  if (['grief','trauma','loneliness','heartbreak'].includes(intent) && Math.random() > 0.65) {
     return rnd(DECLARATIVE_RESPONSES.warmth);
   }
-  // Very short messages just need a quiet response sometimes
-  if (text.length < 30 && Math.random() > 0.7) {
+  // Quiet response only for very short messages that aren't questions or requests
+  if (text.length < 25 && !t.includes('?') && !t.includes('tell') && !t.includes('how') &&
+      !t.includes('what') && !t.includes('give') && !t.includes('say') && Math.random() > 0.75) {
     return rnd(DECLARATIVE_RESPONSES.quiet);
   }
   return null;
@@ -378,13 +390,17 @@ const SILENCE_RESPONSES = {
 };
 
 function getSilenceResponse(emotion, text) {
-  if (text.length > 80) return null; // Only for short messages
-  if (Math.random() > 0.25) return null;
+  if (text.length > 60) return null; // Only for genuinely short messages
+  if (Math.random() > 0.15) return null; // Less frequent — 15% not 25%
+  // Don't silence when user is asking something
+  var t = text.toLowerCase();
+  if (t.includes('?') || t.includes('tell') || t.includes('how') ||
+      t.includes('what') || t.includes('give') || t.includes('say') ||
+      t.includes('joke') || t.includes('story') || t.includes('funny')) return null;
 
   if (['sad','grieving','lonely'].includes(emotion)) return rnd(SILENCE_RESPONSES.sad);
   if (['overwhelmed','anxious','angry'].includes(emotion)) return rnd(SILENCE_RESPONSES.heavy);
   if (['happy','excited','grateful'].includes(emotion)) return rnd(SILENCE_RESPONSES.good_news);
-  if (['confused'].includes(emotion)) return rnd(SILENCE_RESPONSES.confused);
   return null;
 }
 
